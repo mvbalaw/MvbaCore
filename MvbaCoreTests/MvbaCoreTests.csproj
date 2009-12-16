@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\IEnumerableTExtensionsTests.cs" />
+    <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="NotificationMessageTests.cs" />
     <Compile Include="NotificationTests_Add.cs" />
     <Compile Include="NotificationTests_ErrorFor.cs" />

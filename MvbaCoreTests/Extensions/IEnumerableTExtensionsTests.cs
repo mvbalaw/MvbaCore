@@ -10,6 +10,34 @@ namespace MvbaCoreTests.Extensions
 	public class IEnumerableTExtensionsTest
 	{
 		[TestFixture]
+		public class When_asked_if_an_IEnumerable_T_IsNullOrEmpty
+		{
+			[Test]
+			public void Should_return_false_if_the_input_contains_items()
+			{
+				IList<int> input = new List<int>
+					{
+						6
+					};
+				input.IsNullOrEmpty().ShouldBeFalse();
+			}
+
+			[Test]
+			public void Should_return_true_if_the_input_is_empty()
+			{
+				IList<int> input = new List<int>();
+				input.IsNullOrEmpty().ShouldBeTrue();
+			}
+
+			[Test]
+			public void Should_return_true_if_the_input_is_null()
+			{
+				const IList<int> input = null;
+				input.IsNullOrEmpty().ShouldBeTrue();
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_join_an_enumerable_list_of_items
 		{
 			[Test]

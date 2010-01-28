@@ -17,7 +17,7 @@ namespace MvbaCoreTests
 			public void Should_return_a_Notification_with_a_message_that_has_the_given_messageText()
 			{
 				const string messageText = "text";
-				Notification notification = Notification.WarningFor(messageText);
+				var notification = Notification.WarningFor(messageText);
 
 				notification.Messages.Count.ShouldBeEqualTo(1);
 				notification.Messages.First().Message.ShouldBeEqualTo(messageText);
@@ -26,7 +26,7 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_a_Notification_with_a_message_that_has_Warning_Severity()
 			{
-				Notification notification = Notification.WarningFor("text");
+				var notification = Notification.WarningFor("text");
 
 				notification.Messages.Count.ShouldBeEqualTo(1);
 				notification.Messages.First().Severity.ShouldBeEqualTo(NotificationSeverity.Warning);

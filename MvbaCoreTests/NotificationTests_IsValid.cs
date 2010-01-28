@@ -12,8 +12,8 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_false_if_Messages_contains_only_messages_with_Error_Severity()
 			{
-				Notification notification = new Notification();
-				NotificationMessage messageTest = new NotificationMessage(NotificationSeverity.Error, "");
+				var notification = new Notification();
+				var messageTest = new NotificationMessage(NotificationSeverity.Error, "");
 				notification.Add(messageTest);
 
 				Assert.IsFalse(notification.IsValid);
@@ -22,8 +22,8 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_false_if_Messages_contains_only_messages_with_Warning_Severity()
 			{
-				Notification notification = new Notification();
-				NotificationMessage messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
+				var notification = new Notification();
+				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
 				notification.Add(messageTest);
 
 				Assert.IsFalse(notification.IsValid);
@@ -32,8 +32,8 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_true_if_Messages_contains_only_messages_with_Info_Severity()
 			{
-				Notification notification = new Notification();
-				NotificationMessage messageTest = new NotificationMessage(NotificationSeverity.Info, "");
+				var notification = new Notification();
+				var messageTest = new NotificationMessage(NotificationSeverity.Info, "");
 				notification.Add(messageTest);
 				Assert.IsTrue(notification.IsValid);
 			}
@@ -41,7 +41,7 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_true_if_Messages_is_empty()
 			{
-				Notification notification = new Notification();
+				var notification = new Notification();
 				Assert.IsTrue(notification.IsValid);
 			}
 		}

@@ -12,14 +12,14 @@ namespace MvbaCoreTests
 			[Test]
 			public void Should_return_false_if_the_Notification_is_not_Notification_Null()
 			{
-				Notification notification = new Notification();
+				var notification = new Notification();
 				Assert.IsFalse(notification.IsNull);
 			}
 
 			[Test]
 			public void Should_return_true_if_the_Notification_is_Notification_Null()
 			{
-				Notification notification = Notification.Null;
+				var notification = Notification.Null;
 				Assert.IsTrue(notification.IsNull);
 			}
 		}

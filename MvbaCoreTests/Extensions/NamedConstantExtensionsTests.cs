@@ -27,7 +27,7 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Should_return_the_input_if_it_is_non_null()
 			{
-				TestNamedConstantWithoutDefault namedConstantWithoutDefault = TestNamedConstantWithoutDefault.Foo;
+				var namedConstantWithoutDefault = TestNamedConstantWithoutDefault.Foo;
 
 				var actualNamedConstant = namedConstantWithoutDefault.ToNonNull();
 				ReferenceEquals(actualNamedConstant, namedConstantWithoutDefault).ShouldBeTrue();
@@ -41,18 +41,18 @@ namespace MvbaCoreTests.Extensions
 				namedConstantWithoutDefault.ShouldThrowAnException(x => x.ToNonNull()).OfType<ArgumentException>();
 			}
 
-			public class TestNamedConstantWithoutDefault : NamedConstant<TestNamedConstantWithoutDefault>
-			{
-				public static readonly TestNamedConstantWithoutDefault Bar = new TestNamedConstantWithoutDefault();
-				public static readonly TestNamedConstantWithoutDefault Foo = new TestNamedConstantWithoutDefault();
-			}
-
 			public class TestNamedConstantWithDefault : NamedConstant<TestNamedConstantWithDefault>
 			{
 				public static readonly TestNamedConstantWithDefault Bar = new TestNamedConstantWithDefault();
 
 				[DefaultKey]
 				public static readonly TestNamedConstantWithDefault Foo = new TestNamedConstantWithDefault();
+			}
+
+			public class TestNamedConstantWithoutDefault : NamedConstant<TestNamedConstantWithoutDefault>
+			{
+				public static readonly TestNamedConstantWithoutDefault Bar = new TestNamedConstantWithoutDefault();
+				public static readonly TestNamedConstantWithoutDefault Foo = new TestNamedConstantWithoutDefault();
 			}
 		}
 	}

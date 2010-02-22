@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace System
 {
 	public static class StringExtensions
@@ -14,6 +16,16 @@ namespace System
 				return true;
 			}
 			return trim && input.Trim() == "";
+		}
+
+		public static string ToCamelCase([CanBeNull] this string str)
+		{
+			if (String.IsNullOrEmpty(str))
+			{
+				return str;
+			}
+			str = Char.ToLower(str[0]) + str.Substring(1);
+			return str;
 		}
 	}
 }

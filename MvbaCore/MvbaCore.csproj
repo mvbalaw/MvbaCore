@@ -57,12 +57,14 @@
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
     <Compile Include="INamedConstant.cs" />
+    <Compile Include="MethodCallData.cs" />
     <Compile Include="NamedConstant.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="NotificationMessage.cs" />
     <Compile Include="NotificationSeverity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Reflection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

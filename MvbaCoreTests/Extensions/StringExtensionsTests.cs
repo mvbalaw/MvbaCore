@@ -103,5 +103,37 @@ namespace MvbaCoreTests.Extensions
 				result.ShouldBeTrue();
 			}
 		}
+
+		[TestFixture]
+		public class When_asked_to_change_a_string_ToCamelCase
+		{
+			[Test]
+			public void Should_make_the_first_character_lower_case_but_not_change_the_case_of_the_rest()
+			{
+				const string test = "TEST";
+				test.ToCamelCase().ShouldBeEqualTo("tEST");
+			}
+
+			[Test]
+			public void Should_make_the_first_character_lower_case_if_the_string_is_only_one_character_long()
+			{
+				const string test = "A";
+				test.ToCamelCase().ShouldBeEqualTo("a");
+			}
+
+			[Test]
+			public void Should_return_empty_if_the_input_is_empty()
+			{
+				const string test = "";
+				test.ToCamelCase().ShouldBeEqualTo("");
+			}
+
+			[Test]
+			public void Should_return_null_if_the_input_is_null()
+			{
+				const string test = null;
+				test.ToCamelCase().ShouldBeNull();
+			}
+		}
 	}
 }

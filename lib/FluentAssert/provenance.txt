@@ -1,0 +1,3 @@
+source: FluentAssert (http://code.google.com/p/fluent-assert/)
+
+license source: http://www.opensource.org/licenses/mit-license.php

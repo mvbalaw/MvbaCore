@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace MvbaCore
 {
-	public class Reflection
+	public static class Reflection
 	{
 		public static List<string> GetArguments<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
@@ -87,18 +87,18 @@ namespace MvbaCore
 			var expression = GetMethodCallExpression(methodCall);
 			var parameters = expression.Method.GetParameters();
 			var parameterDictionary = parameters.Select((x, i) => new
-				{
-					x.Name,
-					Value = GetValueAsString(expression.Arguments[i])
-				}
+			{
+				x.Name,
+				Value = GetValueAsString(expression.Arguments[i])
+			}
 				).ToDictionary(x => x.Name, x => x.Value);
 
 			return new MethodCallData
-				{
-					MethodName = methodName,
-					ClassName = className,
-					ParameterValues = parameterDictionary
-				};
+			{
+				MethodName = methodName,
+				ClassName = className,
+				ParameterValues = parameterDictionary
+			};
 		}
 
 		public static MethodCallExpression GetMethodCallExpression<T, TReturn>(Expression<Func<T, TReturn>> expression)
@@ -137,9 +137,9 @@ namespace MvbaCore
 		private static List<string> GetNames(MemberExpression memberExpression)
 		{
 			var names = new List<string>
-				{
-					memberExpression.Member.Name
-				};
+			{
+				memberExpression.Member.Name
+			};
 			while (memberExpression.Expression as MemberExpression != null)
 			{
 				memberExpression = (MemberExpression)memberExpression.Expression;
@@ -151,25 +151,38 @@ namespace MvbaCore
 		[DebuggerStepThrough]
 		public static string GetPropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
-			var memberExpression = expression.Body as MemberExpression;
+			string names = GetPropertyName(expression.Body as MemberExpression);
+			if (names != null)
+			{
+				return names;
+			}
+			names = GetPropertyName(expression.Body as UnaryExpression);
+			if (names != null)
+			{
+				return names;
+			}
+			throw new ArgumentException("expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
+		}
+
+		public static string GetPropertyName(MemberExpression memberExpression)
+		{
 			if (memberExpression == null)
 			{
-				var unaryExpression = expression.Body as UnaryExpression;
-				if (unaryExpression == null)
-				{
-					throw new ArgumentException(
-						"expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
-				}
-				memberExpression = unaryExpression.Operand as MemberExpression;
-				if (memberExpression == null)
-				{
-					throw new ArgumentException(
-						"expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
-				}
+				return null;
 			}
 			var names = GetNames(memberExpression);
 			string name = names.Join(".");
 			return name;
+		}
+
+		public static string GetPropertyName(UnaryExpression unaryExpression)
+		{
+			if (unaryExpression == null)
+			{
+				return null;
+			}
+			var memberExpression = unaryExpression.Operand as MemberExpression;
+			return GetPropertyName(memberExpression);
 		}
 
 		[DebuggerStepThrough]

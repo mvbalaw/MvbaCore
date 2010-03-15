@@ -30,15 +30,5 @@ namespace MvbaCore.Extensions
 			}
 			return DefaultValue<T>();
 		}
-
-		[NotNull, Obsolete("use .OrDefault()")]
-		public static T ToNonNull<T>([CanBeNull] this T value) where T : NamedConstant<T>
-		{
-			if (value != null)
-			{
-				return value;
-			}
-			return DefaultValue<T>();
-		}
 	}
 }

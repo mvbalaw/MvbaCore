@@ -12,14 +12,14 @@ namespace MvbaCoreTests.Extensions
 	public class NamedConstantExtensionsTests
 	{
 		[TestFixture]
-		public class When_asked_to_get_the_non_null_value_for_a_NamedConstant
+		public class When_asked_to_get_the_value_for_a_NamedConstant_or_its_default
 		{
 			[Test]
 			public void Should_return_the_field_marked_with__DefaultKeyAttribute__given_null_input()
 			{
 				const TestNamedConstantWithDefault namedConstantWithDefault = null;
 
-				var actualNamedConstant = namedConstantWithDefault.ToNonNull();
+				var actualNamedConstant = namedConstantWithDefault.OrDefault();
 				Console.WriteLine(actualNamedConstant);
 				ReferenceEquals(actualNamedConstant, TestNamedConstantWithDefault.Foo).ShouldBeTrue();
 			}
@@ -29,7 +29,7 @@ namespace MvbaCoreTests.Extensions
 			{
 				var namedConstantWithoutDefault = TestNamedConstantWithoutDefault.Foo;
 
-				var actualNamedConstant = namedConstantWithoutDefault.ToNonNull();
+				var actualNamedConstant = namedConstantWithoutDefault.OrDefault();
 				ReferenceEquals(actualNamedConstant, namedConstantWithoutDefault).ShouldBeTrue();
 			}
 
@@ -38,7 +38,7 @@ namespace MvbaCoreTests.Extensions
 			{
 				const TestNamedConstantWithoutDefault namedConstantWithoutDefault = null;
 
-				namedConstantWithoutDefault.ShouldThrowAnException(x => x.ToNonNull()).OfType<ArgumentException>();
+				namedConstantWithoutDefault.ShouldThrowAnException(x => x.OrDefault()).OfType<ArgumentException>();
 			}
 
 			public class TestNamedConstantWithDefault : NamedConstant<TestNamedConstantWithDefault>

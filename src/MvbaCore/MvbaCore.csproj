@@ -56,6 +56,7 @@
     <Compile Include="DefaultKeyAttribute.cs" />
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
+    <Compile Include="Extensions\TExtensions.cs" />
     <Compile Include="INamedConstant.cs" />
     <Compile Include="MethodCallData.cs" />
     <Compile Include="NamedConstant.cs" />

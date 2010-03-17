@@ -2,8 +2,6 @@ using System;
 
 using FluentAssert;
 
-using MvbaCore.Extensions;
-
 using NUnit.Framework;
 
 namespace MvbaCoreTests.Extensions
@@ -26,6 +24,30 @@ namespace MvbaCoreTests.Extensions
 			const int expected = 6;
 			object input = expected;
 			Assert.Throws<InvalidOperationException>(() => input.TryCastTo<string>());
+		}
+	}
+
+	[TestFixture]
+	public class When_asked_to_get_a_non_null_value_for_an_input
+	{
+		[Test]
+		public void Should_return_the_input_given_a_non_null_input()
+		{
+			var input = new Test();
+			var result = input.ToNonNull();
+			result.ShouldBeEqualTo(input);
+		}
+
+		[Test]
+		public void Should_return_the_input_given_a_null_input()
+		{
+			const Test input = null;
+			var result = input.ToNonNull();
+			result.ShouldNotBeNull();
+		}
+
+		public class Test
+		{
 		}
 	}
 }

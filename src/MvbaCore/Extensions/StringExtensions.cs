@@ -27,5 +27,14 @@ namespace System
 			str = Char.ToLower(str[0]) + str.Substring(1);
 			return str;
 		}
+
+		public static string ToNonNull(this string input)
+		{
+			if (input == null)
+			{
+				return "";
+			}
+			return input;
+		}
 	}
 }

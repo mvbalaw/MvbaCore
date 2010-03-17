@@ -135,5 +135,25 @@ namespace MvbaCoreTests.Extensions
 				test.ToCamelCase().ShouldBeNull();
 			}
 		}
+
+		[TestFixture]
+		public class When_asked_to_get_a_non_null_value_for_a_string
+		{
+			[Test]
+			public void Should_return_the_string_given_a_non_null_input()
+			{
+				const string input = "hello";
+				string result = input.ToNonNull();
+				result.ShouldBeEqualTo(input);
+			}
+
+			[Test]
+			public void Should_return_the_string_given_a_null_input()
+			{
+				const string input = null;
+				string result = input.ToNonNull();
+				result.ShouldNotBeNull();
+			}
+		}
 	}
 }

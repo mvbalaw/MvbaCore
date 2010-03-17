@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
+using CodeQuery;
+
 namespace MvbaCore
 {
 	public static class Reflection
@@ -79,6 +81,36 @@ namespace MvbaCore
 			return names.Last();
 		}
 
+		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType)
+		{
+			var sourceProperties = sourceType
+				.GetProperties()
+				.ThatHaveAGetter()
+				.ToDictionary(x => x.Name.ToLower());
+			var destinationProperties = destinationType
+				.GetProperties()
+				.ThatHaveASetter()
+				.Where(x => sourceProperties.ContainsKey(x.Name.ToLower()))
+				.ToDictionary(x => x.Name.ToLower());
+			var accessors = new List<PropertyMappingInfo>();
+			foreach (var destinationProperty in destinationProperties)
+			{
+				var sourceProperty = sourceProperties[destinationProperty.Key];
+
+				var property = destinationProperty;
+				var propertyMappingInfo = new PropertyMappingInfo
+					{
+						Name = destinationProperty.Value.Name,
+						SourcePropertyType = sourceProperty.PropertyType,
+						DestinationPropertyType = destinationProperty.Value.PropertyType,
+						GetValueFromSource = source => sourceProperty.GetValue(source, null),
+						SetValueToDestination = (destination, value) => property.Value.SetValue(destination, value, null)
+					};
+				accessors.Add(propertyMappingInfo);
+			}
+			return accessors;
+		}
+
 		public static MethodCallData GetMethodCallData<TClass>(Expression<Func<TClass, object>> methodCall) where TClass : class
 		{
 			string className = typeof(TClass).Name;
@@ -87,18 +119,18 @@ namespace MvbaCore
 			var expression = GetMethodCallExpression(methodCall);
 			var parameters = expression.Method.GetParameters();
 			var parameterDictionary = parameters.Select((x, i) => new
-			{
-				x.Name,
-				Value = GetValueAsString(expression.Arguments[i])
-			}
+				{
+					x.Name,
+					Value = GetValueAsString(expression.Arguments[i])
+				}
 				).ToDictionary(x => x.Name, x => x.Value);
 
 			return new MethodCallData
-			{
-				MethodName = methodName,
-				ClassName = className,
-				ParameterValues = parameterDictionary
-			};
+				{
+					MethodName = methodName,
+					ClassName = className,
+					ParameterValues = parameterDictionary
+				};
 		}
 
 		public static MethodCallExpression GetMethodCallExpression<T, TReturn>(Expression<Func<T, TReturn>> expression)
@@ -137,9 +169,9 @@ namespace MvbaCore
 		private static List<string> GetNames(MemberExpression memberExpression)
 		{
 			var names = new List<string>
-			{
-				memberExpression.Member.Name
-			};
+				{
+					memberExpression.Member.Name
+				};
 			while (memberExpression.Expression as MemberExpression != null)
 			{
 				memberExpression = (MemberExpression)memberExpression.Expression;

@@ -30,11 +30,7 @@ namespace System
 
 		public static string ToNonNull(this string input)
 		{
-			if (input == null)
-			{
-				return "";
-			}
-			return input;
+			return input ?? "";
 		}
 	}
 }

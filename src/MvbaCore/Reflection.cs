@@ -36,6 +36,11 @@ namespace MvbaCore
 			return (prefix + GetPropertyName(expression)).ToCamelCase();
 		}
 
+		public static string GetCamelCasePropertyNameWithPrefix<T>(Expression<Func<T>> expression, string prefix)
+		{
+			return (String.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase())).ToCamelCase();
+		}
+
 		public static string GetClassName<T>()
 		{
 			return typeof(T).Name;

@@ -31,7 +31,7 @@ namespace System.Collections.Generic
 		[NotNull]
 		public static IEnumerable<List<T>> InSetsOf<T>([NotNull] this IEnumerable<T> items, int setSize, bool fillPartialSetWithDefaultItems, T defaultItemToFillGroups)
 		{
-			var set = new List<T>();
+			var set = new List<T>(setSize);
 			foreach (var item in items)
 			{
 				set.Add(item);

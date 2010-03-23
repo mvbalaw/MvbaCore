@@ -122,6 +122,15 @@ namespace MvbaCoreTests
 					Assert.AreEqual(Foo.BoundPropertyNames.PrimaryBar.ToCamelCase() + "." + Bar.BoundPropertyNames.Office,
 					                fullPropertyName);
 				}
+				
+				[Test]
+				public void Should_get_the_name_of_the_property_using_a_lambda()
+				{
+					var address = new Address();
+					string fullPropertyName = Reflection.GetCamelCasePropertyNameWithPrefix(() => address.City, "prefix");
+					Assert.AreEqual("prefix." + Address.BoundPropertyNames.City.ToCamelCase(),
+					                fullPropertyName);
+				}
 			}
 
 			[TestFixture]

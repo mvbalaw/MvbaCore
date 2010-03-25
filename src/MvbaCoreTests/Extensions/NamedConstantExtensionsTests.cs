@@ -11,9 +11,69 @@ namespace MvbaCoreTests.Extensions
 {
 	public class NamedConstantExtensionsTests
 	{
+		public class TestNamedConstantWithDefault : NamedConstant<TestNamedConstantWithDefault>
+		{
+			public static readonly TestNamedConstantWithDefault Bar = new TestNamedConstantWithDefault("bar");
+
+			[DefaultKey]
+			public static readonly TestNamedConstantWithDefault Foo = new TestNamedConstantWithDefault("foo");
+
+			public TestNamedConstantWithDefault(string key)
+			{
+				base.Add(key, this);
+			}
+		}
+
+		public class TestNamedConstantWithoutDefault : NamedConstant<TestNamedConstantWithoutDefault>
+		{
+			public static readonly TestNamedConstantWithoutDefault Bar = new TestNamedConstantWithoutDefault("bar");
+			public static readonly TestNamedConstantWithoutDefault Foo = new TestNamedConstantWithoutDefault("foo");
+
+			public TestNamedConstantWithoutDefault(string key)
+			{
+				base.Add(key, this);
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_get_a_NamedConstant_for_a_specific_key
+		{
+			[Test]
+			public void Should_get_null_given_a_non_existent_key_if_a_default_is_not_defined()
+			{
+				var result = NamedConstant<TestNamedConstantWithoutDefault>.GetFor("notthere");
+				result.ShouldBeNull();
+			}
+
+			[Test]
+			public void Should_get_the_correct_instance_given_an_existing_key()
+			{
+				var expected = TestNamedConstantWithDefault.Foo;
+				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key);
+				result.ShouldBeEqualTo(expected);
+			}
+
+			[Test]
+			public void Should_get_the_default_instance_given_a_non_existent_key_if_a_default_is_defined()
+			{
+				const TestNamedConstantWithDefault namedConstantWithDefault = null;
+				var expected = namedConstantWithDefault.OrDefault();
+				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key + "x");
+				result.ShouldBeEqualTo(expected);
+			}
+		}
+
 		[TestFixture]
 		public class When_asked_to_get_the_value_for_a_NamedConstant_or_its_default
 		{
+			[Test]
+			public void Should_return_null_if_the_input_is_null()
+			{
+				const TestNamedConstantWithoutDefault namedConstantWithoutDefault = null;
+
+				namedConstantWithoutDefault.OrDefault().ShouldBeNull();
+			}
+
 			[Test]
 			public void Should_return_the_field_marked_with__DefaultKeyAttribute__given_null_input()
 			{
@@ -31,28 +91,6 @@ namespace MvbaCoreTests.Extensions
 
 				var actualNamedConstant = namedConstantWithoutDefault.OrDefault();
 				ReferenceEquals(actualNamedConstant, namedConstantWithoutDefault).ShouldBeTrue();
-			}
-
-			[Test]
-			public void Should_throw_an_argument_exception_if_the_input_is_null()
-			{
-				const TestNamedConstantWithoutDefault namedConstantWithoutDefault = null;
-
-				namedConstantWithoutDefault.ShouldThrowAnException(x => x.OrDefault()).OfType<ArgumentException>();
-			}
-
-			public class TestNamedConstantWithDefault : NamedConstant<TestNamedConstantWithDefault>
-			{
-				public static readonly TestNamedConstantWithDefault Bar = new TestNamedConstantWithDefault();
-
-				[DefaultKey]
-				public static readonly TestNamedConstantWithDefault Foo = new TestNamedConstantWithDefault();
-			}
-
-			public class TestNamedConstantWithoutDefault : NamedConstant<TestNamedConstantWithoutDefault>
-			{
-				public static readonly TestNamedConstantWithoutDefault Bar = new TestNamedConstantWithoutDefault();
-				public static readonly TestNamedConstantWithoutDefault Foo = new TestNamedConstantWithoutDefault();
 			}
 		}
 	}

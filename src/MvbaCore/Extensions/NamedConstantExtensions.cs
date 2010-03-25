@@ -16,7 +16,7 @@ namespace MvbaCore.Extensions
 			var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
 			if (defaultField == null)
 			{
-				throw new ArgumentException(typeof(T).Name + " must have a field marked with attribute [DefaultKey]");
+				return null;
 			}
 			return (T)defaultField.GetValue(null);
 		}

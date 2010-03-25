@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 
+using MvbaCore.Extensions;
+
 namespace MvbaCore
 {
 	[Serializable]
 #pragma warning disable 661,660
 	public class NamedConstant<T> : INamedConstant
 #pragma warning restore 661,660
-		where T : class
+		where T : NamedConstant<T>
 	{
 		private static readonly Dictionary<string, T> NamedConstants = new Dictionary<string, T>();
 
@@ -53,5 +55,10 @@ namespace MvbaCore
 		}
 
 		public string Key { get; protected set; }
+
+		public static T GetFor(string key)
+		{
+			return Get(key).OrDefault();
+		}
 	}
 }

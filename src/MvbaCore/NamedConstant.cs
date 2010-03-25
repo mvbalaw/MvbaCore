@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 using MvbaCore.Extensions;
 
@@ -58,6 +59,18 @@ namespace MvbaCore
 
 		public static T GetFor(string key)
 		{
+			if (NamedConstants.Count == 0)
+			{
+				try
+				{
+					var fieldInfos = typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public);
+					// ensure its static members get created by triggering the type initializer
+					fieldInfos[0].GetValue(null);
+				}
+				catch
+				{
+				}
+			}
 			return Get(key).OrDefault();
 		}
 	}

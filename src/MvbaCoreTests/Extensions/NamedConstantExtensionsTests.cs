@@ -35,6 +35,16 @@ namespace MvbaCoreTests.Extensions
 			}
 		}
 
+		public class TestNamedConstantNotInstantiated : NamedConstant<TestNamedConstantNotInstantiated>
+		{
+			public static readonly TestNamedConstantNotInstantiated Foo = new TestNamedConstantNotInstantiated("foo");
+
+			public TestNamedConstantNotInstantiated(string key)
+			{
+				base.Add(key, this);
+			}
+		}
+
 		[TestFixture]
 		public class When_asked_to_get_a_NamedConstant_for_a_specific_key
 		{
@@ -61,6 +71,17 @@ namespace MvbaCoreTests.Extensions
 				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key + "x");
 				result.ShouldBeEqualTo(expected);
 			}
+
+			[Test]
+			public void Should_Get_the_correct_instance_given_an_existing_key_for_a_type_that_has_not_been_instantiated()
+			{
+// ReSharper disable AccessToStaticMemberViaDerivedType
+				var result = TestNamedConstantNotInstantiated.GetFor("foo");
+// ReSharper restore AccessToStaticMemberViaDerivedType
+				result.ShouldNotBeNull();
+			}
+
+
 		}
 
 		[TestFixture]

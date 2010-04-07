@@ -16,7 +16,8 @@ namespace MvbaCore
 
 		protected void Add(string key, T item)
 		{
-			NamedConstants.Add(key.ToLower(), item);
+		    Key = key;
+            NamedConstants.Add(key.ToLower(), item);
 		}
 
 		protected static IEnumerable<T> Values()

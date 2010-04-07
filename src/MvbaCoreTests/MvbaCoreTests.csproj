@@ -57,6 +57,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeQuery\FieldInfoExtensionsTests.cs" />
+    <Compile Include="CodeQuery\PropertyInfoExtensionsTests.cs" />
+    <Compile Include="CodeQuery\TypeExtensionsTests.cs" />
     <Compile Include="Extensions\IEnumerableTExtensionsTests.cs" />
     <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="Extensions\TExtensionsTests.cs" />

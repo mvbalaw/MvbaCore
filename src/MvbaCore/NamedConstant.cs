@@ -16,12 +16,19 @@ namespace MvbaCore
 
 		protected void Add(string key, T item)
 		{
-		    Key = key;
-            NamedConstants.Add(key.ToLower(), item);
+			Key = key;
+			NamedConstants.Add(key.ToLower(), item);
 		}
 
+		[Obsolete("Use .GetAll()")]
 		protected static IEnumerable<T> Values()
 		{
+			return GetAll();
+		}
+
+		public static IEnumerable<T> GetAll()
+		{
+			EnsureValues();
 			return NamedConstants.Values;
 		}
 
@@ -60,6 +67,12 @@ namespace MvbaCore
 
 		public static T GetFor(string key)
 		{
+			EnsureValues();
+			return Get(key).OrDefault();
+		}
+
+		private static void EnsureValues()
+		{
 			if (NamedConstants.Count == 0)
 			{
 				try
@@ -72,7 +85,6 @@ namespace MvbaCore
 				{
 				}
 			}
-			return Get(key).OrDefault();
 		}
 	}
 }

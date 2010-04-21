@@ -1,5 +1,3 @@
-using System;
-
 using FluentAssert;
 
 using MvbaCore;
@@ -11,6 +9,16 @@ namespace MvbaCoreTests.Extensions
 {
 	public class NamedConstantExtensionsTests
 	{
+		public class TestNamedConstantNotInstantiated : NamedConstant<TestNamedConstantNotInstantiated>
+		{
+			public static readonly TestNamedConstantNotInstantiated Foo = new TestNamedConstantNotInstantiated("foo");
+
+			public TestNamedConstantNotInstantiated(string key)
+			{
+				base.Add(key, this);
+			}
+		}
+
 		public class TestNamedConstantWithDefault : NamedConstant<TestNamedConstantWithDefault>
 		{
 			public static readonly TestNamedConstantWithDefault Bar = new TestNamedConstantWithDefault("bar");
@@ -35,16 +43,6 @@ namespace MvbaCoreTests.Extensions
 			}
 		}
 
-		public class TestNamedConstantNotInstantiated : NamedConstant<TestNamedConstantNotInstantiated>
-		{
-			public static readonly TestNamedConstantNotInstantiated Foo = new TestNamedConstantNotInstantiated("foo");
-
-			public TestNamedConstantNotInstantiated(string key)
-			{
-				base.Add(key, this);
-			}
-		}
-
 		[TestFixture]
 		public class When_asked_to_get_a_NamedConstant_for_a_specific_key
 		{
@@ -64,15 +62,6 @@ namespace MvbaCoreTests.Extensions
 			}
 
 			[Test]
-			public void Should_get_the_default_instance_given_a_non_existent_key_if_a_default_is_defined()
-			{
-				const TestNamedConstantWithDefault namedConstantWithDefault = null;
-				var expected = namedConstantWithDefault.OrDefault();
-				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key + "x");
-				result.ShouldBeEqualTo(expected);
-			}
-
-			[Test]
 			public void Should_Get_the_correct_instance_given_an_existing_key_for_a_type_that_has_not_been_instantiated()
 			{
 // ReSharper disable AccessToStaticMemberViaDerivedType
@@ -81,7 +70,14 @@ namespace MvbaCoreTests.Extensions
 				result.ShouldNotBeNull();
 			}
 
-
+			[Test]
+			public void Should_get_the_default_instance_given_a_non_existent_key_if_a_default_is_defined()
+			{
+				const TestNamedConstantWithDefault namedConstantWithDefault = null;
+				var expected = namedConstantWithDefault.OrDefault();
+				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key + "x");
+				result.ShouldBeEqualTo(expected);
+			}
 		}
 
 		[TestFixture]
@@ -101,7 +97,6 @@ namespace MvbaCoreTests.Extensions
 				const TestNamedConstantWithDefault namedConstantWithDefault = null;
 
 				var actualNamedConstant = namedConstantWithDefault.OrDefault();
-				Console.WriteLine(actualNamedConstant);
 				ReferenceEquals(actualNamedConstant, TestNamedConstantWithDefault.Foo).ShouldBeTrue();
 			}
 

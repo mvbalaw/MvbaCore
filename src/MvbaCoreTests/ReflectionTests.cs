@@ -97,6 +97,88 @@ namespace MvbaCoreTests
 		}
 
 		[TestFixture]
+		public class When_asked_if_a_type_is_a_nullable_value_type
+		{
+			private bool _result;
+			private Type _type;
+
+			[Test]
+			public void Given_a_nullable_value_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_is_a_nullable_value_type)
+					.With(a_nullable_value_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_reference_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_is_a_nullable_value_type)
+					.With(a_reference_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_value_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_is_a_nullable_value_type)
+					.With(a_value_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_string_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_is_a_nullable_value_type)
+					.With(a_string_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			private void a_nullable_value_type()
+			{
+				_type = typeof(int?);
+			}
+
+			private void a_reference_type()
+			{
+				_type = typeof(When_asked_if_a_type_could_be_null);
+			}
+
+			private void a_string_type()
+			{
+				_type = typeof(string);
+			}
+
+			private void a_value_type()
+			{
+				_type = typeof(int);
+			}
+
+			private void asked_if_a_type_is_a_nullable_value_type()
+			{
+				_result = Reflection.IsNullableValueType(_type);
+			}
+
+			private void return_false()
+			{
+				_result.ShouldBeFalse();
+			}
+
+			private void return_true()
+			{
+				_result.ShouldBeTrue();
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_get_method_call_data
 		{
 			[Test]

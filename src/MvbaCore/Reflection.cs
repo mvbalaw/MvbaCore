@@ -276,5 +276,23 @@ namespace MvbaCore
 			var result = GetValue(expression);
 			return result.ToString();
 		}
+
+		public static bool CouldBeNull(Type type)
+		{
+			if (type.IsValueType)
+			{
+				if (!type.IsGenericType)
+				{
+					return false;
+				}
+
+				if (Nullable.GetUnderlyingType(type) == null)
+				{
+					// e.g. decimal?
+					return true;
+				}
+			}
+			return true;
+		}
 	}
 }

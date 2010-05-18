@@ -15,6 +15,88 @@ namespace MvbaCoreTests
 	public class ReflectionTests
 	{
 		[TestFixture]
+		public class When_asked_if_a_type_could_be_null
+		{
+			private bool _result;
+			private Type _type;
+
+			[Test]
+			public void Given_a_nullable_value_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_could_be_null)
+					.With(a_nullable_value_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_reference_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_could_be_null)
+					.With(a_reference_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_value_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_could_be_null)
+					.With(a_value_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_string_type()
+			{
+				Test.Static()
+					.When(asked_if_a_type_could_be_null)
+					.With(a_string_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			private void a_nullable_value_type()
+			{
+				_type = typeof(int?);
+			}
+
+			private void a_reference_type()
+			{
+				_type = typeof(When_asked_if_a_type_could_be_null);
+			}
+
+			private void a_string_type()
+			{
+				_type = typeof(string);
+			}
+
+			private void a_value_type()
+			{
+				_type = typeof(int);
+			}
+
+			private void asked_if_a_type_could_be_null()
+			{
+				_result = Reflection.CouldBeNull(_type);
+			}
+
+			private void return_false()
+			{
+				_result.ShouldBeFalse();
+			}
+
+			private void return_true()
+			{
+				_result.ShouldBeTrue();
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_get_method_call_data
 		{
 			[Test]
@@ -115,20 +197,20 @@ namespace MvbaCoreTests
 			public class When_asked_for_a_camel_case_property
 			{
 				[Test]
-				public void Should_get_the_name_using_a_parameterized_lambda_to_a_property_multi_level()
-				{
-					string fullPropertyName = Reflection.GetCamelCaseMultiLevelPropertyName(Foo.BoundPropertyNames.PrimaryBar,
-					                                                                        Bar.BoundPropertyNames.Office);
-					Assert.AreEqual(Foo.BoundPropertyNames.PrimaryBar.ToCamelCase() + "." + Bar.BoundPropertyNames.Office,
-					                fullPropertyName);
-				}
-				
-				[Test]
 				public void Should_get_the_name_of_the_property_using_a_lambda()
 				{
 					var address = new Address();
 					string fullPropertyName = Reflection.GetCamelCasePropertyNameWithPrefix(() => address.City, "prefix");
 					Assert.AreEqual("prefix." + Address.BoundPropertyNames.City.ToCamelCase(),
+					                fullPropertyName);
+				}
+
+				[Test]
+				public void Should_get_the_name_using_a_parameterized_lambda_to_a_property_multi_level()
+				{
+					string fullPropertyName = Reflection.GetCamelCaseMultiLevelPropertyName(Foo.BoundPropertyNames.PrimaryBar,
+					                                                                        Bar.BoundPropertyNames.Office);
+					Assert.AreEqual(Foo.BoundPropertyNames.PrimaryBar.ToCamelCase() + "." + Bar.BoundPropertyNames.Office,
 					                fullPropertyName);
 				}
 			}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 using CodeQuery;
 
@@ -10,6 +11,24 @@ namespace MvbaCore
 {
 	public static class Reflection
 	{
+		public static bool CouldBeNull(Type type)
+		{
+			if (type.IsValueType)
+			{
+				if (!type.IsGenericType)
+				{
+					return false;
+				}
+
+				if (Nullable.GetUnderlyingType(type) == null)
+				{
+					// e.g. decimal?
+					return true;
+				}
+			}
+			return true;
+		}
+
 		public static List<string> GetArguments<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
 			var methodCallExpression = expression.Body as MethodCallExpression;
@@ -19,6 +38,11 @@ namespace MvbaCore
 			}
 			var arguments = methodCallExpression.Arguments;
 			return arguments.Select(p => Expression.Lambda(p).Compile().DynamicInvoke().ToString()).ToList();
+		}
+
+		public static T GetAttribute<T>(Assembly assembly)
+		{
+			return (T)assembly.GetCustomAttributes(typeof(T), false)[0];
 		}
 
 		public static string GetCamelCaseMultiLevelPropertyName(params string[] propertyNames)
@@ -277,22 +301,11 @@ namespace MvbaCore
 			return result.ToString();
 		}
 
-		public static bool CouldBeNull(Type type)
+		public static bool IsUserType(Type type)
 		{
-			if (type.IsValueType)
-			{
-				if (!type.IsGenericType)
-				{
-					return false;
-				}
-
-				if (Nullable.GetUnderlyingType(type) == null)
-				{
-					// e.g. decimal?
-					return true;
-				}
-			}
-			return true;
+			var assembly = type.Assembly;
+			string company = GetAttribute<AssemblyCompanyAttribute>(assembly).Company;
+			return company != "Microsoft Corporation";
 		}
 	}
 }

@@ -97,6 +97,127 @@ namespace MvbaCoreTests
 		}
 
 		[TestFixture]
+		public class When_asked_if_a_type_is_a_user_type
+		{
+			private bool _result;
+			private Type _type;
+
+			[Test]
+			public void Given_a_built_in_enum_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_built_in_enum_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_datetime_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_datetime_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_primitive_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_primitive_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_string_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_string_type)
+					.Should(return_false)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_user_created_enum_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_user_created_enum_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			[Test]
+			public void Given_a_user_created_struct_type()
+			{
+				Test.Static()
+					.When(asked_if_it_is_a_user_type)
+					.With(a_user_created_struct_type)
+					.Should(return_true)
+					.Verify();
+			}
+
+			public enum MyEnum
+			{
+				Color = 1
+			} ;
+
+			public struct MyStruct
+			{
+			}
+
+			private void a_built_in_enum_type()
+			{
+				_type = typeof(StringSplitOptions);
+			}
+
+			private void a_datetime_type()
+			{
+				_type = typeof(DateTime);
+			}
+
+			private void a_primitive_type()
+			{
+				_type = typeof(int);
+			}
+
+			private void a_string_type()
+			{
+				_type = typeof(string);
+			}
+
+			private void a_user_created_enum_type()
+			{
+				_type = typeof(MyEnum);
+			}
+
+			private void a_user_created_struct_type()
+			{
+				_type = typeof(MyStruct);
+			}
+
+			private void asked_if_it_is_a_user_type()
+			{
+				_result = Reflection.IsUserType(_type);
+			}
+
+			private void return_false()
+			{
+				_result.ShouldBeFalse();
+			}
+
+			private void return_true()
+			{
+				_result.ShouldBeTrue();
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_get_method_call_data
 		{
 			[Test]

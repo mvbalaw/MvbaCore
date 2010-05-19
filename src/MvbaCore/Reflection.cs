@@ -13,20 +13,18 @@ namespace MvbaCore
 	{
 		public static bool CouldBeNull(Type type)
 		{
-			if (type.IsValueType)
+			if (!type.IsValueType)
 			{
-				if (!type.IsGenericType)
-				{
-					return false;
-				}
-
-				if (Nullable.GetUnderlyingType(type) == null)
-				{
-					// e.g. decimal?
-					return true;
-				}
+				return true;
 			}
-			return true;
+
+			if (IsNullableValueType(type))
+			{
+				// e.g. decimal?
+				return true;
+			}
+
+			return false;
 		}
 
 		public static List<string> GetArguments<T, TReturn>(Expression<Func<T, TReturn>> expression)
@@ -299,6 +297,20 @@ namespace MvbaCore
 		{
 			var result = GetValue(expression);
 			return result.ToString();
+		}
+
+		public static bool IsNullableValueType(Type type)
+		{
+			if (type.IsValueType)
+			{
+				if (type.IsGenericType &&
+				    type.DeclaringType == null)
+				{
+					// e.g. decimal?
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public static bool IsUserType(Type type)

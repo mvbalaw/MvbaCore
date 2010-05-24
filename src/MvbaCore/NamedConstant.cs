@@ -7,8 +7,14 @@ using MvbaCore.Extensions;
 namespace MvbaCore
 {
 	[Serializable]
+	public class NamedConstant : INamedConstant
+	{
+		public string Key { get; protected set; }
+	}
+
 #pragma warning disable 661,660
-	public class NamedConstant<T> : INamedConstant
+	[Serializable]
+	public class NamedConstant<T> : NamedConstant
 #pragma warning restore 661,660
 		where T : NamedConstant<T>
 	{
@@ -62,8 +68,6 @@ namespace MvbaCore
 		{
 			return !(a == b);
 		}
-
-		public string Key { get; protected set; }
 
 		public static T GetFor(string key)
 		{

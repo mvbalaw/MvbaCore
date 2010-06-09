@@ -1,7 +1,25 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using JetBrains.Annotations;
+
+
+namespace System.Linq
+{
+	public static class IEnumerableExtensions
+	{
+		[NotNull]
+		public static int MaxWithDefault<T>([NotNull] this IEnumerable<T> items, Func<T, int> selector, int @default)
+		{
+			if (items.IsNullOrEmpty())
+			{
+				return @default;
+			}
+			return items.Max(selector);
+		}
+	}
+}
 
 namespace System.Collections.Generic
 {

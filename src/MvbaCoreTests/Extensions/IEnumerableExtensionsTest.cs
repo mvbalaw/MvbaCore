@@ -20,7 +20,8 @@ namespace MvbaCoreTests.Extensions
 			public void Given_a_list()
 			{
 				Test.Static()
-					.When(given_a_list)
+					.When(asked_to_get_the_max_number_in_the_sequence)
+					.With(a_list)
 					.Should(return_the_maximum_number_in_the_list)
 					.Verify();
 			}
@@ -29,7 +30,8 @@ namespace MvbaCoreTests.Extensions
 			public void Given_a_null_list()
 			{
 				Test.Static()
-					.When(given_null_list)
+					.When(asked_to_get_the_max_number_in_the_sequence)
+					.With(a_null_list)
 					.Should(return_default)
 					.Verify();
 			}
@@ -38,12 +40,13 @@ namespace MvbaCoreTests.Extensions
 			public void Given_an_empty_list()
 			{
 				Test.Static()
-					.When(given_empty_list)
+					.When(asked_to_get_the_max_number_in_the_sequence)
+					.With(an_empty_list)
 					.Should(return_default)
 					.Verify();
 			}
 
-			private void given_a_list()
+			private void a_list()
 			{
 				_list = new List<int>
 					{
@@ -51,19 +54,21 @@ namespace MvbaCoreTests.Extensions
 						5,
 						8
 					};
-				_result = _list.MaxWithDefault(x => x, Default);
 			}
 
-			private void given_empty_list()
-			{
-				_list = new List<int>();
-				_result = _list.MaxWithDefault(x => x, Default);
-			}
-
-			private void given_null_list()
+			private void a_null_list()
 			{
 				_list = null;
-				_result = _list.MaxWithDefault(x => x, Default);
+			}
+
+			private void an_empty_list()
+			{
+				_list = new List<int>();
+			}
+
+			private void asked_to_get_the_max_number_in_the_sequence()
+			{
+				_result = _list.Max(x => x, Default);
 			}
 
 			private void return_default()

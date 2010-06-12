@@ -37,70 +37,143 @@ namespace MvbaCoreTests.Extensions
 		}
 
 		[TestFixture]
-		public class When_asked_if_a_string_IsNullOrEmpty_with_trim
+		public class When_asked_if_a_string_is_null_or_empty_with_optional_trim
 		{
+			private string _input;
+			private bool _result;
+			private bool _trim;
+
 			[Test]
-			public void Should_return_false_if_the_input_contains_only_non_whitespace_and_trim_is_false()
+			public void Given_a_null_string_and_trim_is_false()
 			{
-				const string input = "ab";
-				bool result = input.IsNullOrEmpty(false);
-				result.ShouldBeFalse();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_null_string)
+					.With(trim_set_to_false)
+					.Should(return_true)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_false_if_the_input_contains_only_non_whitespace_and_trim_is_true()
+			public void Given_a_null_string_and_trim_is_true()
 			{
-				const string input = "ab";
-				bool result = input.IsNullOrEmpty(true);
-				result.ShouldBeFalse();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_null_string)
+					.With(trim_set_to_true)
+					.Should(return_true)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_false_if_the_input_contains_only_whitespace_and_trim_is_false()
+			public void Given_a_string_containing_non_whitespace_and_trim_is_false()
 			{
-				const string input = "\r\n";
-				bool result = input.IsNullOrEmpty(false);
-				result.ShouldBeFalse();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_string_containing_non_whitespace)
+					.With(trim_set_to_false)
+					.Should(return_false)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_true_if_the_input_contains_only_whitespace_and_trim_is_true()
+			public void Given_a_string_containing_non_whitespace_and_trim_is_true()
 			{
-				const string input = "\r\n";
-				bool result = input.IsNullOrEmpty(true);
-				result.ShouldBeTrue();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_string_containing_non_whitespace)
+					.With(trim_set_to_true)
+					.Should(return_false)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_true_if_the_input_is_empty_and_trim_is_false()
+			public void Given_a_string_containing_only_whitespace_and_trim_is_false()
 			{
-				string input = String.Empty;
-				bool result = input.IsNullOrEmpty(false);
-				result.ShouldBeTrue();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_string_containing_only_whitespace)
+					.With(trim_set_to_false)
+					.Should(return_false)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_true_if_the_input_is_empty_and_trim_is_true()
+			public void Given_a_string_containing_only_whitespace_and_trim_is_true()
 			{
-				string input = String.Empty;
-				bool result = input.IsNullOrEmpty(true);
-				result.ShouldBeTrue();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(a_string_containing_only_whitespace)
+					.With(trim_set_to_true)
+					.Should(return_true)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_true_if_the_input_is_null_and_trim_is_false()
+			public void Given_an_empty_string_and_trim_is_false()
 			{
-				const string input = null;
-				bool result = input.IsNullOrEmpty(false);
-				result.ShouldBeTrue();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(an_empty_string)
+					.With(trim_set_to_false)
+					.Should(return_true)
+					.Verify();
 			}
 
 			[Test]
-			public void Should_return_true_if_the_input_is_null_and_trim_is_true()
+			public void Given_an_empty_string_and_trim_is_true()
 			{
-				const string input = null;
-				bool result = input.IsNullOrEmpty(true);
-				result.ShouldBeTrue();
+				Test.Static()
+					.When(asked_if_a_string_is_null_or_empty)
+					.With(an_empty_string)
+					.With(trim_set_to_true)
+					.Should(return_true)
+					.Verify();
+			}
+
+			private void a_null_string()
+			{
+				_input = null;
+			}
+
+			private void a_string_containing_non_whitespace()
+			{
+				_input = "aa";
+			}
+
+			private void a_string_containing_only_whitespace()
+			{
+				_input = "\n\r\t ";
+			}
+
+			private void an_empty_string()
+			{
+				_input = "";
+			}
+
+			private void asked_if_a_string_is_null_or_empty()
+			{
+				_result = _input.IsNullOrEmpty(_trim);
+			}
+
+			private void return_false()
+			{
+				_result.ShouldBeFalse();
+			}
+
+			private void return_true()
+			{
+				_result.ShouldBeTrue();
+			}
+
+			private void trim_set_to_false()
+			{
+				_trim = false;
+			}
+
+			private void trim_set_to_true()
+			{
+				_trim = true;
 			}
 		}
 

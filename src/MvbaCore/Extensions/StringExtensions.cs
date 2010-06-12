@@ -15,7 +15,7 @@ namespace System
 			{
 				return true;
 			}
-			return trim && input.Trim() == "";
+			return trim && String.IsNullOrEmpty(input.Trim());
 		}
 
 		public static string ToCamelCase([CanBeNull] this string str)

@@ -46,132 +46,132 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Given_a_null_string_and_trim_is_false()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_null_string)
-					.With(trim_set_to_false)
-					.Should(return_true)
-					.Verify();
+				Test.Verify(
+					with_a_null_string,
+					with_trim_set_to_false,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
 			[Test]
 			public void Given_a_null_string_and_trim_is_true()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_null_string)
-					.With(trim_set_to_true)
-					.Should(return_true)
-					.Verify();
+				Test.Verify(
+					with_a_null_string,
+					with_trim_set_to_true,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
 			[Test]
 			public void Given_a_string_containing_non_whitespace_and_trim_is_false()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_string_containing_non_whitespace)
-					.With(trim_set_to_false)
-					.Should(return_false)
-					.Verify();
+				Test.Verify(
+					with_a_string_containing_non_whitespace,
+					with_trim_set_to_false,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_false
+					);
 			}
 
 			[Test]
 			public void Given_a_string_containing_non_whitespace_and_trim_is_true()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_string_containing_non_whitespace)
-					.With(trim_set_to_true)
-					.Should(return_false)
-					.Verify();
+				Test.Verify(
+					with_a_string_containing_non_whitespace,
+					with_trim_set_to_true,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
 			[Test]
 			public void Given_a_string_containing_only_whitespace_and_trim_is_false()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_string_containing_only_whitespace)
-					.With(trim_set_to_false)
-					.Should(return_false)
-					.Verify();
+				Test.Verify(
+					with_a_string_containing_only_whitespace,
+					with_trim_set_to_false,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_false
+					);
 			}
 
 			[Test]
 			public void Given_a_string_containing_only_whitespace_and_trim_is_true()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(a_string_containing_only_whitespace)
-					.With(trim_set_to_true)
-					.Should(return_true)
-					.Verify();
+				Test.Verify(
+					with_a_string_containing_only_whitespace,
+					with_trim_set_to_true,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
 			[Test]
 			public void Given_an_empty_string_and_trim_is_false()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(an_empty_string)
-					.With(trim_set_to_false)
-					.Should(return_true)
-					.Verify();
+				Test.Verify(
+					with_an_empty_string,
+					with_trim_set_to_false,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
 			[Test]
 			public void Given_an_empty_string_and_trim_is_true()
 			{
-				Test.Static()
-					.When(asked_if_a_string_is_null_or_empty)
-					.With(an_empty_string)
-					.With(trim_set_to_true)
-					.Should(return_true)
-					.Verify();
+				Test.Verify(
+					with_an_empty_string,
+					with_trim_set_to_true,
+					when_asked_if_a_string_is_null_or_empty,
+					should_return_true
+					);
 			}
 
-			private void a_null_string()
-			{
-				_input = null;
-			}
-
-			private void a_string_containing_non_whitespace()
-			{
-				_input = "aa";
-			}
-
-			private void a_string_containing_only_whitespace()
-			{
-				_input = "\n\r\t ";
-			}
-
-			private void an_empty_string()
-			{
-				_input = "";
-			}
-
-			private void asked_if_a_string_is_null_or_empty()
-			{
-				_result = _input.IsNullOrEmpty(_trim);
-			}
-
-			private void return_false()
+			private void should_return_false()
 			{
 				_result.ShouldBeFalse();
 			}
 
-			private void return_true()
+			private void should_return_true()
 			{
 				_result.ShouldBeTrue();
 			}
 
-			private void trim_set_to_false()
+			private void when_asked_if_a_string_is_null_or_empty()
+			{
+				_result = _input.IsNullOrEmpty(_trim);
+			}
+
+			private void with_a_null_string()
+			{
+				_input = null;
+			}
+
+			private void with_a_string_containing_non_whitespace()
+			{
+				_input = "aa";
+			}
+
+			private void with_a_string_containing_only_whitespace()
+			{
+				_input = "\n\r\t ";
+			}
+
+			private void with_an_empty_string()
+			{
+				_input = "";
+			}
+
+			private void with_trim_set_to_false()
 			{
 				_trim = false;
 			}
 
-			private void trim_set_to_true()
+			private void with_trim_set_to_true()
 			{
 				_trim = true;
 			}

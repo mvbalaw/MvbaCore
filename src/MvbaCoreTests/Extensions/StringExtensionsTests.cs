@@ -83,7 +83,7 @@ namespace MvbaCoreTests.Extensions
 					with_a_string_containing_non_whitespace,
 					with_trim_set_to_true,
 					when_asked_if_a_string_is_null_or_empty,
-					should_return_true
+					should_return_false
 					);
 			}
 

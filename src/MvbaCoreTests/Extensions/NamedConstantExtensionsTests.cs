@@ -1,3 +1,5 @@
+using System;
+
 using FluentAssert;
 
 using MvbaCore;
@@ -15,7 +17,7 @@ namespace MvbaCoreTests.Extensions
 
 			public TestNamedConstantNotInstantiated(string key)
 			{
-				base.Add(key, this);
+				Add(key, this);
 			}
 		}
 
@@ -28,7 +30,7 @@ namespace MvbaCoreTests.Extensions
 
 			public TestNamedConstantWithDefault(string key)
 			{
-				base.Add(key, this);
+				Add(key, this);
 			}
 		}
 
@@ -39,44 +41,98 @@ namespace MvbaCoreTests.Extensions
 
 			public TestNamedConstantWithoutDefault(string key)
 			{
-				base.Add(key, this);
+				Add(key, this);
 			}
 		}
 
 		[TestFixture]
 		public class When_asked_to_get_a_NamedConstant_for_a_specific_key
 		{
+			private object _expected;
+			private Func<string, object> _getFor;
+			private string _key;
+			private object _result;
+
 			[Test]
-			public void Should_get_null_given_a_non_existent_key_if_a_default_is_not_defined()
+			public void Given_a_key_for_which_a_NamedConstant_has_been_defined()
 			{
-				var result = NamedConstant<TestNamedConstantWithoutDefault>.GetFor("notthere");
-				result.ShouldBeNull();
+				Test.Verify(
+					with_a_key_that_exists_for_the_requested_NamedConstant,
+					with_a_NamedConstant_that_does_not_have_a_default_value,
+					when_asked_to_get_the_NamedConstant_for_the_key,
+					should_not_return_null,
+					should_get_the_correct_instance
+					);
 			}
 
 			[Test]
-			public void Should_get_the_correct_instance_given_an_existing_key()
+			public void Given_a_key_for_which_a_NamedConstant_has_not_been_defined_and_there_is_a_default_defined()
 			{
-				var expected = TestNamedConstantWithDefault.Foo;
-				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key);
-				result.ShouldBeEqualTo(expected);
+				Test.Verify(
+					with_a_key_that_does_not_exist_for_the_requested_NamedConstant,
+					with_a_NamedConstant_that_has_a_default_value,
+					when_asked_to_get_the_NamedConstant_for_the_key,
+					should_not_return_null,
+					should_get_the_default_instance
+					);
 			}
 
 			[Test]
-			public void Should_Get_the_correct_instance_given_an_existing_key_for_a_type_that_has_not_been_instantiated()
+			public void Given_a_key_for_which_a_NamedConstant_has_not_been_defined_and_there_is_no_default_defined()
 			{
-// ReSharper disable AccessToStaticMemberViaDerivedType
-				var result = TestNamedConstantNotInstantiated.GetFor("foo");
-// ReSharper restore AccessToStaticMemberViaDerivedType
-				result.ShouldNotBeNull();
+				Test.Verify(
+					with_a_key_that_does_not_exist_for_the_requested_NamedConstant,
+					with_a_NamedConstant_that_does_not_have_a_default_value,
+					when_asked_to_get_the_NamedConstant_for_the_key,
+					should_return_null
+					);
 			}
 
-			[Test]
-			public void Should_get_the_default_instance_given_a_non_existent_key_if_a_default_is_defined()
+			private void should_get_the_correct_instance()
 			{
-				const TestNamedConstantWithDefault namedConstantWithDefault = null;
-				var expected = namedConstantWithDefault.OrDefault();
-				var result = NamedConstant<TestNamedConstantWithDefault>.GetFor(expected.Key + "x");
-				result.ShouldBeEqualTo(expected);
+				_result.ShouldBeSameInstanceAs(_expected);
+			}
+
+			private void should_get_the_default_instance()
+			{
+				_result.ShouldBeEqualTo(TestNamedConstantWithDefault.Foo);
+			}
+
+			private void should_not_return_null()
+			{
+				_result.ShouldNotBeNull();
+			}
+
+			private void should_return_null()
+			{
+				_result.ShouldBeNull();
+			}
+
+			private void when_asked_to_get_the_NamedConstant_for_the_key()
+			{
+				_result = _getFor(_key);
+			}
+
+			private void with_a_NamedConstant_that_does_not_have_a_default_value()
+			{
+				_expected = TestNamedConstantWithoutDefault.GetFor(_key);
+				_getFor = key => NamedConstant<TestNamedConstantWithoutDefault>.GetFor(key);
+			}
+
+			private void with_a_NamedConstant_that_has_a_default_value()
+			{
+				_expected = TestNamedConstantWithDefault.GetFor(_key);
+				_getFor = key => NamedConstant<TestNamedConstantWithDefault>.GetFor(key);
+			}
+
+			private void with_a_key_that_does_not_exist_for_the_requested_NamedConstant()
+			{
+				_key = "notthere";
+			}
+
+			private void with_a_key_that_exists_for_the_requested_NamedConstant()
+			{
+				_key = "foo";
 			}
 		}
 

@@ -8,7 +8,7 @@ namespace MvbaCore.Extensions
 {
 	public static class NamedConstantExtensions
 	{
-		[NotNull]
+		[CanBeNull]
 		public static T DefaultValue<T>() where T : NamedConstant<T>
 		{
 			var fields = typeof(T).GetFields().ThatAreStatic();
@@ -17,10 +17,12 @@ namespace MvbaCore.Extensions
 			{
 				return null;
 			}
+// ReSharper disable AssignNullToNotNullAttribute
 			return (T)defaultField.GetValue(null);
+// ReSharper restore AssignNullToNotNullAttribute
 		}
 
-		[NotNull]
+		[CanBeNull]
 		public static T OrDefault<T>([CanBeNull] this T value) where T : NamedConstant<T>
 		{
 			if (value != null)

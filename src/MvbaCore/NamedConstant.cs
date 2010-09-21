@@ -72,7 +72,13 @@ namespace MvbaCore
 		public static T GetFor(string key)
 		{
 			EnsureValues();
-			return Get(key).OrDefault();
+			return Get(key);
+		}
+
+		public static T GetDefault()
+		{
+			EnsureValues();
+			return NamedConstantExtensions.DefaultValue<T>();
 		}
 
 		private static void EnsureValues()

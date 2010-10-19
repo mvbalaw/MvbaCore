@@ -35,6 +35,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\JetBrains.Annotations\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Lucene\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -58,6 +62,13 @@
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
     <Compile Include="INamedConstant.cs" />
+    <Compile Include="Lucene\IEntityIndexUpdater.cs" />
+    <Compile Include="Lucene\ILuceneFileSystem.cs" />
+    <Compile Include="Lucene\ILuceneIndexedField.cs" />
+    <Compile Include="Lucene\LuceneIndexer.cs" />
+    <Compile Include="Lucene\LuceneSearcher.cs" />
+    <Compile Include="Lucene\LuceneSearchResult.cs" />
+    <Compile Include="Lucene\LuceneWriter.cs" />
     <Compile Include="MethodCallData.cs" />
     <Compile Include="NamedConstant.cs" />
     <Compile Include="Notification.cs" />

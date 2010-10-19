@@ -1,0 +1,4 @@
+StructureMap version 2.5.4
+http://structuremap.sourceforge.net/Default.htm
+official 2.5.4 release downloaded 1/21/2010
+license: Apache License Version 2.0

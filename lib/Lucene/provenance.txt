@@ -1,0 +1,4 @@
+Lucene 2.9.2
+fetched via svn on 10/13/2010
+https://svn.apache.org/repos/asf/lucene/lucene.net/tags/Lucene.Net_2_9_2/
+license: Apache License Version 2.0

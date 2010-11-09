@@ -59,6 +59,7 @@
     <Compile Include="CodeQuery\TypeExtensions.cs" />
     <Compile Include="DefaultKeyAttribute.cs" />
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
+    <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
     <Compile Include="INamedConstant.cs" />

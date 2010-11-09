@@ -74,6 +74,7 @@
     <Compile Include="CodeQuery\TypeExtensionsTests.cs" />
     <Compile Include="Extensions\IEnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\IEnumerableTExtensionsTests.cs" />
+    <Compile Include="Extensions\Int32ExtensionsTests.cs" />
     <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="Extensions\TExtensionsTests.cs" />
     <Compile Include="Lucene\LuceneIndexerTests.cs" />

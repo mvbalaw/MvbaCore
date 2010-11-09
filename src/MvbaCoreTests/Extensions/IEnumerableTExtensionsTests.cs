@@ -16,9 +16,9 @@ namespace MvbaCoreTests.Extensions
 			public void Should_return_false_if_the_input_contains_items()
 			{
 				IList<int> input = new List<int>
-					{
-						6
-					};
+				{
+					6
+				};
 				input.IsNullOrEmpty().ShouldBeFalse();
 			}
 
@@ -46,10 +46,10 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					{
-						one,
-						item
-					};
+				{
+					one,
+					item
+				};
 				const string delimiter = "','";
 				string expect = one + delimiter + item;
 
@@ -76,10 +76,10 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					{
-						one,
-						item
-					};
+				{
+					one,
+					item
+				};
 				const string delimiter = null;
 				string expect = one + "" + item;
 

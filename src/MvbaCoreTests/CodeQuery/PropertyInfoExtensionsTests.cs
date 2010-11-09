@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 
 using CodeQuery;
 
@@ -19,40 +18,15 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_return_False_if_there_are_no_matching_attributes()
 			{
-				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<TestAttribute>();
+				bool hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<TestAttribute>();
 				hasAttributeOfType.ShouldBeFalse();
 			}
 
 			[Test]
 			public void Should_return_True_if_there_are_matching_attributes()
 			{
-				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<ReadOnlyAttribute>();
+				bool hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<ReadOnlyAttribute>();
 				hasAttributeOfType.ShouldBeTrue();
-			}
-
-			public class TestClass
-			{
-				[ReadOnly(true)]
-				public int Id { get; private set; }
-			}
-		}
-
-		[TestFixture]
-		public class When_asked_to_get_custom_Attributes_of_a_specific_type_for_a_PropertyInfo
-		{
-			[Test]
-			public void Should_get_the_matching_Attributes()
-			{
-				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<ReadOnlyAttribute>();
-				attributes.Count().ShouldBeEqualTo(1);
-			}
-
-			[Test]
-			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
-			{
-				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<TestAttribute>();
-				attributes.ShouldNotBeNull();
-				attributes.Count().ShouldBeEqualTo(0);
 			}
 
 			public class TestClass
@@ -163,6 +137,31 @@ namespace CodeQueryTests
 				public int Id { get; private set; }
 
 				public string Name { get; set; }
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_get_custom_Attributes_of_a_specific_type_for_a_PropertyInfo
+		{
+			[Test]
+			public void Should_get_the_matching_Attributes()
+			{
+				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<ReadOnlyAttribute>();
+				attributes.Count().ShouldBeEqualTo(1);
+			}
+
+			[Test]
+			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
+			{
+				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<TestAttribute>();
+				attributes.ShouldNotBeNull();
+				attributes.Count().ShouldBeEqualTo(0);
+			}
+
+			public class TestClass
+			{
+				[ReadOnly(true)]
+				public int Id { get; private set; }
 			}
 		}
 

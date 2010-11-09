@@ -126,13 +126,13 @@ namespace MvbaCore
 
 				var property = destinationProperty;
 				var propertyMappingInfo = new PropertyMappingInfo
-					{
-						Name = destinationProperty.Value.Name,
-						SourcePropertyType = sourceProperty.PropertyType,
-						DestinationPropertyType = destinationProperty.Value.PropertyType,
-						GetValueFromSource = source => sourceProperty.GetValue(source, null),
-						SetValueToDestination = (destination, value) => property.Value.SetValue(destination, value, null)
-					};
+				{
+					Name = destinationProperty.Value.Name,
+					SourcePropertyType = sourceProperty.PropertyType,
+					DestinationPropertyType = destinationProperty.Value.PropertyType,
+					GetValueFromSource = source => sourceProperty.GetValue(source, null),
+					SetValueToDestination = (destination, value) => property.Value.SetValue(destination, value, null)
+				};
 				accessors.Add(propertyMappingInfo);
 			}
 			return accessors;
@@ -146,18 +146,18 @@ namespace MvbaCore
 			var expression = GetMethodCallExpression(methodCall);
 			var parameters = expression.Method.GetParameters();
 			var parameterDictionary = parameters.Select((x, i) => new
-				{
-					x.Name,
-					Value = GetValueAsString(expression.Arguments[i])
-				}
+			{
+				x.Name,
+				Value = GetValueAsString(expression.Arguments[i])
+			}
 				).ToDictionary(x => x.Name, x => x.Value);
 
 			return new MethodCallData
-				{
-					MethodName = methodName,
-					ClassName = className,
-					ParameterValues = parameterDictionary
-				};
+			{
+				MethodName = methodName,
+				ClassName = className,
+				ParameterValues = parameterDictionary
+			};
 		}
 
 		public static MethodCallExpression GetMethodCallExpression<T, TReturn>(Expression<Func<T, TReturn>> expression)
@@ -196,9 +196,9 @@ namespace MvbaCore
 		private static List<string> GetNames(MemberExpression memberExpression)
 		{
 			var names = new List<string>
-				{
-					memberExpression.Member.Name
-				};
+			{
+				memberExpression.Member.Name
+			};
 			while (memberExpression.Expression as MemberExpression != null)
 			{
 				memberExpression = (MemberExpression)memberExpression.Expression;
@@ -257,9 +257,9 @@ namespace MvbaCore
 			return name;
 		}
 
-		/// <summary>
-		///		http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
-		/// </summary>
+		///<summary>
+		///    http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
+		///</summary>
 		private static object GetValue(Expression expression)
 		{
 			var lambda = Expression.Lambda<Func<object>>(Expression.Convert(expression, typeof(object)));

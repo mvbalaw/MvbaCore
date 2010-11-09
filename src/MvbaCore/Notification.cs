@@ -9,9 +9,9 @@ namespace MvbaCore
 	public class Notification<T> : NotificationBase
 	{
 		public static readonly Notification<T> Null = new Notification<T>
-			{
-				IsNull = true
-			};
+		{
+			IsNull = true
+		};
 		private T _item;
 
 		public Notification()
@@ -112,9 +112,9 @@ namespace MvbaCore
 	public class Notification : NotificationBase
 	{
 		public static readonly Notification Null = new Notification
-			{
-				IsNull = true
-			};
+		{
+			IsNull = true
+		};
 
 		public Notification()
 		{

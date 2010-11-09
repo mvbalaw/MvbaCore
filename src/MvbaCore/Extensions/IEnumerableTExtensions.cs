@@ -4,7 +4,6 @@ using System.Text;
 
 using JetBrains.Annotations;
 
-
 namespace System.Linq
 {
 	public static class IEnumerableExtensions

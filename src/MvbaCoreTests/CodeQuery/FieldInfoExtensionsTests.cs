@@ -36,40 +36,15 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_return_False_if_there_are_no_matching_attributes()
 			{
-				var hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<TestAttribute>();
+				bool hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<TestAttribute>();
 				hasAttributeOfType.ShouldBeFalse();
 			}
 
 			[Test]
 			public void Should_return_True_if_there_are_matching_attributes()
 			{
-				var hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<ReadOnlyAttribute>();
+				bool hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<ReadOnlyAttribute>();
 				hasAttributeOfType.ShouldBeTrue();
-			}
-
-			public class TestClass
-			{
-				[ReadOnly(true)]
-				public int Id;
-			}
-		}
-
-		[TestFixture]
-		public class When_asked_to_get_custom_Attributes_of_a_specific_type_for_a_FieldInfo
-		{
-			[Test]
-			public void Should_get_the_matching_Attributes()
-			{
-				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<ReadOnlyAttribute>();
-				attributes.Count().ShouldBeEqualTo(1);
-			}
-
-			[Test]
-			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
-			{
-				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<TestAttribute>();
-				attributes.ShouldNotBeNull();
-				attributes.Count().ShouldBeEqualTo(0);
 			}
 
 			public class TestClass
@@ -104,6 +79,31 @@ namespace CodeQueryTests
 				public int Id;
 
 				public string Name;
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_get_custom_Attributes_of_a_specific_type_for_a_FieldInfo
+		{
+			[Test]
+			public void Should_get_the_matching_Attributes()
+			{
+				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<ReadOnlyAttribute>();
+				attributes.Count().ShouldBeEqualTo(1);
+			}
+
+			[Test]
+			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
+			{
+				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<TestAttribute>();
+				attributes.ShouldNotBeNull();
+				attributes.Count().ShouldBeEqualTo(0);
+			}
+
+			public class TestClass
+			{
+				[ReadOnly(true)]
+				public int Id;
 			}
 		}
 	}

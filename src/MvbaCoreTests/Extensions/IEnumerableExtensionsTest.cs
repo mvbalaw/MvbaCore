@@ -49,11 +49,11 @@ namespace MvbaCoreTests.Extensions
 			private void a_list()
 			{
 				_list = new List<int>
-					{
-						1,
-						5,
-						8
-					};
+				{
+					1,
+					5,
+					8
+				};
 			}
 
 			private void a_null_list()

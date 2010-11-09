@@ -76,6 +76,43 @@ namespace MvbaCoreTests
 		}
 
 		[TestFixture]
+		public class When_asked_to_Add_a_NotificationMessage
+		{
+			[Test]
+			public void Should_add_the_message_to_Messages_if_the_Notification_is_not_Notification_Null()
+			{
+				var notification = new Notification();
+				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
+				notification.Add(messageTest);
+				Assert.AreEqual(1, notification.Messages.Count);
+				Assert.AreEqual(messageTest, notification.Messages.First());
+			}
+
+			[Test]
+			public void Should_not_add_the_message_if_the_Notification_already_contains_an_identical_message()
+			{
+				var notification = new Notification();
+				const NotificationSeverity notificationSeverity = NotificationSeverity.Warning;
+				const string notificationText = "test";
+				var messageTest = new NotificationMessage(notificationSeverity, notificationText);
+				notification.Add(messageTest);
+				var secondMessage = new NotificationMessage(notificationSeverity, notificationText);
+				notification.Add(secondMessage);
+				Assert.AreEqual(1, notification.Messages.Count);
+				Assert.AreEqual(messageTest, notification.Messages.First());
+			}
+
+			[Test]
+			public void Should_not_add_the_message_to_Messages_if_the_Notification_is_Notification_Null()
+			{
+				var notification = Notification.Null;
+				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
+				notification.Add(messageTest);
+				Assert.AreEqual(0, notification.Messages.Count);
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_Add_a_Notification_T
 		{
 			[Test]
@@ -139,43 +176,6 @@ namespace MvbaCoreTests
 				var destination = new Notification();
 				destination.Add(source);
 				Assert.AreEqual(0, destination.Messages.Count);
-			}
-		}
-
-		[TestFixture]
-		public class When_asked_to_Add_a_NotificationMessage
-		{
-			[Test]
-			public void Should_add_the_message_to_Messages_if_the_Notification_is_not_Notification_Null()
-			{
-				var notification = new Notification();
-				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
-				notification.Add(messageTest);
-				Assert.AreEqual(1, notification.Messages.Count);
-				Assert.AreEqual(messageTest, notification.Messages.First());
-			}
-
-			[Test]
-			public void Should_not_add_the_message_if_the_Notification_already_contains_an_identical_message()
-			{
-				var notification = new Notification();
-				const NotificationSeverity notificationSeverity = NotificationSeverity.Warning;
-				const string notificationText = "test";
-				var messageTest = new NotificationMessage(notificationSeverity, notificationText);
-				notification.Add(messageTest);
-				var secondMessage = new NotificationMessage(notificationSeverity, notificationText);
-				notification.Add(secondMessage);
-				Assert.AreEqual(1, notification.Messages.Count);
-				Assert.AreEqual(messageTest, notification.Messages.First());
-			}
-
-			[Test]
-			public void Should_not_add_the_message_to_Messages_if_the_Notification_is_Notification_Null()
-			{
-				var notification = Notification.Null;
-				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
-				notification.Add(messageTest);
-				Assert.AreEqual(0, notification.Messages.Count);
 			}
 		}
 	}

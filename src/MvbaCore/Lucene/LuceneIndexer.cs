@@ -2,8 +2,8 @@
 //  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
 //  * This source code is subject to terms and conditions of the MIT License.
 //  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
@@ -14,6 +14,7 @@ namespace MvbaCore.Lucene
 	public interface ILuceneIndexer
 	{
 		void DeleteFromIndex<T>(T entity);
+		bool IsIndexable<T>(T entity);
 		void UpdateIndex<T>(T entity);
 	}
 
@@ -30,7 +31,7 @@ namespace MvbaCore.Lucene
 
 		public void UpdateIndex<T>(T entity)
 		{
-			var updater = _indexUpdaters.FirstOrDefault(x => x.IsMatch(entity));
+			var updater = GetUpdater(entity);
 			if (updater == null)
 			{
 				return;
@@ -46,9 +47,14 @@ namespace MvbaCore.Lucene
 			}
 		}
 
+		public bool IsIndexable<T>(T entity)
+		{
+			return GetUpdater(entity) != null;
+		}
+
 		public void DeleteFromIndex<T>(T entity)
 		{
-			var updater = _indexUpdaters.FirstOrDefault(x => x.IsMatch(entity));
+			var updater = GetUpdater(entity);
 			if (updater == null)
 			{
 				return;
@@ -62,6 +68,11 @@ namespace MvbaCore.Lucene
 			{
 				_luceneWriter.Close();
 			}
+		}
+
+		private IEntityIndexUpdater GetUpdater<T>(T entity)
+		{
+			return _indexUpdaters.FirstOrDefault(x => x.IsMatch(entity));
 		}
 	}
 }

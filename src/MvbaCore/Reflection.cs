@@ -124,24 +124,24 @@ namespace MvbaCore
 				.GetProperties()
 				.ThatHaveAGetter()
 				.ToDictionary(x => x.Name.ToLower());
-			var destinationProperties = destinationType
-				.GetProperties()
-				.ThatHaveASetter()
-				.Where(x => sourceProperties.ContainsKey(x.Name.ToLower()))
-				.ToDictionary(x => x.Name.ToLower());
 			var accessors = new List<PropertyMappingInfo>();
-			foreach (var destinationProperty in destinationProperties)
+
+			foreach (var destinationProperty in destinationType.GetProperties().ThatHaveASetter())
 			{
-				var sourceProperty = sourceProperties[destinationProperty.Key];
+				PropertyInfo sourceProperty;
+				if (!sourceProperties.TryGetValue(destinationProperty.Name.ToLower(), out sourceProperty))
+				{
+					continue;
+				}
 
 				var property = destinationProperty;
 				var propertyMappingInfo = new PropertyMappingInfo
 				{
-					Name = destinationProperty.Value.Name,
+					Name = destinationProperty.Name,
 					SourcePropertyType = sourceProperty.PropertyType,
-					DestinationPropertyType = destinationProperty.Value.PropertyType,
+					DestinationPropertyType = destinationProperty.PropertyType,
 					GetValueFromSource = source => sourceProperty.GetValue(source, null),
-					SetValueToDestination = (destination, value) => property.Value.SetValue(destination, value, null)
+					SetValueToDestination = (destination, value) => property.SetValue(destination, value, null)
 				};
 				accessors.Add(propertyMappingInfo);
 			}

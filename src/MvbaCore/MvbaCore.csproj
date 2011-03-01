@@ -43,6 +43,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -58,10 +59,13 @@
     <Compile Include="CodeQuery\PropertyInfoExtensions.cs" />
     <Compile Include="CodeQuery\TypeExtensions.cs" />
     <Compile Include="DefaultKeyAttribute.cs" />
+    <Compile Include="EnvironmentException.cs" />
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
+    <Compile Include="FileSystemService.cs" />
     <Compile Include="INamedConstant.cs" />
     <Compile Include="Lucene\IEntityIndexUpdater.cs" />
     <Compile Include="Lucene\ILuceneFileSystem.cs" />

@@ -75,6 +75,7 @@ namespace MvbaCore.Lucene
 		{
 			Open();
 			_writer.AddDocument(document);
+			Commit();
 		}
 
 		private void Open()

@@ -7,26 +7,38 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+using System;
 using System.Linq;
 
 namespace MvbaCore.Lucene
 {
 	public interface ILuceneIndexer
 	{
+		void Close();
 		void DeleteFromIndex<T>(T entity);
 		bool IsIndexable<T>(T entity);
 		void UpdateIndex<T>(T entity);
 	}
 
-	public class LuceneIndexer : ILuceneIndexer
+	public class LuceneIndexer : ILuceneIndexer, IDisposable
 	{
 		private readonly IEntityIndexUpdater[] _indexUpdaters;
 		private readonly ILuceneWriter _luceneWriter;
+		private bool _disposed;
 
 		public LuceneIndexer(ILuceneWriter luceneWriter, IEntityIndexUpdater[] indexUpdaters)
 		{
 			_luceneWriter = luceneWriter;
 			_indexUpdaters = indexUpdaters;
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+
+			// Use SupressFinalize in case a subclass
+			// of this type implements a finalizer.
+			GC.SuppressFinalize(this);
 		}
 
 		public void UpdateIndex<T>(T entity)
@@ -37,14 +49,7 @@ namespace MvbaCore.Lucene
 				return;
 			}
 
-			try
-			{
-				updater.UpdateIndex(entity, _luceneWriter);
-			}
-			finally
-			{
-				_luceneWriter.Close();
-			}
+			updater.UpdateIndex(entity, _luceneWriter);
 		}
 
 		public bool IsIndexable<T>(T entity)
@@ -60,13 +65,23 @@ namespace MvbaCore.Lucene
 				return;
 			}
 
-			try
+			updater.DeleteFromIndex(entity, _luceneWriter);
+		}
+
+		public void Close()
+		{
+			_luceneWriter.Close();
+		}
+
+		private void Dispose(bool disposing)
+		{
+			if (!_disposed)
 			{
-				updater.DeleteFromIndex(entity, _luceneWriter);
-			}
-			finally
-			{
-				_luceneWriter.Close();
+				if (disposing)
+				{
+					_luceneWriter.Close();
+				}
+				_disposed = true;
 			}
 		}
 

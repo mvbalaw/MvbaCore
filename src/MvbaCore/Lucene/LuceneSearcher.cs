@@ -88,7 +88,7 @@ namespace MvbaCore.Lucene
 				}
 
 				var result = mergedResults
-					.Where(x => x.GetMatchCount(queryWords) == queryWords.Count)
+					.Where(x => x.GetMatchCount(queryWords) >= queryWords.Count)
 					.Take(MaxResults)
 					.ToList();
 				return result;

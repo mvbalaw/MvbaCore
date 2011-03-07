@@ -67,6 +67,7 @@
     <Compile Include="Extensions\TExtensions.cs" />
     <Compile Include="FileSystemService.cs" />
     <Compile Include="INamedConstant.cs" />
+    <Compile Include="LruCache.cs" />
     <Compile Include="Lucene\IEntityIndexUpdater.cs" />
     <Compile Include="Lucene\ILuceneFileSystem.cs" />
     <Compile Include="Lucene\ILuceneIndexedField.cs" />

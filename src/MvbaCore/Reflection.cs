@@ -2,8 +2,8 @@
 //  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
 //  * This source code is subject to terms and conditions of the MIT License.
 //  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
@@ -21,6 +21,15 @@ namespace MvbaCore
 {
 	public static class Reflection
 	{
+		public enum AccessorType
+		{
+			Field,
+			Property
+		}
+
+		private static readonly LruCache<Type, Dictionary<string, GenericGetter>> _getters = new LruCache<Type, Dictionary<string, GenericGetter>>(50);
+		private static readonly LruCache<Type, Dictionary<string, GenericSetter>> _setters = new LruCache<Type, Dictionary<string, GenericSetter>>(50);
+
 		public static bool CouldBeNull(Type type)
 		{
 			if (!type.IsValueType)
@@ -94,6 +103,43 @@ namespace MvbaCore
 			return name;
 		}
 
+		private static Dictionary<string, GenericSetter> GetDestinationAccessors(Type destinationType)
+		{
+			var destinationAccessors = _setters[destinationType];
+			if (destinationAccessors == null)
+			{
+				var destinationFields = destinationType
+					.GetFields()
+					.Where(x=>!x.IsLiteral)
+					.Select(x => new GenericSetter
+					{
+						Name = x.Name,
+						StorageType = x.FieldType,
+						SetValue = (Action<object, object>)(x.SetValue),
+						AccessorType = AccessorType.Field
+					});
+
+				var destinationProperties = destinationType
+					.GetProperties()
+					.ThatHaveASetter()
+					.Select(x => new GenericSetter
+					{
+						Name = x.Name,
+						StorageType = x.PropertyType,
+						SetValue = (Action<object, object>)((instance, value) => x.SetValue(instance, value, null)),
+						AccessorType = AccessorType.Property
+					});
+
+				destinationAccessors = new Dictionary<string, GenericSetter>(100);
+				foreach (var accessor in destinationProperties.Concat(destinationFields))
+				{
+					destinationAccessors.Add(accessor.Name.ToLower(), accessor);
+				}
+				_setters.Add(destinationType, destinationAccessors);
+			}
+			return destinationAccessors;
+		}
+
 		[DebuggerStepThrough]
 		public static string GetFinalPropertyName<T>(Expression<Func<T>> expression)
 		{
@@ -118,34 +164,44 @@ namespace MvbaCore
 			return names.Last();
 		}
 
+		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType)
+		{
+			var sourceAccessors = GetSourceAccessors(sourceType);
+			var destinationAccessors = GetDestinationAccessors(destinationType);
+
+			return (from entry in destinationAccessors
+			        where sourceAccessors.ContainsKey(entry.Key)
+			        let sourceAccessor = sourceAccessors[entry.Key]
+			        let destinationAccessor = entry.Value
+			        select new PropertyMappingInfo
+			        {
+			        	Name = destinationAccessor.Name,
+			        	SourcePropertyType = sourceAccessor.StorageType,
+			        	DestinationPropertyType = destinationAccessor.StorageType,
+			        	GetValueFromSource = sourceAccessor.GetValue,
+			        	SetValueToDestination = destinationAccessor.SetValue
+			        }).ToList();
+		}
+
 		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType)
 		{
-			var sourceProperties = sourceType
-				.GetProperties()
-				.ThatHaveAGetter()
-				.ToDictionary(x => x.Name.ToLower());
-			var accessors = new List<PropertyMappingInfo>();
+			var sourceAccessors = GetSourceAccessors(sourceType);
+			var destinationAccessors = GetDestinationAccessors(destinationType);
 
-			foreach (var destinationProperty in destinationType.GetProperties().ThatHaveASetter())
-			{
-				PropertyInfo sourceProperty;
-				if (!sourceProperties.TryGetValue(destinationProperty.Name.ToLower(), out sourceProperty))
-				{
-					continue;
-				}
-
-				var property = destinationProperty;
-				var propertyMappingInfo = new PropertyMappingInfo
-				{
-					Name = destinationProperty.Name,
-					SourcePropertyType = sourceProperty.PropertyType,
-					DestinationPropertyType = destinationProperty.PropertyType,
-					GetValueFromSource = source => sourceProperty.GetValue(source, null),
-					SetValueToDestination = (destination, value) => property.SetValue(destination, value, null)
-				};
-				accessors.Add(propertyMappingInfo);
-			}
-			return accessors;
+			return (from entry in destinationAccessors
+			        where sourceAccessors.ContainsKey(entry.Key)
+			        let sourceAccessor = sourceAccessors[entry.Key]
+			        let destinationAccessor = entry.Value
+			        where sourceAccessor.AccessorType == AccessorType.Property
+			        where destinationAccessor.AccessorType == AccessorType.Property
+			        select new PropertyMappingInfo
+			        {
+			        	Name = destinationAccessor.Name,
+			        	SourcePropertyType = sourceAccessor.StorageType,
+			        	DestinationPropertyType = destinationAccessor.StorageType,
+			        	GetValueFromSource = sourceAccessor.GetValue,
+			        	SetValueToDestination = destinationAccessor.SetValue
+			        }).ToList();
 		}
 
 		public static MethodCallData GetMethodCallData<TClass>(Expression<Func<TClass, object>> methodCall) where TClass : class
@@ -267,6 +323,44 @@ namespace MvbaCore
 			return name;
 		}
 
+		private static Dictionary<string, GenericGetter> GetSourceAccessors(Type sourceType)
+		{
+			var sourceAccessors = _getters[sourceType];
+			if (sourceAccessors == null)
+			{
+				var sourceFields = sourceType
+					.GetFields()
+					.Select(x =>
+					        new GenericGetter
+					        {
+					        	Name = x.Name,
+					        	StorageType = x.FieldType,
+					        	GetValue = x.GetValue,
+					        	AccessorType = AccessorType.Field
+					        }
+					);
+				var sourceProperties = sourceType
+					.GetProperties()
+					.ThatHaveAGetter()
+					.Select(x => new GenericGetter
+					{
+						Name = x.Name,
+						StorageType = x.PropertyType,
+						GetValue = (Func<object, object>)(instance => x.GetValue(instance, null)),
+						AccessorType = AccessorType.Property
+					});
+
+				sourceAccessors = new Dictionary<string, GenericGetter>(100);
+				foreach (var accessor in sourceProperties.Concat(sourceFields))
+				{
+					sourceAccessors.Add(accessor.Name.ToLower(), accessor);
+				}
+
+				_getters.Add(sourceType, sourceAccessors);
+			}
+			return sourceAccessors;
+		}
+
 		///<summary>
 		///    http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
 		///</summary>
@@ -328,6 +422,22 @@ namespace MvbaCore
 			var assembly = type.Assembly;
 			string company = GetAttribute<AssemblyCompanyAttribute>(assembly).Company;
 			return company != "Microsoft Corporation";
+		}
+
+		private class GenericGetter
+		{
+			public AccessorType AccessorType { get; set; }
+			public Func<object, object> GetValue { get; set; }
+			public string Name { get; set; }
+			public Type StorageType { get; set; }
+		}
+
+		private class GenericSetter
+		{
+			public AccessorType AccessorType { get; set; }
+			public string Name { get; set; }
+			public Action<object, object> SetValue { get; set; }
+			public Type StorageType { get; set; }
 		}
 	}
 }

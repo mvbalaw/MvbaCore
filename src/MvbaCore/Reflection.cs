@@ -17,6 +17,8 @@ using System.Reflection;
 
 using CodeQuery;
 
+using FastReflection;
+
 namespace MvbaCore
 {
 	public static class Reflection
@@ -110,7 +112,7 @@ namespace MvbaCore
 			{
 				var destinationFields = destinationType
 					.GetFields()
-					.Where(x=>!x.IsLiteral)
+					.Where(x => !x.IsLiteral)
 					.Select(x => new GenericSetter
 					{
 						Name = x.Name,
@@ -122,13 +124,18 @@ namespace MvbaCore
 				var destinationProperties = destinationType
 					.GetProperties()
 					.ThatHaveASetter()
-					.Select(x => new GenericSetter
-					{
-						Name = x.Name,
-						StorageType = x.PropertyType,
-						SetValue = (Action<object, object>)((instance, value) => x.SetValue(instance, value, null)),
-						AccessorType = AccessorType.Property
-					});
+					.Select(x =>
+						{
+							var fastProperty = new FastProperty(x);
+							return new GenericSetter
+							{
+								Name = x.Name,
+								StorageType = x.PropertyType,
+								SetValue = fastProperty.CanWrite ? fastProperty.Set : (Action<object, object>)null,
+								AccessorType = AccessorType.Property
+							};
+						})
+					.Where(x => x.SetValue != null);
 
 				destinationAccessors = new Dictionary<string, GenericSetter>(100);
 				foreach (var accessor in destinationProperties.Concat(destinationFields))
@@ -346,7 +353,7 @@ namespace MvbaCore
 					{
 						Name = x.Name,
 						StorageType = x.PropertyType,
-						GetValue = (Func<object, object>)(instance => x.GetValue(instance, null)),
+						GetValue = new FastProperty(x).Get,
 						AccessorType = AccessorType.Property
 					});
 

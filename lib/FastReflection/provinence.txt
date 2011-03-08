@@ -1,0 +1,2 @@
+source: http://fastreflection.codeplex.com
+license: License: Microsoft Public License (Ms-PL)

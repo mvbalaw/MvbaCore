@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 using Lucene.Net.Documents;
 
@@ -58,7 +59,7 @@ namespace MvbaCore.Lucene
 			}
 			int count = (from queryWord in queryWords
 			             from value in _matches.Values
-			             where value.IndexOf(queryWord, StringComparison.CurrentCultureIgnoreCase) != -1
+			             where Regex.IsMatch(value, ".*"+queryWord.Replace("*",".*")+".*", RegexOptions.IgnoreCase)
 			             select queryWord).Count();
 
 			_matchCount = count;

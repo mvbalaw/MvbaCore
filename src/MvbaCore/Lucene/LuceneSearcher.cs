@@ -78,17 +78,7 @@ namespace MvbaCore.Lucene
 					.OrderByDescending(x => x.Count())
 					.Select(x => new LuceneSearchResult(x.Key, x));
 
-				var queryWords = new HashSet<string>();
-
-				foreach (string key in lowerQueryString
-					.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					int index = key.IndexOf(':');
-					queryWords.Add(index != -1 ? key.Substring(index + 1) : key);
-				}
-
 				var result = mergedResults
-					.Where(x => x.GetMatchCount(queryWords) >= queryWords.Count)
 					.Take(MaxResults)
 					.ToList();
 				return result;

@@ -1,4 +1,8 @@
 <CodeStyleSettings>
+  <CSS>
+    <FormatSettings />
+    <Naming2 />
+  </CSS>
   <CSharp>
     <FormatSettings>
       <BLANK_LINES_AROUND_FIELD>0</BLANK_LINES_AROUND_FIELD>
@@ -300,6 +304,10 @@ II.2.12 <HandlesEvent />
 </Patterns>
 ]]></CustomMemberReorderingPatterns>
   </CSharp>
+  <JavaScript>
+    <FormatSettings />
+    <Naming2 />
+  </JavaScript>
   <VB>
     <FormatSettings />
     <ImportsSettings />
@@ -311,12 +319,12 @@ II.2.12 <HandlesEvent />
   <Web>
     <Naming2 />
   </Web>
-  <Xaml>
-    <Naming2 />
-  </Xaml>
   <XML>
     <FormatSettings />
   </XML>
+  <Xaml>
+    <Naming2 />
+  </Xaml>
   <FileHeader><![CDATA[ * **************************************************************************
  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
  * This source code is subject to terms and conditions of the MIT License.

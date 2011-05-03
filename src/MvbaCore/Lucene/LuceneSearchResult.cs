@@ -24,6 +24,7 @@ namespace MvbaCore.Lucene
 			UniqueId = uniqueId;
 			foreach (var doc in documents)
 			{
+				MatchedDocumentCount++;
 				foreach (Field field in doc.GetFields())
 				{
 					string stringValue = field.StringValue();
@@ -44,6 +45,8 @@ namespace MvbaCore.Lucene
 				}
 			}
 		}
+
+		public int MatchedDocumentCount { get; private set; }
 
 		public string UniqueId { get; private set; }
 	}

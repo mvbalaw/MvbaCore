@@ -69,7 +69,7 @@ namespace MvbaCore.Lucene
 					return new List<LuceneSearchResult>();
 				}
 
-				string uniqueKey = _fields.FirstOrDefault(x => x.IsUniqueKey).Name;
+				string uniqueKey = _fields.First(x => x.IsUniqueKey).Name;
 
 				int count = Math.Min(hits.totalHits, MaxHits);
 				var mergedResults = Enumerable.Range(0, count)

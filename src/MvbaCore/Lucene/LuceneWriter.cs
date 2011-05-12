@@ -50,6 +50,7 @@ namespace MvbaCore.Lucene
 			if (_writer != null)
 			{
 				_writer.Commit();
+				_writer.Optimize();
 				_writer.Close();
 				_writer = null;
 			}

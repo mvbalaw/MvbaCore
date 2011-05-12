@@ -30,7 +30,7 @@ namespace MvbaCore.Lucene
 	public class LuceneSearcher : ILuceneSearcher
 	{
 		private const int MaxHits = 100000;
-		private const int MaxResults = 100;
+		private const int MaxResults = 100000;
 		private readonly ILuceneIndexedField[] _fields;
 		private readonly ILuceneFileSystem _luceneFileSystem;
 
@@ -44,25 +44,71 @@ namespace MvbaCore.Lucene
 
 		public IList<LuceneSearchResult> FindMatches(string querystring)
 		{
-			var analyzer = new KeywordAnalyzer();
+			var analyzer = new SimpleAnalyzer();
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
 				.Select(x => x.Name)
 				.ToArray();
 			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
-			                                       fieldNames,
-			                                       analyzer);
+												   fieldNames,
+												   analyzer);
 			string lowerQueryString = querystring.ToLower();
 
+			parser.SetDefaultOperator(QueryParser.Operator.AND);
 			try
 			{
-				var query = parser.Parse(lowerQueryString);
+				var fullQuery = parser.Parse(lowerQueryString);
+				var rewrittenQueryString = fullQuery.ToString();
+				var clauses = rewrittenQueryString.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+
 				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 
 				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 				var indexSearcher = new IndexSearcher(fsDirectory, true);
+
+
+				if (clauses.Length <= 1)
+				{
+					return FindClauseMatches(fullQuery, indexSearcher);
+				}
+
+				// force it to be an 'and' search by keeping only those uniqueIDs
+				// that show up in the search result for each independent clause
+				parser.SetDefaultOperator(QueryParser.Operator.OR);
+
+				var searchResultList = new List<LuceneSearchResult>();
+				foreach (var queryPart in clauses)
+				{
+					var query = parser.Parse(queryPart);
+					var partialResult = FindClauseMatches(query, indexSearcher);
+					if (!partialResult.Any())
+					{
+						// nothing matched this clause. since we are aggregating an AND
+						// result across multiple documents, we're done.
+						return partialResult;
+					}
+					searchResultList.AddRange(partialResult);
+				}
+				var mergedResult = searchResultList
+					.GroupBy(x => x.UniqueId)
+					.Where(x => x.Count() == clauses.Count())
+					.Select(x => x.First())
+					.ToList();
+				return mergedResult;
+			}
+			catch (ParseException)
+			{
+				return new List<LuceneSearchResult>();
+			}
+		}
+
+		private IList<LuceneSearchResult> FindClauseMatches(Query fullQuery, Searcher indexSearcher)
+		{
+
+			try
+			{
 				var collector = TopScoreDocCollector.create(MaxHits, false);
-				indexSearcher.Search(query, collector);
+				indexSearcher.Search(fullQuery, collector);
 				var hits = collector.TopDocs();
 				if (hits.totalHits == 0)
 				{

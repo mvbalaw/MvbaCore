@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
@@ -44,7 +45,7 @@ namespace MvbaCore.Lucene
 
 		public IList<LuceneSearchResult> FindMatches(string querystring)
 		{
-			var analyzer = new SimpleAnalyzer();
+			var analyzer = new StandardAnalyzer(Version.LUCENE_29);
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
 				.Select(x => x.Name)

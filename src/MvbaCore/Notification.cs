@@ -2,8 +2,8 @@
 //  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
 //  * This source code is subject to terms and conditions of the MIT License.
 //  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
@@ -18,12 +18,6 @@ namespace MvbaCore
 {
 	public class Notification<T> : NotificationBase
 	{
-		public static readonly Notification<T> Null = new Notification<T>
-		{
-			IsNull = true
-		};
-		private T _item;
-
 		public Notification()
 		{
 		}
@@ -33,16 +27,16 @@ namespace MvbaCore
 		{
 		}
 
-		public T Item
+		public static Notification<T> Empty
 		{
-			get { return _item; }
-			set
-			{
-				if (!IsNull)
-				{
-					_item = value;
-				}
-			}
+			get { return new Notification<T>(); }
+		}
+
+		public T Item { get; set; }
+		[Obsolete("use Notification<T>.Empty")]
+		public static Notification<T> Null
+		{
+			get { return Empty; }
 		}
 	}
 
@@ -56,14 +50,12 @@ namespace MvbaCore
 		protected NotificationBase([NotNull] NotificationMessage notificationMessage)
 			: this()
 		{
-			Messages = new List<NotificationMessage>();
-			if (!IsNull)
+			Messages = new List<NotificationMessage>
 			{
-				Messages.Add(notificationMessage);
-			}
+				notificationMessage
+			};
 		}
 
-		public bool IsNull { get; protected set; }
 		public bool IsValid
 		{
 			get { return !Messages.Any(x => x.Severity != NotificationSeverity.Info); }
@@ -74,10 +66,6 @@ namespace MvbaCore
 
 		public void Add([NotNull] Notification notification)
 		{
-			if (IsNull)
-			{
-				return;
-			}
 			foreach (var message in notification.Messages)
 			{
 				AddMessage(message);
@@ -86,19 +74,11 @@ namespace MvbaCore
 
 		public void Add([NotNull] NotificationMessage message)
 		{
-			if (IsNull)
-			{
-				return;
-			}
 			AddMessage(message);
 		}
 
 		public void Add<K>([NotNull] Notification<K> notification)
 		{
-			if (IsNull)
-			{
-				return;
-			}
 			foreach (var message in notification.Messages)
 			{
 				AddMessage(message);
@@ -121,11 +101,6 @@ namespace MvbaCore
 
 	public class Notification : NotificationBase
 	{
-		public static readonly Notification Null = new Notification
-		{
-			IsNull = true
-		};
-
 		public Notification()
 		{
 		}
@@ -133,6 +108,16 @@ namespace MvbaCore
 		public Notification(NotificationMessage notificationMessage)
 			: base(notificationMessage)
 		{
+		}
+
+		public static Notification Empty
+		{
+			get { return new Notification(); }
+		}
+		[Obsolete("use Notification.Empty")]
+		public static Notification Null
+		{
+			get { return Empty; }
 		}
 
 		[NotNull]

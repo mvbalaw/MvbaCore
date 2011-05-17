@@ -2,12 +2,13 @@
 //  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
 //  * This source code is subject to terms and conditions of the MIT License.
 //  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
 
+using System;
 using System.Linq;
 
 using CodeQuery;
@@ -27,19 +28,22 @@ namespace MvbaCore.Extensions
 			{
 				return null;
 			}
-// ReSharper disable AssignNullToNotNullAttribute
 			return (T)defaultField.GetValue(null);
-// ReSharper restore AssignNullToNotNullAttribute
 		}
 
-		[CanBeNull]
+		[NotNull]
 		public static T OrDefault<T>([CanBeNull] this T value) where T : NamedConstant<T>
 		{
 			if (value != null)
 			{
 				return value;
 			}
-			return DefaultValue<T>();
+			var defaultValue = DefaultValue<T>();
+			if (defaultValue == null)
+			{
+				throw new ArgumentException("No default value defined for Named Constant type " + typeof(T));
+			}
+			return defaultValue;
 		}
 	}
 }

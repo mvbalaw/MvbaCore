@@ -83,7 +83,6 @@
     <Compile Include="NotificationTests_ErrorFor.cs" />
     <Compile Include="NotificationTests_For.cs" />
     <Compile Include="NotificationTests_InfoFor.cs" />
-    <Compile Include="NotificationTests_IsNull.cs" />
     <Compile Include="NotificationTests_IsValid.cs" />
     <Compile Include="NotificationTests_WarningFor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

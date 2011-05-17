@@ -50,19 +50,6 @@ namespace MvbaCoreTests
 			}
 
 			[Test]
-			public void Should_not_copy_the_NotificationMessages_from_the_source_if_the_destination_is_Notification_Null()
-			{
-				var source = new Notification();
-				var notification = new NotificationMessage(NotificationSeverity.Error, "");
-				source.Add(notification);
-
-				var destination = Notification.Null;
-				destination.Add(notification);
-
-				Assert.AreEqual(0, destination.Messages.Count);
-			}
-
-			[Test]
 			public void Should_not_overwrite_any_NotificationMessages_that_already_exist()
 			{
 				var source = new Notification();
@@ -111,15 +98,6 @@ namespace MvbaCoreTests
 				Assert.AreEqual(1, notification.Messages.Count);
 				Assert.AreEqual(messageTest, notification.Messages.First());
 			}
-
-			[Test]
-			public void Should_not_add_the_message_to_Messages_if_the_Notification_is_Notification_Null()
-			{
-				var notification = Notification.Null;
-				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
-				notification.Add(messageTest);
-				Assert.AreEqual(0, notification.Messages.Count);
-			}
 		}
 
 		[TestFixture]
@@ -151,19 +129,6 @@ namespace MvbaCoreTests
 				destination.Add(source);
 
 				Assert.AreEqual(2, destination.Messages.Count);
-			}
-
-			[Test]
-			public void Should_not_copy_the_NotificationMessages_from_the_source_if_the_destination_is_Notification_Null()
-			{
-				var source = new Notification<string>();
-				var notification = new NotificationMessage(NotificationSeverity.Error, "");
-				source.Add(notification);
-
-				var destination = Notification.Null;
-				destination.Add(notification);
-
-				Assert.AreEqual(0, destination.Messages.Count);
 			}
 
 			[Test]

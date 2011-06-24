@@ -1,11 +1,9 @@
 COMPILE_TARGET = "debug"
 $LOAD_PATH.unshift(File.dirname(__FILE__))
+
 require "build_support/BuildUtils.rb"
-
 include FileTest
-
 require 'rubygems'
-
 require 'zip/zip'
 require 'zip/zipfilesystem'
 
@@ -14,7 +12,7 @@ BUILD_NUMBER = "0.1.0."
 PRODUCT = "SuitSystem"
 COPYRIGHT = 'Copyright 2009 McCreary, Veselka, Bragg & Allen, P.C. All rights reserved.';
 COMMON_ASSEMBLY_INFO = 'src/CommonAssemblyInfo.cs';
-CLR_VERSION = "v3.5"
+CLR_VERSION = "v4.0.30319"
 
 versionNumber = ENV["BUILD_NUMBER"].nil? ? 0 : ENV["BUILD_NUMBER"]
 

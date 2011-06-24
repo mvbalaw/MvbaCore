@@ -20,18 +20,27 @@ class NUnitRunner
 			sh "#{@nunitExe} #{file}"
 		end
 	end
+	
+	def executeCategoryTests(assembly, category)
+		Dir.mkdir @resultsDir unless exists?(@resultsDir)
+		
+		file = File.expand_path("#{@sourceDir}/#{assembly}/bin/#{@compileTarget}/#{assembly}.dll")
+		puts "#{@nunitExe} #{file} /include:#{category}"
+		sh "#{@nunitExe} #{file} /include:#{category}"
+	end
 end
 
 class MSBuildRunner
 	def self.compile(attributes)
-		version = attributes.fetch(:clrversion, 'v3.5')
-		compileTarget = attributes.fetch(:compilemode, 'debug')
+		version = attributes.fetch(:clrversion, 'v4.0.30319')
+		compileMode = attributes.fetch(:compilemode, 'debug')
+		target = attributes.fetch(:target, 'Rebuild')
 	    solutionFile = attributes[:solutionfile]
 		
 		frameworkDir = File.join(ENV['windir'].dup, 'Microsoft.NET', 'Framework', version)
 		msbuildFile = File.join(frameworkDir, 'msbuild.exe')
 		
-		sh "#{msbuildFile} #{solutionFile} /nologo /maxcpucount /v:m /property:BuildInParallel=false /property:Configuration=#{compileTarget} /t:Rebuild"
+		sh "#{msbuildFile} #{solutionFile} /nologo /maxcpucount /v:m /property:BuildInParallel=true /property:Configuration=#{compileMode} /t:#{target}"
 	end
 end
 
@@ -41,7 +50,7 @@ class AspNetCompilerRunner
 		webPhysDir = attributes.fetch(:webPhysDir, '')
 		webVirDir = attributes.fetch(:webVirDir, 'This_Value_Is_Not_Used')
 		
-		frameworkDir = File.join(ENV['windir'].dup, 'Microsoft.NET', 'Framework', 'v2.0.50727')
+		frameworkDir = File.join(ENV['windir'].dup, 'Microsoft.NET', 'Framework', 'v4.0.30319')
 		aspNetCompiler = File.join(frameworkDir, 'aspnet_compiler.exe')
 
 		sh "#{aspNetCompiler} -nologo -errorstack -c -p #{webPhysDir} -v #{webVirDir}"

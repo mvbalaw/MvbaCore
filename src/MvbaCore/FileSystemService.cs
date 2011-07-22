@@ -20,7 +20,7 @@ namespace MvbaCore
 		StreamWriter CreateFile([NotNull] string filePath);
 
 		[NotNull]
-		StreamWriter CreateTextFile([NotNull] string filePath);
+		TextWriter CreateTextFile([NotNull] string filePath);
 
 		void DeleteDirectoryContents([NotNull] string dirPath);
 
@@ -90,7 +90,7 @@ namespace MvbaCore
 		}
 
 		[NotNull]
-		public StreamWriter CreateTextFile([NotNull] string filePath)
+		public TextWriter CreateTextFile([NotNull] string filePath)
 		{
 			return File.CreateText(filePath);
 		}

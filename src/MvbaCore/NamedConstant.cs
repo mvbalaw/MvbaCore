@@ -11,15 +11,19 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-
+using JetBrains.Annotations;
 using MvbaCore.Extensions;
 
 namespace MvbaCore
 {
+
 	[Serializable]
 	public class NamedConstant : INamedConstant
 	{
-		public string Key { get; protected set; }
+		/// <summary>
+		/// Use Add to set
+		/// </summary>
+		public string Key { get; internal set; }
 	}
 
 #pragma warning disable 661,660
@@ -28,7 +32,9 @@ namespace MvbaCore
 #pragma warning restore 661,660
 		where T : NamedConstant<T>
 	{
+// ReSharper disable StaticFieldInGenericType
 		private static readonly Dictionary<string, T> NamedConstants = new Dictionary<string, T>();
+// ReSharper restore StaticFieldInGenericType
 
 		protected void Add(string key, T item)
 		{
@@ -95,16 +101,11 @@ namespace MvbaCore
 		{
 			if (NamedConstants.Count == 0)
 			{
-				try
-				{
-					var fieldInfos = typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public);
-					// ensure its static members get created by triggering the type initializer
-					fieldInfos[0].GetValue(null);
-				}
-				catch
-				{
-				}
+				var fieldInfos = typeof (T).GetFields(BindingFlags.Static | BindingFlags.Public);
+				// ensure its static members get created by triggering the type initializer
+				fieldInfos[0].GetValue(null);
 			}
+
 		}
 	}
 }

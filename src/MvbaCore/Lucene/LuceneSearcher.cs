@@ -2,18 +2,18 @@
 //  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
 //  * This source code is subject to terms and conditions of the MIT License.
 //  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
@@ -45,28 +45,28 @@ namespace MvbaCore.Lucene
 
 		public IList<LuceneSearchResult> FindMatches(string querystring)
 		{
-			var analyzer = new StandardAnalyzer(Version.LUCENE_29);
+			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
 				.Select(x => x.Name)
 				.ToArray();
 			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
-												   fieldNames,
-												   analyzer);
+			                                       fieldNames,
+			                                       analyzer);
 			string lowerQueryString = querystring.ToLower();
 
 			parser.SetDefaultOperator(QueryParser.Operator.AND);
 			try
 			{
-				var fullQuery = parser.Parse(lowerQueryString);
+				var escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
+				var fullQuery = parser.Parse(escaped);
 				var rewrittenQueryString = fullQuery.ToString();
-				var clauses = rewrittenQueryString.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+				var clauses = rewrittenQueryString.Split(new[] { '+' });
 
 				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 
 				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 				var indexSearcher = new IndexSearcher(fsDirectory, true);
-
 
 				if (clauses.Length <= 1)
 				{
@@ -105,7 +105,6 @@ namespace MvbaCore.Lucene
 
 		private IList<LuceneSearchResult> FindClauseMatches(Query fullQuery, Searcher indexSearcher)
 		{
-
 			try
 			{
 				var collector = TopScoreDocCollector.create(MaxHits, false);
@@ -134,6 +133,30 @@ namespace MvbaCore.Lucene
 			{
 				return new List<LuceneSearchResult>();
 			}
+		}
+
+		public static string ReplaceDashesWithSpecialString(string input, bool ignoreLeadingDash)
+		{
+			const string replacement = @"dash";
+
+			var parts = input.Split(' ');
+			for (int i = 0; i < parts.Length; i++)
+			{
+				if (parts[i].Length < 2)
+				{
+					continue;
+				}
+
+				if (ignoreLeadingDash)
+				{
+					parts[i] = parts[i].Substring(0, 1) + parts[i].Substring(1).Replace("-", replacement);
+				}
+				else
+				{
+					parts[i] = parts[i].Replace("-", replacement);
+				}
+			}
+			return String.Join(" ", parts);
 		}
 	}
 }

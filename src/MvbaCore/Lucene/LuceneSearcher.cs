@@ -61,7 +61,7 @@ namespace MvbaCore.Lucene
 				var escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
 				var fullQuery = parser.Parse(escaped);
 				var rewrittenQueryString = fullQuery.ToString();
-				var clauses = rewrittenQueryString.Split(new[] { '+' });
+				var clauses = rewrittenQueryString.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
 
 				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 

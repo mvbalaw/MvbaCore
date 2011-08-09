@@ -99,6 +99,7 @@
     <Compile Include="Lucene\LuceneSearcher.cs" />
     <Compile Include="Lucene\LuceneSearchResult.cs" />
     <Compile Include="Lucene\LuceneWriter.cs" />
+    <Compile Include="MergeSorter.cs" />
     <Compile Include="MethodCallData.cs" />
     <Compile Include="NamedConstant.cs" />
     <Compile Include="Notification.cs" />

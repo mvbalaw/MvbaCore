@@ -98,6 +98,7 @@
     <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="Extensions\TExtensionsTests.cs" />
     <Compile Include="Lucene\LuceneIndexerTests.cs" />
+    <Compile Include="MergeSorterTests.cs" />
     <Compile Include="NotificationMessageTests.cs" />
     <Compile Include="NotificationTests_Add.cs" />
     <Compile Include="NotificationTests_ErrorFor.cs" />

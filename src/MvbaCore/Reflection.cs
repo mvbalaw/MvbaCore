@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -28,6 +29,8 @@ namespace MvbaCore
 			Field,
 			Property
 		}
+
+		private static readonly StringDictionary _emptyCustomDestinationPropertyNameToSourcePropertyNameMap = new StringDictionary();
 
 		private static readonly LruCache<Type, Dictionary<string, GenericGetter>> _getters = new LruCache<Type, Dictionary<string, GenericGetter>>(50);
 		private static readonly LruCache<Type, Dictionary<string, GenericSetter>> _setters = new LruCache<Type, Dictionary<string, GenericSetter>>(50);
@@ -173,12 +176,24 @@ namespace MvbaCore
 
 		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType)
 		{
+			return GetMatchingFieldsAndProperties(sourceType, destinationType, _emptyCustomDestinationPropertyNameToSourcePropertyNameMap);
+		}
+
+		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
+		{
+			var lowerCustomDictionary = new StringDictionary();
+			foreach (string item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
+			{
+				lowerCustomDictionary.Add(item.ToLower(), customDestinationPropertyNameToSourcePropertyNameMap[item].ToLower());
+			}
+
 			var sourceAccessors = GetSourceAccessors(sourceType);
 			var destinationAccessors = GetDestinationAccessors(destinationType);
 
 			return (from entry in destinationAccessors
-			        where sourceAccessors.ContainsKey(entry.Key)
-			        let sourceAccessor = sourceAccessors[entry.Key]
+			        let key = lowerCustomDictionary[entry.Key] ?? entry.Key
+			        where sourceAccessors.ContainsKey(key)
+			        let sourceAccessor = sourceAccessors[key]
 			        let destinationAccessor = entry.Value
 			        select new PropertyMappingInfo
 			        {
@@ -192,12 +207,23 @@ namespace MvbaCore
 
 		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType)
 		{
+			return GetMatchingProperties(sourceType, destinationType, _emptyCustomDestinationPropertyNameToSourcePropertyNameMap);
+		}
+
+		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
+		{
+			var lowerCustomDictionary = new StringDictionary();
+			foreach (string item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
+			{
+				lowerCustomDictionary.Add(item.ToLower(), customDestinationPropertyNameToSourcePropertyNameMap[item].ToLower());
+			}
 			var sourceAccessors = GetSourceAccessors(sourceType);
 			var destinationAccessors = GetDestinationAccessors(destinationType);
 
 			return (from entry in destinationAccessors
-			        where sourceAccessors.ContainsKey(entry.Key)
-			        let sourceAccessor = sourceAccessors[entry.Key]
+			        let key = lowerCustomDictionary[entry.Key] ?? entry.Key
+			        where sourceAccessors.ContainsKey(key)
+			        let sourceAccessor = sourceAccessors[key]
 			        let destinationAccessor = entry.Value
 			        where sourceAccessor.AccessorType == AccessorType.Property
 			        where destinationAccessor.AccessorType == AccessorType.Property

@@ -1,24 +1,12 @@
-//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution. 
-//  * By using this source code in any fashion, you are agreeing to be bound by 
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-
 using Version = Lucene.Net.Util.Version;
 
 namespace MvbaCore.Lucene
@@ -58,10 +46,10 @@ namespace MvbaCore.Lucene
 			parser.SetDefaultOperator(QueryParser.Operator.AND);
 			try
 			{
-				var escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
+				string escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
 				var fullQuery = parser.Parse(escaped);
-				var rewrittenQueryString = fullQuery.ToString();
-				var clauses = rewrittenQueryString.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+				string rewrittenQueryString = fullQuery.ToString();
+				var clauses = rewrittenQueryString.Split(new[] {'+'}, StringSplitOptions.RemoveEmptyEntries);
 
 				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 
@@ -78,7 +66,7 @@ namespace MvbaCore.Lucene
 				parser.SetDefaultOperator(QueryParser.Operator.OR);
 
 				var searchResultList = new List<LuceneSearchResult>();
-				foreach (var queryPart in clauses)
+				foreach (string queryPart in clauses)
 				{
 					var query = parser.Parse(queryPart);
 					var partialResult = FindClauseMatches(query, indexSearcher);
@@ -120,7 +108,15 @@ namespace MvbaCore.Lucene
 				int count = Math.Min(hits.totalHits, MaxHits);
 				var mergedResults = Enumerable.Range(0, count)
 					.Select(x => indexSearcher.Doc(hits.scoreDocs[x].doc))
-					.GroupBy(x => x.GetField(uniqueKey).StringValue())
+					.GroupBy(x =>
+					         	{
+					         		var field = _fields
+					         			.Where(y => y.IsUniqueKey)
+					         			.Select(y => x.GetField(y.Name))
+					         			.FirstOrDefault(y => y != null);
+					         		return field == null ? "" : field.StringValue();
+					         	})
+					.Where(x => x.Key != "")
 					.OrderByDescending(x => x.Count())
 					.Select(x => new LuceneSearchResult(x.Key, x));
 

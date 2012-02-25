@@ -404,6 +404,27 @@ namespace MvbaCore
 			return func.Invoke();
 		}
 
+		/// <summary>
+		/// http://stackoverflow.com/questions/232535/how-to-use-reflection-to-call-generic-method
+		/// </summary>
+		public static object CallGenericMethod<TContainer>(TContainer container, Type genericType, string methodName, params object[] parameters)
+		{
+			MethodInfo method;
+			if (parameters == null || !parameters.Any())
+			{
+				method = typeof(TContainer).GetMethod(methodName);
+			}
+			else
+			{
+				// also consider http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
+				method = typeof(TContainer).GetMethod(methodName, parameters.Select(x => x== null ? typeof(object) : x.GetType()).ToArray());
+			}
+			var generic = method.MakeGenericMethod(genericType);
+			var result = generic.Invoke(container, parameters);
+			return result;
+		}
+
+
 		public static string GetValueAsString(Expression expression)
 		{
 			switch (expression.NodeType)

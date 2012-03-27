@@ -11,6 +11,7 @@ namespace MvbaCore.Lucene
 {
 	public interface ILuceneIndexedField
 	{
+	    bool IsSystemDescriminator { get; }
 		bool IsSearchable { get; }
 		bool IsUniqueKey { get; }
 		string Name { get; }

@@ -36,8 +36,10 @@ namespace MvbaCore.Lucene
 			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
+				.Where(x => !x.IsSystemDescriminator)
 				.Select(x => x.Name)
 				.ToArray();
+		    var systemDescriminator = _fields.FirstOrDefault(x => x.IsSystemDescriminator);
 			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
 			                                       fieldNames,
 			                                       analyzer);
@@ -56,7 +58,13 @@ namespace MvbaCore.Lucene
 				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 				var indexSearcher = new IndexSearcher(fsDirectory, true);
 
-				if (clauses.Length <= 1)
+			    string descriminatorClause = "";
+                if (systemDescriminator != null)
+                {
+                    descriminatorClause = clauses.FirstOrDefault(y => y.StartsWith(systemDescriminator.Name+":")) ?? "";
+                }
+
+                if (clauses.Length <= 1 || descriminatorClause.Length > 0 && clauses.Length == 2)
 				{
 					return FindClauseMatches(fullQuery, indexSearcher);
 				}
@@ -66,10 +74,12 @@ namespace MvbaCore.Lucene
 				parser.SetDefaultOperator(QueryParser.Operator.OR);
 
 				var searchResultList = new List<LuceneSearchResult>();
-				foreach (string queryPart in clauses)
+				foreach (string queryPart in clauses.Except(new[]{descriminatorClause}))
 				{
-					var query = parser.Parse(queryPart);
-					var partialResult = FindClauseMatches(query, indexSearcher);
+				    var query = descriminatorClause.Length > 0 
+                        ? parser.Parse("+" + queryPart + " +" + descriminatorClause) 
+                        : parser.Parse(queryPart);
+				    var partialResult = FindClauseMatches(query, indexSearcher);
 					if (!partialResult.Any())
 					{
 						// nothing matched this clause. since we are aggregating an AND
@@ -78,9 +88,14 @@ namespace MvbaCore.Lucene
 					}
 					searchResultList.AddRange(partialResult);
 				}
-				var mergedResult = searchResultList
+			    var expectedMatchingClauses = clauses.Length;
+                if (descriminatorClause.Length > 0)
+                {
+                    expectedMatchingClauses--;
+                }
+			    var mergedResult = searchResultList
 					.GroupBy(x => x.UniqueId)
-					.Where(x => x.Count() == clauses.Count())
+					.Where(x => x.Count() == expectedMatchingClauses)
 					.Select(x => x.First())
 					.ToList();
 				return mergedResult;
@@ -102,8 +117,6 @@ namespace MvbaCore.Lucene
 				{
 					return new List<LuceneSearchResult>();
 				}
-
-				string uniqueKey = _fields.First(x => x.IsUniqueKey).Name;
 
 				int count = Math.Min(hits.totalHits, MaxHits);
 				var mergedResults = Enumerable.Range(0, count)

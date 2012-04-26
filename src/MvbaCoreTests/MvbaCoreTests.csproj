@@ -55,6 +55,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\FluentAssert\FluentAssert.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=4.5.1230.4, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL" />
     <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Lucene\Lucene.Net.dll</HintPath>
@@ -99,6 +100,7 @@
     <Compile Include="Extensions\TExtensionsTests.cs" />
     <Compile Include="Lucene\LuceneIndexerTests.cs" />
     <Compile Include="MergeSorterTests.cs" />
+    <Compile Include="NamedConstantTests.cs" />
     <Compile Include="NotificationMessageTests.cs" />
     <Compile Include="NotificationTests_Add.cs" />
     <Compile Include="NotificationTests_ErrorFor.cs" />

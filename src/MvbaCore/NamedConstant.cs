@@ -1,27 +1,17 @@
-//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
+
 using MvbaCore.Extensions;
 
 namespace MvbaCore
 {
-
 	[Serializable]
 	public class NamedConstant : INamedConstant
 	{
 		/// <summary>
-		/// Use Add to set
+		///   Use Add to set
 		/// </summary>
 		public string Key { get; internal set; }
 	}
@@ -42,19 +32,19 @@ namespace MvbaCore
 			NamedConstants.Add(key.ToLower(), item);
 		}
 
-		[Obsolete("Use .GetAll()")]
-		protected static IEnumerable<T> Values()
-		{
-			return GetAll();
-		}
-
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMember.Global
 		public static IEnumerable<T> GetAll()
+// ReSharper restore UnusedMember.Global
+// ReSharper restore MemberCanBePrivate.Global
 		{
 			EnsureValues();
-			return NamedConstants.Values;
+			return NamedConstants.Values.Distinct();
 		}
 
+// ReSharper disable MemberCanBePrivate.Global
 		protected static T Get(string key)
+// ReSharper restore MemberCanBePrivate.Global
 		{
 			if (key == null)
 			{
@@ -99,13 +89,13 @@ namespace MvbaCore
 
 		private static void EnsureValues()
 		{
-			if (NamedConstants.Count == 0)
+			if (NamedConstants.Count != 0)
 			{
-				var fieldInfos = typeof (T).GetFields(BindingFlags.Static | BindingFlags.Public);
-				// ensure its static members get created by triggering the type initializer
-				fieldInfos[0].GetValue(null);
+				return;
 			}
-
+			var fieldInfos = typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public);
+			// ensure its static members get created by triggering the type initializer
+			fieldInfos[0].GetValue(null);
 		}
 	}
 }

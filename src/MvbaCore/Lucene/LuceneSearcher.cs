@@ -7,13 +7,35 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using MvbaCore.Extensions;
 using Version = Lucene.Net.Util.Version;
 
 namespace MvbaCore.Lucene
 {
+	public class QueryType : NamedConstant<QueryType>
+	{
+		[DefaultKey] public static readonly QueryType Intersection = new QueryType("intersection", "Intersection",
+		                                                                           (searcher, queryString) =>
+		                                                                           searcher.FindIntersection(queryString));
+
+		public static readonly QueryType Union = new QueryType("union", "Union",
+		                                                       (searcher, queryString) => searcher.FindUnion(queryString));
+
+		private QueryType(string key, string description, Func<LuceneSearcher, string, IList<LuceneSearchResult>> findMatches)
+		{
+			Description = description;
+			FindMatches = findMatches;
+			Add(key, this);
+		}
+
+		public string Description { get; private set; }
+		public Func<LuceneSearcher, string, IList<LuceneSearchResult>> FindMatches { get; private set; }
+	}
+
+
 	public interface ILuceneSearcher
 	{
-		IList<LuceneSearchResult> FindMatches(string querystring);
+		IList<LuceneSearchResult> FindMatches(string querystring, string queryType);
 	}
 
 	public class LuceneSearcher : ILuceneSearcher
@@ -31,7 +53,47 @@ namespace MvbaCore.Lucene
 			_luceneFileSystem = luceneFileSystem;
 		}
 
-		public IList<LuceneSearchResult> FindMatches(string querystring)
+		public IList<LuceneSearchResult> FindMatches(string querystring, string queryType)
+		{
+			return QueryType.GetFor(queryType).OrDefault().FindMatches(this, querystring);
+		}
+
+		public IList<LuceneSearchResult> FindUnion(string querystring)
+		{
+			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
+			var fieldNames = _fields
+				.Where(x => x.IsSearchable)
+				.Where(x => !x.IsSystemDescriminator)
+				.Where(
+					x => querystring.Contains(String.Format("{0}:", x.Name)) || querystring.Contains(String.Format("{0} :", x.Name)))
+				.Select(x => x.Name)
+				.ToArray();
+			var parser = new QueryParser(Version.LUCENE_29,
+			                             fieldNames[0],
+			                             analyzer);
+
+			parser.SetDefaultOperator(QueryParser.Operator.OR);
+			try
+			{
+				string escaped = ReplaceDashesWithSpecialString(querystring.ToLower(), true);
+
+				var fullQuery = parser.Parse(escaped);
+				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
+
+				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
+				var indexSearcher = new IndexSearcher(fsDirectory, true);
+
+				var searchResultList = FindClauseMatches(fullQuery, indexSearcher);
+
+				return searchResultList;
+			}
+			catch (ParseException)
+			{
+				return new List<LuceneSearchResult>();
+			}
+		}
+
+		public IList<LuceneSearchResult> FindIntersection(string querystring)
 		{
 			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
 			var fieldNames = _fields
@@ -39,7 +101,7 @@ namespace MvbaCore.Lucene
 				.Where(x => !x.IsSystemDescriminator)
 				.Select(x => x.Name)
 				.ToArray();
-		    var systemDescriminator = _fields.FirstOrDefault(x => x.IsSystemDescriminator);
+			var systemDescriminator = _fields.FirstOrDefault(x => x.IsSystemDescriminator);
 			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
 			                                       fieldNames,
 			                                       analyzer);
@@ -58,13 +120,13 @@ namespace MvbaCore.Lucene
 				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 				var indexSearcher = new IndexSearcher(fsDirectory, true);
 
-			    string descriminatorClause = "";
-                if (systemDescriminator != null)
-                {
-                    descriminatorClause = clauses.FirstOrDefault(y => y.StartsWith(systemDescriminator.Name+":")) ?? "";
-                }
+				string descriminatorClause = "";
+				if (systemDescriminator != null)
+				{
+					descriminatorClause = clauses.FirstOrDefault(y => y.StartsWith(systemDescriminator.Name + ":")) ?? "";
+				}
 
-                if (clauses.Length <= 1 || descriminatorClause.Length > 0 && clauses.Length == 2)
+				if (clauses.Length <= 1 || descriminatorClause.Length > 0 && clauses.Length == 2)
 				{
 					return FindClauseMatches(fullQuery, indexSearcher);
 				}
@@ -74,12 +136,12 @@ namespace MvbaCore.Lucene
 				parser.SetDefaultOperator(QueryParser.Operator.OR);
 
 				var searchResultList = new List<LuceneSearchResult>();
-				foreach (string queryPart in clauses.Except(new[]{descriminatorClause}))
+				foreach (string queryPart in clauses.Except(new[] {descriminatorClause}))
 				{
-				    var query = descriminatorClause.Length > 0 
-                        ? parser.Parse("+" + queryPart + " +" + descriminatorClause) 
-                        : parser.Parse(queryPart);
-				    var partialResult = FindClauseMatches(query, indexSearcher);
+					var query = descriminatorClause.Length > 0
+					            	? parser.Parse("+" + queryPart + " +" + descriminatorClause)
+					            	: parser.Parse(queryPart);
+					var partialResult = FindClauseMatches(query, indexSearcher);
 					if (!partialResult.Any())
 					{
 						// nothing matched this clause. since we are aggregating an AND
@@ -88,12 +150,12 @@ namespace MvbaCore.Lucene
 					}
 					searchResultList.AddRange(partialResult);
 				}
-			    var expectedMatchingClauses = clauses.Length;
-                if (descriminatorClause.Length > 0)
-                {
-                    expectedMatchingClauses--;
-                }
-			    var mergedResult = searchResultList
+				int expectedMatchingClauses = clauses.Length;
+				if (descriminatorClause.Length > 0)
+				{
+					expectedMatchingClauses--;
+				}
+				var mergedResult = searchResultList
 					.GroupBy(x => x.UniqueId)
 					.Where(x => x.Count() == expectedMatchingClauses)
 					.Select(x => x.First())

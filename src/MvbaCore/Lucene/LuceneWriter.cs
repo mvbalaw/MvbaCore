@@ -82,6 +82,10 @@ namespace MvbaCore.Lucene
 				{
 					var field = (Field)abstractField;
 					var value = LuceneSearcher.ReplaceDashesWithSpecialString(field.StringValue(), false);
+					if (field.IsTokenized())
+					{
+						value = value + (" " + value).Replace(" ", " " + LuceneConstants.WildcardEndsWithSearchEnabler); 
+					}
 					field.SetValue(value);
 				}
 			}

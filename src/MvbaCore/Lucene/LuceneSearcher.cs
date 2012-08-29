@@ -1,22 +1,37 @@
+//  * **************************************************************************
+//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//  * This source code is subject to terms and conditions of the MIT License.
+//  * A copy of the license can be found in the License.txt file
+//  * at the root of this distribution. 
+//  * By using this source code in any fashion, you are agreeing to be bound by 
+//  * the terms of the MIT License.
+//  * You must not remove this notice from this software.
+//  * **************************************************************************
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+
 using MvbaCore.Extensions;
+
 using Version = Lucene.Net.Util.Version;
 
 namespace MvbaCore.Lucene
 {
 	public class QueryType : NamedConstant<QueryType>
 	{
-		[DefaultKey] public static readonly QueryType Intersection = new QueryType("intersection", "Intersection",
-		                                                                           (searcher, queryString) =>
-		                                                                           searcher.FindIntersection(queryString));
+		[DefaultKey]
+		public static readonly QueryType Intersection = new QueryType("intersection", "Intersection",
+		                                                              (searcher, queryString) =>
+		                                                              searcher.FindIntersection(queryString));
 
 		public static readonly QueryType Union = new QueryType("union", "Union",
 		                                                       (searcher, queryString) => searcher.FindUnion(queryString));
@@ -31,7 +46,6 @@ namespace MvbaCore.Lucene
 		public string Description { get; private set; }
 		public Func<LuceneSearcher, string, IList<LuceneSearchResult>> FindMatches { get; private set; }
 	}
-
 
 	public interface ILuceneSearcher
 	{
@@ -58,34 +72,37 @@ namespace MvbaCore.Lucene
 			return QueryType.GetFor(queryType).OrDefault().FindMatches(this, querystring);
 		}
 
-		public IList<LuceneSearchResult> FindUnion(string querystring)
+		private IList<LuceneSearchResult> FindClauseMatches(Query fullQuery, Searcher indexSearcher)
 		{
-			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
-			var fieldNames = _fields
-				.Where(x => x.IsSearchable)
-				.Where(x => !x.IsSystemDescriminator)
-				.Where(
-					x => querystring.Contains(String.Format("{0}:", x.Name)) || querystring.Contains(String.Format("{0} :", x.Name)))
-				.Select(x => x.Name)
-				.ToArray();
-			var parser = new QueryParser(Version.LUCENE_29,
-			                             fieldNames[0],
-			                             analyzer);
-
-			parser.SetDefaultOperator(QueryParser.Operator.OR);
 			try
 			{
-				string escaped = ReplaceDashesWithSpecialString(querystring.ToLower(), true);
+				var collector = TopScoreDocCollector.create(MaxHits, false);
+				indexSearcher.Search(fullQuery, collector);
+				var hits = collector.TopDocs();
+				if (hits.totalHits == 0)
+				{
+					return new List<LuceneSearchResult>();
+				}
 
-				var fullQuery = parser.Parse(escaped);
-				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
+				var count = Math.Min(hits.totalHits, MaxHits);
+				var mergedResults = Enumerable.Range(0, count)
+					.Select(x => indexSearcher.Doc(hits.scoreDocs[x].doc))
+					.GroupBy(x =>
+						{
+							var field = _fields
+								.Where(y => y.IsUniqueKey)
+								.Select(y => x.GetField(y.Name))
+								.FirstOrDefault(y => y != null);
+							return field == null ? "" : field.StringValue();
+						})
+					.Where(x => x.Key != "")
+					.OrderByDescending(x => x.Count())
+					.Select(x => new LuceneSearchResult(x.Key, x));
 
-				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
-				var indexSearcher = new IndexSearcher(fsDirectory, true);
-
-				var searchResultList = FindClauseMatches(fullQuery, indexSearcher);
-
-				return searchResultList;
+				var result = mergedResults
+					.Take(MaxResults)
+					.ToList();
+				return result;
 			}
 			catch (ParseException)
 			{
@@ -105,22 +122,23 @@ namespace MvbaCore.Lucene
 			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
 			                                       fieldNames,
 			                                       analyzer);
-			string lowerQueryString = querystring.ToLower();
+			var lowerQueryString = querystring.ToLower();
 
 			parser.SetDefaultOperator(QueryParser.Operator.AND);
 			try
 			{
-				string escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
+				var escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
+				escaped = EscapeLeadingWildcards(escaped);
 				var fullQuery = parser.Parse(escaped);
-				string rewrittenQueryString = fullQuery.ToString();
-				var clauses = rewrittenQueryString.Split(new[] {'+'}, StringSplitOptions.RemoveEmptyEntries);
+				var rewrittenQueryString = fullQuery.ToString();
+				var clauses = rewrittenQueryString.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
 
-				string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
+				var luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 
 				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 				var indexSearcher = new IndexSearcher(fsDirectory, true);
 
-				string descriminatorClause = "";
+				var descriminatorClause = "";
 				if (systemDescriminator != null)
 				{
 					descriminatorClause = clauses.FirstOrDefault(y => y.StartsWith(systemDescriminator.Name + ":")) ?? "";
@@ -136,11 +154,11 @@ namespace MvbaCore.Lucene
 				parser.SetDefaultOperator(QueryParser.Operator.OR);
 
 				var searchResultList = new List<LuceneSearchResult>();
-				foreach (string queryPart in clauses.Except(new[] {descriminatorClause}))
+				foreach (var queryPart in clauses.Except(new[] { descriminatorClause }))
 				{
 					var query = descriminatorClause.Length > 0
-					            	? parser.Parse("+" + queryPart + " +" + descriminatorClause)
-					            	: parser.Parse(queryPart);
+						            ? parser.Parse("+" + queryPart + " +" + descriminatorClause)
+						            : parser.Parse(queryPart);
 					var partialResult = FindClauseMatches(query, indexSearcher);
 					if (!partialResult.Any())
 					{
@@ -150,7 +168,7 @@ namespace MvbaCore.Lucene
 					}
 					searchResultList.AddRange(partialResult);
 				}
-				int expectedMatchingClauses = clauses.Length;
+				var expectedMatchingClauses = clauses.Length;
 				if (descriminatorClause.Length > 0)
 				{
 					expectedMatchingClauses--;
@@ -168,37 +186,94 @@ namespace MvbaCore.Lucene
 			}
 		}
 
-		private IList<LuceneSearchResult> FindClauseMatches(Query fullQuery, Searcher indexSearcher)
+		public static string EscapeLeadingWildcards(string input)
 		{
-			try
+			if (input.Length == 0)
 			{
-				var collector = TopScoreDocCollector.create(MaxHits, false);
-				indexSearcher.Search(fullQuery, collector);
-				var hits = collector.TopDocs();
-				if (hits.totalHits == 0)
+				return input;
+			}
+			var escaped = new StringBuilder();
+
+			var parts = input.Split(new[] { ' ' });
+			if (parts.Length == 1)
+			{
+				return input;
+			}
+			bool gatheringTerm = false;
+			foreach(var part in parts)
+			{
+				escaped.Append(' ');
+				if (gatheringTerm)
 				{
-					return new List<LuceneSearchResult>();
+					if (part.Contains("\""))
+					{
+						gatheringTerm = false;
+					}
+				}
+				else if (part.Contains("\""))
+				{
+					if (part.IndexOf('\"') != part.LastIndexOf('\"'))
+					{
+						gatheringTerm = true;
+					}
 				}
 
-				int count = Math.Min(hits.totalHits, MaxHits);
-				var mergedResults = Enumerable.Range(0, count)
-					.Select(x => indexSearcher.Doc(hits.scoreDocs[x].doc))
-					.GroupBy(x =>
-					         	{
-					         		var field = _fields
-					         			.Where(y => y.IsUniqueKey)
-					         			.Select(y => x.GetField(y.Name))
-					         			.FirstOrDefault(y => y != null);
-					         		return field == null ? "" : field.StringValue();
-					         	})
-					.Where(x => x.Key != "")
-					.OrderByDescending(x => x.Count())
-					.Select(x => new LuceneSearchResult(x.Key, x));
+				if (part.Contains(":"))
+				{
+					if (part.Contains(":*"))
+					{
+						escaped.Append(part.Replace(":*", ":" + LuceneConstants.WildcardEndsWithSearchEnabler + "*"));
+						continue;
+					}
+					if (part.Contains(":\"*"))
+					{
+						escaped.Append(part.Replace(":\"*", ":\""));
+						continue;
+					}
+				}
+				else if (part.StartsWith("\"*"))
+				{
+					escaped.Append(part.Replace("\"*", "\""));
+					continue;
+				}
+				else if (part.StartsWith("*"))
+				{
+					escaped.Append(LuceneConstants.WildcardEndsWithSearchEnabler);
+				}
+				escaped.Append(part);
+			}
 
-				var result = mergedResults
-					.Take(MaxResults)
-					.ToList();
-				return result;
+			return escaped.ToString().TrimStart();
+		}
+
+		public IList<LuceneSearchResult> FindUnion(string querystring)
+		{
+			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
+			var fieldNames = _fields
+				.Where(x => x.IsSearchable)
+				.Where(x => !x.IsSystemDescriminator)
+				.Where(
+					x => querystring.Contains(String.Format("{0}:", x.Name)) || querystring.Contains(String.Format("{0} :", x.Name)))
+				.Select(x => x.Name)
+				.ToArray();
+			var parser = new QueryParser(Version.LUCENE_29,
+			                             fieldNames[0],
+			                             analyzer);
+
+			parser.SetDefaultOperator(QueryParser.Operator.OR);
+			try
+			{
+				var escaped = ReplaceDashesWithSpecialString(querystring.ToLower(), true);
+				escaped = EscapeLeadingWildcards(escaped);
+				var fullQuery = parser.Parse(escaped);
+				var luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
+
+				var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
+				var indexSearcher = new IndexSearcher(fsDirectory, true);
+
+				var searchResultList = FindClauseMatches(fullQuery, indexSearcher);
+
+				return searchResultList;
 			}
 			catch (ParseException)
 			{
@@ -211,7 +286,7 @@ namespace MvbaCore.Lucene
 			const string replacement = @"dash";
 
 			var parts = input.Split(' ');
-			for (int i = 0; i < parts.Length; i++)
+			for (var i = 0; i < parts.Length; i++)
 			{
 				if (parts[i].Length < 2)
 				{

@@ -99,6 +99,7 @@
     <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="Extensions\TExtensionsTests.cs" />
     <Compile Include="Lucene\LuceneIndexerTests.cs" />
+    <Compile Include="Lucene\LuceneSearcherTests.cs" />
     <Compile Include="MergeSorterTests.cs" />
     <Compile Include="NamedConstantTests.cs" />
     <Compile Include="NotificationMessageTests.cs" />

@@ -91,7 +91,7 @@ namespace System.Collections.Generic
 		public static string Join<T>([CanBeNull] this IEnumerable<T> items, [CanBeNull] string delimiter)
 		{
 			var result = new StringBuilder();
-			if (items != null && items.Any())
+			if (items != null)
 			{
 				delimiter = delimiter ?? "";
 				foreach (var item in items)
@@ -99,7 +99,10 @@ namespace System.Collections.Generic
 					result.Append(item);
 					result.Append(delimiter);
 				}
-				result.Length = result.Length - delimiter.Length;
+				if (result.Length > 0)
+				{
+					result.Length -= delimiter.Length;
+				}
 			}
 			return result.ToString();
 		}

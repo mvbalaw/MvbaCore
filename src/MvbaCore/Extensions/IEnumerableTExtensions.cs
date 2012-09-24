@@ -49,6 +49,25 @@ namespace System.Collections.Generic
 			return items;
 		}
 
+		public static IEnumerable<IEnumerable<T>> Group<T>([NotNull] this IEnumerable<T> input, [NotNull] Func<T, T, bool> keepGrouping)
+		{
+			using (var enumerator = input.GetEnumerator())
+			{
+				if (!enumerator.MoveNext())
+				{
+					yield break;
+				}
+
+				bool hasMore;
+				do
+				{
+					var @group = new ContinuingEnumerator<T>(enumerator, keepGrouping, enumerator.Current);
+					yield return @group;
+					hasMore = @group.HasNext;
+				} while (hasMore);
+			}
+		}
+
 		[NotNull]
 		public static IEnumerable<List<T>> InSetsOf<T>([NotNull] this IEnumerable<T> items, int setSize)
 		{
@@ -58,27 +77,22 @@ namespace System.Collections.Generic
 		[NotNull]
 		public static IEnumerable<List<T>> InSetsOf<T>([NotNull] this IEnumerable<T> items, int setSize, bool fillPartialSetWithDefaultItems, T defaultItemToFillGroups)
 		{
-			var set = new List<T>(setSize);
-			foreach (var item in items)
-			{
-				set.Add(item);
-				if (set.Count == setSize)
+			var counter = 0;
+			Func<T, T, bool> keepGoing = (current, previous) =>
 				{
-					yield return set.ToList();
-					set.Clear();
-				}
-			}
-
-			if (set.Count > 0)
-			{
-				if (fillPartialSetWithDefaultItems)
-				{
-					while (set.Count < setSize)
+					if (++counter > setSize)
 					{
-						set.Add(defaultItemToFillGroups);
+						counter = 0;
 					}
+					return counter != 0;
+				};
+			foreach (var list in items.Group(keepGoing).Select(set => set.ToList()))
+			{
+				if (list.Count < setSize && fillPartialSetWithDefaultItems)
+				{
+					list.AddRange(Enumerable.Repeat(defaultItemToFillGroups, setSize - list.Count));
 				}
-				yield return set;
+				yield return list;
 			}
 		}
 
@@ -111,6 +125,45 @@ namespace System.Collections.Generic
 		public static HashSet<T> ToHashSet<T>([NotNull] this IEnumerable<T> items)
 		{
 			return new HashSet<T>(items);
+		}
+	}
+
+	public class ContinuingEnumerator<T> : IEnumerable<T>
+	{
+		private readonly IEnumerator<T> _enumerator;
+		private readonly Func<T, T, bool> _keepGrouping;
+
+		public ContinuingEnumerator(IEnumerator<T> enumerator, Func<T, T, bool> keepGrouping, T current)
+		{
+			Current = current;
+			_enumerator = enumerator;
+			_keepGrouping = keepGrouping;
+		}
+
+		public T Current { get; private set; }
+
+		public bool HasNext { get; private set; }
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			var previous = Current;
+			do
+			{
+				if (_keepGrouping(_enumerator.Current, previous))
+				{
+					previous = _enumerator.Current;
+					yield return _enumerator.Current;
+					continue;
+				}
+				HasNext = true;
+				Current = _enumerator.Current;
+				yield break;
+			} while (_enumerator.MoveNext());
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }

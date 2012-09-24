@@ -8,8 +8,10 @@
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using FluentAssert;
 
@@ -26,9 +28,9 @@ namespace MvbaCoreTests.Extensions
 			public void Should_return_false_if_the_input_contains_items()
 			{
 				IList<int> input = new List<int>
-				{
-					6
-				};
+					{
+						6
+					};
 				input.IsNullOrEmpty().ShouldBeFalse();
 			}
 
@@ -48,6 +50,26 @@ namespace MvbaCoreTests.Extensions
 		}
 
 		[TestFixture]
+		public class When_asked_to_group_a_list
+		{
+			[Test]
+			public void Should_group_by_the_provided_descriminator()
+			{
+				var input = new[] { "a", "b", "b", "b", "c", "c", "d" };
+				var grouped = input.Group((current, previous) => current == previous);
+				var sb = new StringBuilder();
+				foreach (var @group in grouped)
+				{
+					sb.AppendLine(String.Join(", ", @group));
+				}
+				sb.ToString().TrimEnd().ShouldBeEqualTo(@"a
+b, b, b
+c, c
+d");
+			}
+		}
+
+		[TestFixture]
 		public class When_asked_to_join_an_enumerable_list_of_items
 		{
 			[Test]
@@ -56,12 +78,12 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-				{
-					one,
-					item
-				};
+					{
+						one,
+						item
+					};
 				const string delimiter = "','";
-				string expect = one + delimiter + item;
+				var expect = one + delimiter + item;
 
 				Assert.AreEqual(expect, items.Join(delimiter));
 			}
@@ -86,12 +108,12 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-				{
-					one,
-					item
-				};
+					{
+						one,
+						item
+					};
 				const string delimiter = null;
-				string expect = one + "" + item;
+				var expect = one + "" + item;
 
 				Assert.AreEqual(expect, items.Join(delimiter));
 			}

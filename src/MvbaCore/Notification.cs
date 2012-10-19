@@ -16,7 +16,7 @@ using JetBrains.Annotations;
 
 namespace MvbaCore
 {
-	public class Notification<T> : NotificationBase
+	public class Notification<T> : Notification
 	{
 		public Notification()
 		{
@@ -27,16 +27,34 @@ namespace MvbaCore
 		{
 		}
 
-		public static Notification<T> Empty
+		public Notification(Notification notification, T item = default(T))
+		{
+			Item = item;
+			Add(notification);
+		}
+
+		public new static Notification<T> Empty
 		{
 			get { return new Notification<T>(); }
 		}
 
 		public T Item { get; set; }
-		[Obsolete("use Notification<T>.Empty")]
-		public static Notification<T> Null
+
+		public static implicit operator T(Notification<T> notification)
 		{
-			get { return Empty; }
+			if (!notification.IsValid)
+			{
+				throw new ArgumentNullException(string.Format("Cannot implicitly cast Notification<{0}> to {0} when there are errors.", typeof(T).Name));
+			}
+			return notification.Item;
+		}
+
+		public static implicit operator Notification<T>(T item)
+		{
+			return new Notification<T>
+				       {
+					       Item = item
+				       };
 		}
 	}
 
@@ -51,14 +69,24 @@ namespace MvbaCore
 			: this()
 		{
 			Messages = new List<NotificationMessage>
-			{
-				notificationMessage
-			};
+				           {
+					           notificationMessage
+				           };
+		}
+
+		public string Errors
+		{
+			get { return Messages.Where(x => x.Severity != NotificationSeverity.Info).Select(x => x.Message).Join(Environment.NewLine); }
+		}
+
+		public string Infos
+		{
+			get { return Messages.Where(x => x.Severity == NotificationSeverity.Info).Select(x => x.Message).Join(Environment.NewLine); }
 		}
 
 		public bool IsValid
 		{
-			get { return !Messages.Any(x => x.Severity != NotificationSeverity.Info); }
+			get { return Messages.All(x => x.Severity == NotificationSeverity.Info); }
 		}
 
 		[NotNull]
@@ -77,14 +105,6 @@ namespace MvbaCore
 			AddMessage(message);
 		}
 
-		public void Add<K>([NotNull] Notification<K> notification)
-		{
-			foreach (var message in notification.Messages)
-			{
-				AddMessage(message);
-			}
-		}
-
 		private void AddMessage(NotificationMessage message)
 		{
 			if (!(Messages.Any(x => x.Severity == message.Severity && x.Message == message.Message)))
@@ -95,7 +115,7 @@ namespace MvbaCore
 
 		public override string ToString()
 		{
-			return Messages.Where(x => x.Severity != NotificationSeverity.Info).Select(x => x.Message).Join(Environment.NewLine);
+			return Errors;
 		}
 	}
 
@@ -113,11 +133,6 @@ namespace MvbaCore
 		public static Notification Empty
 		{
 			get { return new Notification(); }
-		}
-		[Obsolete("use Notification.Empty")]
-		public static Notification Null
-		{
-			get { return Empty; }
 		}
 
 		[NotNull]
@@ -160,6 +175,20 @@ namespace MvbaCore
 		public static Notification WarningFor([NotNull] string messageFormatString, params object[] messageParameters)
 		{
 			return new Notification(new NotificationMessage(NotificationSeverity.Warning, messageFormatString, messageParameters));
+		}
+	}
+
+	public static class NotificationExtensions
+	{
+		public static Notification<T> ToNotification<T>(this Notification notification)
+		{
+			// becuase we can't implicitly cast up from a base class
+			return new Notification<T>(notification);
+		}
+
+		public static Notification<T> ToNotification<T>(this Notification notification, T item)
+		{
+			return new Notification<T>(notification, item);
 		}
 	}
 }

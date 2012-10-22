@@ -126,7 +126,7 @@ namespace MvbaCoreTests.Extensions
 			private void with_a_NamedConstant_that_does_not_have_a_default_value()
 			{
 				_expected = TestNamedConstantWithoutDefault.GetFor(_key);
-				_getFor = key => NamedConstant<TestNamedConstantWithoutDefault>.GetFor(key);
+				_getFor = NamedConstant<TestNamedConstantWithoutDefault>.GetFor;
 			}
 
 			private void with_a_NamedConstant_that_has_a_default_value()

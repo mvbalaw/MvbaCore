@@ -15,7 +15,9 @@ using System.Reflection;
 
 using JetBrains.Annotations;
 
+// ReSharper disable CheckNamespace
 namespace CodeQuery
+// ReSharper restore CheckNamespace
 {
 	internal static class MemberInfoExtensions
 	{

@@ -17,7 +17,9 @@ using FluentAssert;
 
 using NUnit.Framework;
 
+// ReSharper disable CheckNamespace
 namespace CodeQueryTests
+// ReSharper restore CheckNamespace
 {
 	public class FieldInfoExtensionsTests
 	{
@@ -70,16 +72,16 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_an_empty_container_if_there_are_no_matching_Fields()
 			{
-				var fieldInfos = typeof(TestClass).GetFields().WithAttributeOfType<TestAttribute>();
+				var fieldInfos = typeof(TestClass).GetFields().WithAttributeOfType<TestAttribute>().ToList();
 				fieldInfos.ShouldNotBeNull();
-				fieldInfos.Count().ShouldBeEqualTo(0);
+				fieldInfos.Count.ShouldBeEqualTo(0);
 			}
 
 			[Test]
 			public void Should_get_the_matching_FieldInfos()
 			{
-				var fieldInfos = typeof(TestClass).GetFields().WithAttributeOfType<ReadOnlyAttribute>();
-				fieldInfos.Count().ShouldBeEqualTo(1);
+				var fieldInfos = typeof(TestClass).GetFields().WithAttributeOfType<ReadOnlyAttribute>().ToList();
+				fieldInfos.Count.ShouldBeEqualTo(1);
 				fieldInfos.First().Name.ShouldBeEqualTo("Id");
 			}
 
@@ -105,9 +107,9 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
 			{
-				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<TestAttribute>();
+				var attributes = typeof(TestClass).GetField("Id").CustomAttributesOfType<TestAttribute>().ToList();
 				attributes.ShouldNotBeNull();
-				attributes.Count().ShouldBeEqualTo(0);
+				attributes.Count.ShouldBeEqualTo(0);
 			}
 
 			public class TestClass

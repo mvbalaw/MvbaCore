@@ -55,32 +55,28 @@ namespace MvbaCore
 
 	public class FileSystemService : IFileSystemService
 	{
-		[NotNull]
 		public string GetCurrentWebApplicationPath()
 		{
 			string env = HostingEnvironment.ApplicationPhysicalPath;
 			return env;
 		}
 
-		[NotNull]
-		public DirectoryInfo GetDirectoryInfo([NotNull] string directoryPath)
+		public DirectoryInfo GetDirectoryInfo(string directoryPath)
 		{
 			return new DirectoryInfo(directoryPath);
 		}
 
-		[NotNull]
-		public IEnumerable<string> GetNamesOfFilesInDirectory([NotNull] string directoryPath)
+		public IEnumerable<string> GetNamesOfFilesInDirectory(string directoryPath)
 		{
 			return Directory.GetFiles(directoryPath);
 		}
 
-		public bool DirectoryExists([NotNull] string directoryPath)
+		public bool DirectoryExists(string directoryPath)
 		{
 			return Directory.Exists(directoryPath);
 		}
 
-		[NotNull]
-		public DirectoryInfo CreateDirectory([NotNull] string directoryPath)
+		public DirectoryInfo CreateDirectory(string directoryPath)
 		{
 			if (!Directory.Exists(directoryPath))
 			{
@@ -89,13 +85,12 @@ namespace MvbaCore
 			return new DirectoryInfo(directoryPath);
 		}
 
-		[NotNull]
-		public TextWriter CreateTextFile([NotNull] string filePath)
+		public TextWriter CreateTextFile(string filePath)
 		{
 			return File.CreateText(filePath);
 		}
 
-		public bool FileExists([NotNull] string filePath)
+		public bool FileExists(string filePath)
 		{
 			return File.Exists(filePath);
 		}
@@ -110,8 +105,7 @@ namespace MvbaCore
 			File.WriteAllText(filePath, data);
 		}
 
-		[NotNull]
-		public StreamWriter CreateFile([NotNull] string filePath)
+		public StreamWriter CreateFile(string filePath)
 		{
 			try
 			{
@@ -135,7 +129,7 @@ namespace MvbaCore
 			}
 		}
 
-		public void MoveFile([NotNull] string oldFilePath, [NotNull] string newFilePath)
+		public void MoveFile(string oldFilePath, string newFilePath)
 		{
 			try
 			{
@@ -147,24 +141,22 @@ namespace MvbaCore
 			}
 		}
 
-		public void AppendAllText([NotNull] string filePath, [NotNull] string textToAppend)
+		public void AppendAllText(string filePath, string textToAppend)
 		{
 			File.AppendAllText(filePath, textToAppend);
 		}
 
-		[NotNull]
-		public string[] ReadAllLines([NotNull] string filePath)
+		public string[] ReadAllLines(string filePath)
 		{
 			return File.ReadAllLines(filePath);
 		}
 
-		[NotNull]
-		public string ReadAllText([NotNull] string filePath)
+		public string ReadAllText(string filePath)
 		{
 			return File.ReadAllText(filePath);
 		}
 
-		public bool DeleteFile([NotNull] string filePath)
+		public bool DeleteFile(string filePath)
 		{
 			if (!FileExists(filePath))
 			{
@@ -181,7 +173,7 @@ namespace MvbaCore
 			}
 		}
 
-		public void DeleteDirectoryContents([NotNull] string dirPath)
+		public void DeleteDirectoryContents(string dirPath)
 		{
 			if (!Directory.Exists(dirPath))
 			{
@@ -197,7 +189,7 @@ namespace MvbaCore
 			}
 		}
 
-		public void DeleteDirectoryRecursive([NotNull] string dirPath)
+		public void DeleteDirectoryRecursive(string dirPath)
 		{
 			if (!Directory.Exists(dirPath) || dirPath.Split(Path.DirectorySeparatorChar).Last() == ".svn")
 			{

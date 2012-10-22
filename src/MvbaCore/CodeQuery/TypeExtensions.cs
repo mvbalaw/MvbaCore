@@ -9,7 +9,9 @@
 //  * **************************************************************************
 using System;
 
+// ReSharper disable CheckNamespace
 namespace CodeQuery
+// ReSharper restore CheckNamespace
 {
 	public static class TypeExtensions
 	{

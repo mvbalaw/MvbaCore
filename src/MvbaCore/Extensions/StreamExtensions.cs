@@ -9,7 +9,9 @@
 //  * **************************************************************************
 using System.IO;
 
+// ReSharper disable CheckNamespace
 namespace System
+// ReSharper restore CheckNamespace
 {
 	public static class StreamExtensions
 	{

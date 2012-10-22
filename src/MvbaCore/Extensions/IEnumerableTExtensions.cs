@@ -42,11 +42,15 @@ namespace System.Collections.Generic
 				throw new ArgumentNullException("items", "collection cannot be null");
 			}
 
+// ReSharper disable PossibleMultipleEnumeration
 			foreach (var item in items)
+// ReSharper restore PossibleMultipleEnumeration
 			{
 				action(item);
 			}
+// ReSharper disable PossibleMultipleEnumeration
 			return items;
+// ReSharper restore PossibleMultipleEnumeration
 		}
 
 		public static IEnumerable<IEnumerable<T>> Group<T>([NotNull] this IEnumerable<T> input, [NotNull] Func<T, T, bool> keepGrouping)

@@ -14,6 +14,8 @@ using System.Linq.Expressions;
 
 using FluentAssert;
 
+using JetBrains.Annotations;
+
 using MvbaCore;
 
 using NUnit.Framework;
@@ -22,6 +24,7 @@ using Rhino.Mocks;
 
 namespace MvbaCoreTests
 {
+	[UsedImplicitly]
 	public class ReflectionTests
 	{
 		[TestFixture]
@@ -356,13 +359,17 @@ namespace MvbaCoreTests
 				}
 			}
 
+// ReSharper disable ClassNeverInstantiated.Local
 			private class Bar
+// ReSharper restore ClassNeverInstantiated.Local
 			{
 				public Office Office { get; private set; }
 
 				public static class BoundPropertyNames
 				{
+// ReSharper disable MemberHidesStaticFromOuterClass
 					public static string Office
+// ReSharper restore MemberHidesStaticFromOuterClass
 					{
 						get { return "Office"; }
 					}
@@ -382,7 +389,9 @@ namespace MvbaCoreTests
 				}
 			}
 
+// ReSharper disable ClassNeverInstantiated.Local
 			private class Office
+// ReSharper restore ClassNeverInstantiated.Local
 			{
 				public Address MailingAddress { get; private set; }
 
@@ -395,7 +404,9 @@ namespace MvbaCoreTests
 				}
 			}
 
+// ReSharper disable ClassNeverInstantiated.Global
 			public class TestCalculator
+// ReSharper restore ClassNeverInstantiated.Global
 			{
 				private int _total;
 
@@ -538,7 +549,9 @@ namespace MvbaCoreTests
 					int TheProperty { get; }
 				}
 
+// ReSharper disable ClassNeverInstantiated.Global
 				public class TestObject
+// ReSharper restore ClassNeverInstantiated.Global
 				{
 					public int Id { get; set; }
 				}

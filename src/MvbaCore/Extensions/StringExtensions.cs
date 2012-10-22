@@ -9,7 +9,9 @@
 //  * **************************************************************************
 using JetBrains.Annotations;
 
+// ReSharper disable CheckNamespace
 namespace System
+// ReSharper restore CheckNamespace
 {
 	public static class StringExtensions
 	{

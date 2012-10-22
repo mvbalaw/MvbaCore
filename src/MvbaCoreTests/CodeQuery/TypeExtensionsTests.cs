@@ -17,7 +17,9 @@ using FluentAssert;
 
 using NUnit.Framework;
 
+// ReSharper disable CheckNamespace
 namespace CodeQueryTests
+// ReSharper restore CheckNamespace
 {
 	public class TypeExtensionsTests
 	{

@@ -114,8 +114,8 @@ namespace MvbaCoreTests.Extensions
 			public void Should_fill_empty_spots_in_the_last_set_with_the_default_value_if_fill_is_requested()
 			{
 				var input = "abcdefghijklm".Select(x => x.ToString()).ToList();
-				var result = input.InSetsOf(5, true, "x");
-				result.Count().ShouldBeEqualTo(3);
+				var result = input.InSetsOf(5, true, "x").ToList();
+				result.Count.ShouldBeEqualTo(3);
 				result.First().Count.ShouldBeEqualTo(5);
 				var last = result.Last();
 				last.Count.ShouldBeEqualTo(5);
@@ -126,8 +126,8 @@ namespace MvbaCoreTests.Extensions
 			public void Should_not_fill_the_last_set_if_fill_is_not_requested()
 			{
 				var input = "abcdefghijkm".Select(x => x.ToString()).ToList();
-				var result = input.InSetsOf(5, false, "x");
-				result.Count().ShouldBeEqualTo(3);
+				var result = input.InSetsOf(5, false, "x").ToList();
+				result.Count.ShouldBeEqualTo(3);
 				result.First().Count.ShouldBeEqualTo(5);
 				result.Last().Count.ShouldBeEqualTo(2);
 			}
@@ -136,7 +136,7 @@ namespace MvbaCoreTests.Extensions
 			public void Should_return_the_correct_number_of_sets_if_the_input_contains_a_multiple_of_the_setSize()
 			{
 				var input = "abcdefghij".Select(x => x.ToString()).ToList();
-				var result = input.InSetsOf(5);
+				var result = input.InSetsOf(5).ToList();
 				result.Count().ShouldBeEqualTo(2);
 				result.First().Count.ShouldBeEqualTo(5);
 				result.Last().Count.ShouldBeEqualTo(5);
@@ -146,8 +146,8 @@ namespace MvbaCoreTests.Extensions
 			public void Should_separate_the_input_into_sets_of_size_requested()
 			{
 				var input = "abcdefghijklm".Select(x => x.ToString()).ToList();
-				var result = input.InSetsOf(5);
-				result.Count().ShouldBeEqualTo(3);
+				var result = input.InSetsOf(5).ToList();
+				result.Count.ShouldBeEqualTo(3);
 				result.First().Count.ShouldBeEqualTo(5);
 				result.Last().Count.ShouldBeEqualTo(3);
 			}

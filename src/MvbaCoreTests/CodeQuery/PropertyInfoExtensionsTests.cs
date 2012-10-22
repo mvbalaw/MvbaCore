@@ -18,7 +18,9 @@ using FluentAssert;
 
 using NUnit.Framework;
 
+// ReSharper disable CheckNamespace
 namespace CodeQueryTests
+// ReSharper restore CheckNamespace
 {
 	public class PropertyInfoExtensionsTests
 	{
@@ -52,7 +54,7 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_an_empty_container_if_there_are_no_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(NoGettersTestClass).GetProperties().ThatHaveAGetter();
+				var propertyInfos = typeof(NoGettersTestClass).GetProperties().ThatHaveAGetter().ToList();
 				propertyInfos.ShouldNotBeNull();
 				propertyInfos.Count().ShouldBeEqualTo(0);
 			}
@@ -60,8 +62,8 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_the_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(TestClass).GetProperties().ThatHaveAGetter();
-				propertyInfos.Count().ShouldBeEqualTo(1);
+				var propertyInfos = typeof(TestClass).GetProperties().ThatHaveAGetter().ToList();
+				propertyInfos.Count.ShouldBeEqualTo(1);
 				propertyInfos.First().Name.ShouldBeEqualTo("Id");
 			}
 
@@ -90,16 +92,16 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_an_empty_container_if_there_are_no_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(NoSettersTestClass).GetProperties().ThatHaveASetter();
+				var propertyInfos = typeof(NoSettersTestClass).GetProperties().ThatHaveASetter().ToList();
 				propertyInfos.ShouldNotBeNull();
-				propertyInfos.Count().ShouldBeEqualTo(0);
+				propertyInfos.Count.ShouldBeEqualTo(0);
 			}
 
 			[Test]
 			public void Should_get_the_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(TestClass).GetProperties().ThatHaveASetter();
-				propertyInfos.Count().ShouldBeEqualTo(1);
+				var propertyInfos = typeof(TestClass).GetProperties().ThatHaveASetter().ToList();
+				propertyInfos.Count.ShouldBeEqualTo(1);
 				propertyInfos.First().Name.ShouldBeEqualTo("Id");
 			}
 
@@ -128,7 +130,7 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_an_empty_container_if_there_are_no_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(TestClass).GetProperties().WithAttributeOfType<TestAttribute>();
+				var propertyInfos = typeof(TestClass).GetProperties().WithAttributeOfType<TestAttribute>().ToList();
 				propertyInfos.ShouldNotBeNull();
 				propertyInfos.Count().ShouldBeEqualTo(0);
 			}
@@ -136,8 +138,8 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_the_matching_PropertyInfos()
 			{
-				var propertyInfos = typeof(TestClass).GetProperties().WithAttributeOfType<ReadOnlyAttribute>();
-				propertyInfos.Count().ShouldBeEqualTo(1);
+				var propertyInfos = typeof(TestClass).GetProperties().WithAttributeOfType<ReadOnlyAttribute>().ToList();
+				propertyInfos.Count.ShouldBeEqualTo(1);
 				propertyInfos.First().Name.ShouldBeEqualTo("Id");
 			}
 
@@ -163,9 +165,9 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
 			{
-				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<TestAttribute>();
+				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<TestAttribute>().ToList();
 				attributes.ShouldNotBeNull();
-				attributes.Count().ShouldBeEqualTo(0);
+				attributes.Count.ShouldBeEqualTo(0);
 			}
 
 			public class TestClass
@@ -181,8 +183,8 @@ namespace CodeQueryTests
 			[Test]
 			public void Should_get_the_Attributes()
 			{
-				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributes();
-				attributes.Count().ShouldBeEqualTo(1);
+				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributes().ToList();
+				attributes.Count.ShouldBeEqualTo(1);
 				attributes.First().ShouldBeOfType<ReadOnlyAttribute>();
 			}
 

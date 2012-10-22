@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace MvbaCoreTests
 {
-	public partial class NotificationTest
+	public partial class NotificationTests
 	{
 		[TestFixture]
 		public class When_asked_for_a_Notification_that_has_an_initial_message_with_Severity_of_Info

@@ -27,7 +27,14 @@ namespace MvbaCore
 		{
 		}
 
-		public Notification(Notification notification, T item = default(T))
+		public Notification(Notification notification)
+// ReSharper disable IntroduceOptionalParameters.Global
+			: this(notification, default(T))
+// ReSharper restore IntroduceOptionalParameters.Global
+		{
+		}
+
+		public Notification(Notification notification, T item)
 		{
 			Item = item;
 			Add(notification);
@@ -42,7 +49,7 @@ namespace MvbaCore
 
 		public static implicit operator T(Notification<T> notification)
 		{
-			if (!notification.IsValid)
+			if (notification.HasErrors)
 			{
 				throw new ArgumentNullException(string.Format("Cannot implicitly cast Notification<{0}> to {0} when there are errors.", typeof(T).Name));
 			}
@@ -68,31 +75,42 @@ namespace MvbaCore
 		protected NotificationBase([NotNull] NotificationMessage notificationMessage)
 			: this()
 		{
-			Messages = new List<NotificationMessage>
-				           {
-					           notificationMessage
-				           };
+			AddMessage(notificationMessage);
 		}
 
 		public string Errors
 		{
-			get { return Messages.Where(x => x.Severity != NotificationSeverity.Info).Select(x => x.Message).Join(Environment.NewLine); }
+			get { return !HasErrors ? "" : GetMessages(x => x.Severity == NotificationSeverity.Error); }
 		}
+
+		public string ErrorsAndWarnings
+		{
+			get { return !(HasErrors || HasWarnings) ? "" : GetMessages(x => x.Severity == NotificationSeverity.Error || x.Severity == NotificationSeverity.Warning); }
+		}
+
+// ReSharper disable MemberCanBeProtected.Global
+		public bool HasErrors { get; private set; }
+// ReSharper restore MemberCanBeProtected.Global
+
+		public bool HasWarnings { get; private set; }
 
 		public string Infos
 		{
-			get { return Messages.Where(x => x.Severity == NotificationSeverity.Info).Select(x => x.Message).Join(Environment.NewLine); }
+			get { return GetMessages(x => x.Severity == NotificationSeverity.Info); }
 		}
 
 		public bool IsValid
 		{
-			get { return Messages.All(x => x.Severity == NotificationSeverity.Info); }
+			get { return !(HasErrors || HasWarnings); }
 		}
 
-		[NotNull]
 		public List<NotificationMessage> Messages { get; private set; }
+		public string Warnings
+		{
+			get { return !HasWarnings ? "" : GetMessages(x => x.Severity == NotificationSeverity.Warning); }
+		}
 
-		public void Add([NotNull] Notification notification)
+		public void Add(Notification notification)
 		{
 			foreach (var message in notification.Messages)
 			{
@@ -100,7 +118,7 @@ namespace MvbaCore
 			}
 		}
 
-		public void Add([NotNull] NotificationMessage message)
+		public void Add(NotificationMessage message)
 		{
 			AddMessage(message);
 		}
@@ -109,13 +127,27 @@ namespace MvbaCore
 		{
 			if (!(Messages.Any(x => x.Severity == message.Severity && x.Message == message.Message)))
 			{
+				switch (message.Severity)
+				{
+					case NotificationSeverity.Error:
+						HasErrors = true;
+						break;
+					case NotificationSeverity.Warning:
+						HasWarnings = true;
+						break;
+				}
 				Messages.Add(message);
 			}
 		}
 
+		private string GetMessages(Func<NotificationMessage, bool> predicate)
+		{
+			return Messages.Where(predicate).Select(x => x.Message).Join(Environment.NewLine);
+		}
+
 		public override string ToString()
 		{
-			return Errors;
+			return ErrorsAndWarnings;
 		}
 	}
 
@@ -125,7 +157,9 @@ namespace MvbaCore
 		{
 		}
 
+// ReSharper disable MemberCanBeProtected.Global
 		public Notification(NotificationMessage notificationMessage)
+// ReSharper restore MemberCanBeProtected.Global
 			: base(notificationMessage)
 		{
 		}
@@ -135,46 +169,56 @@ namespace MvbaCore
 			get { return new Notification(); }
 		}
 
-		[NotNull]
-		public static Notification ErrorFor([NotNull] string messageText)
+		public static Notification ErrorFor(string messageText)
 		{
 			return For(NotificationSeverity.Error, messageText);
 		}
 
 		[StringFormatMethod("messageFormatString")]
-		public static Notification ErrorFor([NotNull] string messageFormatString, params object[] messageParameters)
+// ReSharper disable MethodOverloadWithOptionalParameter
+		public static Notification ErrorFor(string messageFormatString, params object[] messageParameters)
+// ReSharper restore MethodOverloadWithOptionalParameter
 		{
-			return new Notification(new NotificationMessage(NotificationSeverity.Error, messageFormatString, messageParameters));
+			return For(NotificationSeverity.Error, messageFormatString, messageParameters);
 		}
 
-		[NotNull]
-		public static Notification For(NotificationSeverity severity, [NotNull] string messageText)
+		public static Notification For(NotificationSeverity severity, string messageText)
 		{
 			return new Notification(new NotificationMessage(severity, messageText));
 		}
 
-		[NotNull]
-		public static Notification InfoFor([NotNull] string messageText)
+		[StringFormatMethod("messageFormatString")]
+// ReSharper disable MethodOverloadWithOptionalParameter
+		private static Notification For(NotificationSeverity severity, string messageFormatString, params object[] messageParameters)
+// ReSharper restore MethodOverloadWithOptionalParameter
+		{
+			return new Notification(new NotificationMessage(severity, messageFormatString, messageParameters));
+		}
+
+		public static Notification InfoFor(string messageText)
 		{
 			return For(NotificationSeverity.Info, messageText);
 		}
 
 		[StringFormatMethod("messageFormatString")]
-		public static Notification InfoFor([NotNull] string messageFormatString, params object[] messageParameters)
+// ReSharper disable MethodOverloadWithOptionalParameter
+		public static Notification InfoFor(string messageFormatString, params object[] messageParameters)
+// ReSharper restore MethodOverloadWithOptionalParameter
 		{
-			return new Notification(new NotificationMessage(NotificationSeverity.Info, messageFormatString, messageParameters));
+			return For(NotificationSeverity.Info, messageFormatString, messageParameters);
 		}
 
-		[NotNull]
-		public static Notification WarningFor([NotNull] string messageText)
+		public static Notification WarningFor(string messageText)
 		{
 			return For(NotificationSeverity.Warning, messageText);
 		}
 
 		[StringFormatMethod("messageFormatString")]
-		public static Notification WarningFor([NotNull] string messageFormatString, params object[] messageParameters)
+// ReSharper disable MethodOverloadWithOptionalParameter
+		public static Notification WarningFor(string messageFormatString, params object[] messageParameters)
+// ReSharper restore MethodOverloadWithOptionalParameter
 		{
-			return new Notification(new NotificationMessage(NotificationSeverity.Warning, messageFormatString, messageParameters));
+			return For(NotificationSeverity.Warning, messageFormatString, messageParameters);
 		}
 	}
 
@@ -182,7 +226,7 @@ namespace MvbaCore
 	{
 		public static Notification<T> ToNotification<T>(this Notification notification)
 		{
-			// becuase we can't implicitly cast up from a base class
+			// because we can't implicitly cast up from a base class
 			return new Notification<T>(notification);
 		}
 

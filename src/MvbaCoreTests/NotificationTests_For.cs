@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 namespace MvbaCoreTests
 {
-	public partial class NotificationTest
+	public partial class NotificationTests
 	{
 		[TestFixture]
 		public class When_asked_For_a_Notification

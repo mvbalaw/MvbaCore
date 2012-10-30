@@ -18,14 +18,13 @@ namespace System.Linq
 {
 	public static class IEnumerableExtensions
 	{
-		[NotNull]
-		public static int Max<T>([NotNull] this IEnumerable<T> items, Func<T, int> selector, int @default)
+		public static int Max<T>([CanBeNull] this IEnumerable<T> items, Func<T, int> selector, int @default)
 		{
-			if (items.IsNullOrEmpty())
+			if (items == null)
 			{
 				return @default;
 			}
-			return items.Max(selector);
+			return items.Select(selector).DefaultIfEmpty(@default).Max();
 		}
 	}
 }

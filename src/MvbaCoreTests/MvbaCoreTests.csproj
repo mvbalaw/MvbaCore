@@ -93,6 +93,7 @@
     <Compile Include="CodeQuery\FieldInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\PropertyInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\TypeExtensionsTests.cs" />
+    <Compile Include="NotificationTests_Messages.cs" />
     <Compile Include="Extensions\IEnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\IEnumerableTExtensionsTests.cs" />
     <Compile Include="Extensions\Int32ExtensionsTests.cs" />

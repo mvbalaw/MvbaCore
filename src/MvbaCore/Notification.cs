@@ -67,9 +67,11 @@ namespace MvbaCore
 
 	public abstract class NotificationBase
 	{
+		private readonly List<NotificationMessage> _messages;
+
 		protected NotificationBase()
 		{
-			Messages = new List<NotificationMessage>();
+			_messages = new List<NotificationMessage>();
 		}
 
 		protected NotificationBase([NotNull] NotificationMessage notificationMessage)
@@ -104,7 +106,10 @@ namespace MvbaCore
 			get { return !(HasErrors || HasWarnings); }
 		}
 
-		public List<NotificationMessage> Messages { get; private set; }
+		public IEnumerable<NotificationMessage> Messages
+		{
+			get { return _messages.ToArray(); }
+		}
 		public string Warnings
 		{
 			get { return !HasWarnings ? "" : GetMessages(x => x.Severity == NotificationSeverity.Warning); }
@@ -136,7 +141,7 @@ namespace MvbaCore
 						HasWarnings = true;
 						break;
 				}
-				Messages.Add(message);
+				_messages.Add(message);
 			}
 		}
 

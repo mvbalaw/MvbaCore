@@ -31,7 +31,7 @@ namespace MvbaCoreTests
 				var destination = new Notification();
 				destination.Add(notification);
 
-				Assert.AreEqual(1, destination.Messages.Count);
+				Assert.AreEqual(1, destination.Messages.Count());
 				Assert.AreEqual(notification, destination.Messages.First());
 			}
 
@@ -46,7 +46,7 @@ namespace MvbaCoreTests
 				destination.Add(new NotificationMessage(NotificationSeverity.Error, "dup"));
 				destination.Add(source);
 
-				Assert.AreEqual(2, destination.Messages.Count);
+				Assert.AreEqual(2, destination.Messages.Count());
 			}
 
 			[Test]
@@ -59,7 +59,7 @@ namespace MvbaCoreTests
 				destination.Add(new NotificationMessage(NotificationSeverity.Error, ""));
 				destination.Add(source);
 
-				Assert.AreEqual(2, destination.Messages.Count);
+				Assert.AreEqual(2, destination.Messages.Count());
 			}
 
 			[Test]
@@ -68,7 +68,7 @@ namespace MvbaCoreTests
 				var source = new Notification();
 				var destination = new Notification();
 				destination.Add(source);
-				Assert.AreEqual(0, destination.Messages.Count);
+				Assert.AreEqual(0, destination.Messages.Count());
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace MvbaCoreTests
 				var notification = new Notification();
 				var messageTest = new NotificationMessage(NotificationSeverity.Warning, "");
 				notification.Add(messageTest);
-				Assert.AreEqual(1, notification.Messages.Count);
+				Assert.AreEqual(1, notification.Messages.Count());
 				Assert.AreEqual(messageTest, notification.Messages.First());
 			}
 
@@ -95,7 +95,7 @@ namespace MvbaCoreTests
 				notification.Add(messageTest);
 				var secondMessage = new NotificationMessage(notificationSeverity, notificationText);
 				notification.Add(secondMessage);
-				Assert.AreEqual(1, notification.Messages.Count);
+				Assert.AreEqual(1, notification.Messages.Count());
 				Assert.AreEqual(messageTest, notification.Messages.First());
 			}
 		}
@@ -113,7 +113,7 @@ namespace MvbaCoreTests
 				var destination = new Notification();
 				destination.Add(notification);
 
-				Assert.AreEqual(1, destination.Messages.Count);
+				Assert.AreEqual(1, destination.Messages.Count());
 				Assert.AreEqual(notification, destination.Messages.First());
 			}
 
@@ -128,7 +128,7 @@ namespace MvbaCoreTests
 				destination.Add(new NotificationMessage(NotificationSeverity.Error, "dup"));
 				destination.Add(source);
 
-				Assert.AreEqual(2, destination.Messages.Count);
+				Assert.AreEqual(2, destination.Messages.Count());
 			}
 
 			[Test]
@@ -141,7 +141,7 @@ namespace MvbaCoreTests
 				destination.Add(new NotificationMessage(NotificationSeverity.Error, ""));
 				destination.Add(source);
 
-				Assert.AreEqual(2, destination.Messages.Count);
+				Assert.AreEqual(2, destination.Messages.Count());
 			}
 
 			[Test]
@@ -150,7 +150,7 @@ namespace MvbaCoreTests
 				var source = new Notification<string>();
 				var destination = new Notification();
 				destination.Add(source);
-				Assert.AreEqual(0, destination.Messages.Count);
+				Assert.AreEqual(0, destination.Messages.Count());
 			}
 		}
 	}

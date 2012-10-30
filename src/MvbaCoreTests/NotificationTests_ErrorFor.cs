@@ -59,14 +59,14 @@ namespace MvbaCoreTests
 				[Test]
 				public void Should_return_a_Notification_with_a_message_that_has_Error_Severity()
 				{
-					_notification.Messages.Count.ShouldBeEqualTo(1);
+					_notification.Messages.Count().ShouldBeEqualTo(1);
 					_notification.Messages.First().Severity.ShouldBeEqualTo(NotificationSeverity.Error);
 				}
 
 				[Test]
 				public void Should_return_a_Notification_with_a_message_that_has_the_given_message_text()
 				{
-					_notification.Messages.Count.ShouldBeEqualTo(1);
+					_notification.Messages.Count().ShouldBeEqualTo(1);
 					_notification.Messages.First().Message.ShouldBeEqualTo(MessageText);
 				}
 			}

@@ -28,7 +28,7 @@ namespace MvbaCoreTests
 			{
 				var notification = Notification.InfoFor("text");
 
-				notification.Messages.Count.ShouldBeEqualTo(1);
+				notification.Messages.Count().ShouldBeEqualTo(1);
 				notification.Messages.First().Severity.ShouldBeEqualTo(NotificationSeverity.Info);
 			}
 
@@ -38,7 +38,7 @@ namespace MvbaCoreTests
 				const string messageText = "text";
 				var notification = Notification.InfoFor(messageText);
 
-				notification.Messages.Count.ShouldBeEqualTo(1);
+				notification.Messages.Count().ShouldBeEqualTo(1);
 				notification.Messages.First().Message.ShouldBeEqualTo(messageText);
 			}
 		}

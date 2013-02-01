@@ -9,6 +9,7 @@
 //  * **************************************************************************
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CodeQuery;
@@ -19,16 +20,36 @@ namespace MvbaCore.Extensions
 {
 	public static class NamedConstantExtensions
 	{
+		private static readonly Dictionary<Type, object> Defaults = new Dictionary<Type, object>();
+		private static readonly HashSet<Type> NoDefaults = new HashSet<Type>();
+
 		[CanBeNull]
 		public static T DefaultValue<T>() where T : NamedConstant<T>
 		{
-			var fields = typeof(T).GetFields().ThatAreStatic();
-			var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
-			if (defaultField == null)
+			var type = typeof(T);
+			if (NoDefaults.Contains(type))
 			{
 				return null;
 			}
-			return (T)defaultField.GetValue(null);
+			object defaultValue;
+			if (!Defaults.TryGetValue(type, out defaultValue))
+			{
+				var fields = type.GetFields().ThatAreStatic();
+				var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
+				if (defaultField == null)
+				{
+					NoDefaults.Add(type);
+					return null;
+				}
+				defaultValue = defaultField.GetValue(null);
+				if (defaultValue == null)
+				{
+					NoDefaults.Add(type);
+					return null;
+				}
+				Defaults.Add(type, defaultValue);
+			}
+			return (T)defaultValue;
 		}
 
 		[NotNull]

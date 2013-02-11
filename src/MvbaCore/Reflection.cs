@@ -442,7 +442,8 @@ namespace MvbaCore
 
 		private static string GetValueAsString(ConstantExpression expression)
 		{
-			return expression.Value.ToString();
+			var value = expression.Value;
+			return value == null ? null : value.ToString();
 		}
 
 		private static string GetValueAsString(MemberExpression expression)

@@ -84,6 +84,7 @@
     <Compile Include="CodeQuery\TypeExtensions.cs" />
     <Compile Include="DefaultKeyAttribute.cs" />
     <Compile Include="EnvironmentException.cs" />
+    <Compile Include="Extensions\CharExtensions.cs" />
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
-namespace MvbaCore
+namespace MvbaCore.Collections
 {
 	public class LruCache<TKey, TValue>
 		where TValue : class

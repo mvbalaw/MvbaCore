@@ -93,7 +93,17 @@
     <Compile Include="CodeQuery\FieldInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\PropertyInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\TypeExtensionsTests.cs" />
+    <Compile Include="Collections\CollectionSynchronizerTests.cs" />
+    <Compile Include="Collections\PersistentListTests.cs" />
     <Compile Include="Extensions\CharExtensionsTests.cs" />
+    <Compile Include="Extensions\DateTimeExtensionsTests.cs" />
+    <Compile Include="Extensions\ICollectionExtensionTests.cs" />
+    <Compile Include="Extensions\IEnumerableCharExtensionsTests.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\ListExtensionsTests.cs" />
+    <Compile Include="FileSystem\DelimitedDataConverterTests.cs" />
+    <Compile Include="FileSystem\PipeDelimitedDataConverterTests.cs" />
+    <Compile Include="FileSystem\QuotedCommaDelimitedDataConverterTests.cs" />
     <Compile Include="NotificationTests_Messages.cs" />
     <Compile Include="Extensions\IEnumerableExtensionsTest.cs" />
     <Compile Include="Extensions\IEnumerableTExtensionsTests.cs" />
@@ -114,6 +124,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\StringExtensionsTests.cs" />
     <Compile Include="ReflectionTests.cs" />
+    <Compile Include="Services\SystemServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MvbaCore\MvbaCore.csproj">

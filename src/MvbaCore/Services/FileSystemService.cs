@@ -7,7 +7,7 @@ using System.Web.Hosting;
 
 using JetBrains.Annotations;
 
-namespace MvbaCore
+namespace MvbaCore.Services
 {
 	public interface IFileSystemService
 	{

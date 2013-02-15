@@ -63,10 +63,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Lucene\Lucene.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\lib\Json.net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -78,21 +83,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationConfiguration\ApplicationConfigurationSettingProvider.cs" />
+    <Compile Include="Collections\CachedEnumerable.cs" />
     <Compile Include="CodeQuery\FieldInfoExtensions.cs" />
     <Compile Include="CodeQuery\MemberInfoExtensions.cs" />
     <Compile Include="CodeQuery\PropertyInfoExtensions.cs" />
     <Compile Include="CodeQuery\TypeExtensions.cs" />
+    <Compile Include="Collections\CollectionSynchronizer.cs" />
+    <Compile Include="Collections\PersistentList.cs" />
+    <Compile Include="Collections\ReadOnlyList.cs" />
+    <Compile Include="Comparers\FuncComparer.cs" />
+    <Compile Include="Comparers\OrdinalComparer.cs" />
     <Compile Include="DefaultKeyAttribute.cs" />
     <Compile Include="EnvironmentException.cs" />
+    <Compile Include="Extensions\ArrayListExtensions.cs" />
     <Compile Include="Extensions\CharExtensions.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\ICollectionExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableCharExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\IEnumerableTExtensions.cs" />
     <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="Extensions\NamedConstantExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
-    <Compile Include="FileSystemService.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Services\FileSystemService.cs" />
+    <Compile Include="FileSystem\CommaDelimitedDataConverter.cs" />
+    <Compile Include="FileSystem\DelimitedDataConverter.cs" />
+    <Compile Include="FileSystem\FileWatcher.cs" />
+    <Compile Include="FileSystem\InfiniteLifetimeFileStream.cs" />
+    <Compile Include="FileSystem\PipeDelimitedDataConverter.cs" />
+    <Compile Include="FileSystem\QuotedCommaDelimitedDataConverter.cs" />
     <Compile Include="INamedConstant.cs" />
-    <Compile Include="LruCache.cs" />
+    <Compile Include="Json\HandlePrivateSettersDefaultContractResolver.cs" />
+    <Compile Include="Json\JsonUtility.cs" />
+    <Compile Include="Json\JsonWebServiceClient.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Collections\LruCache.cs" />
     <Compile Include="Lucene\IEntityIndexUpdater.cs" />
     <Compile Include="Lucene\ILuceneFileSystem.cs" />
     <Compile Include="Lucene\ILuceneIndexedField.cs" />
@@ -102,6 +130,7 @@
     <Compile Include="Lucene\LuceneSearchResult.cs" />
     <Compile Include="Lucene\LuceneWriter.cs" />
     <Compile Include="MergeSorter.cs" />
+    <Compile Include="Messaging\MessageWatcher.cs" />
     <Compile Include="MethodCallData.cs" />
     <Compile Include="NamedConstant.cs" />
     <Compile Include="Notification.cs" />
@@ -111,6 +140,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="PropertyMappingInfo.cs" />
     <Compile Include="Reflection.cs" />
+    <Compile Include="Services\SystemService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -129,6 +159,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,3 +1,13 @@
+//   * **************************************************************************
+//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//   * This source code is subject to terms and conditions of the MIT License.
+//   * A copy of the license can be found in the License.txt file
+//   * at the root of this distribution.
+//   * By using this source code in any fashion, you are agreeing to be bound by
+//   * the terms of the MIT License.
+//   * You must not remove this notice from this software.
+//   * **************************************************************************
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +21,134 @@ namespace MvbaCoreTests.Extensions
 {
 	public class IEnumerableTExtensionsTest
 	{
+		public interface ITestItem
+		{
+			int KeyId { get; set; }
+			string Name { get; set; }
+		}
+
+		public class OtherItem : ITestItem
+		{
+			public int KeyId { get; set; }
+			public string Name { get; set; }
+		}
+
+		public abstract class SelectWhereNotInOtherTestBase<ListAType, ListBType>
+			where ListAType : ITestItem, new()
+			where ListBType : ITestItem, new()
+		{
+			public abstract IEnumerable<ListAType> CallExtension(IEnumerable<ListAType> listA, IEnumerable<ListBType> listB);
+
+			[Test]
+			public void Should_return_empty_if_the_list_being_selected_from_is_empty()
+			{
+				var listA = new List<ListAType>();
+				var listB = new List<ListBType>
+					            {
+						            new ListBType()
+					            };
+
+				var result = CallExtension(listA, listB);
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Any());
+			}
+
+			[Test]
+			public void Should_return_only_the_items_in_list_being_selected_from_that_are_not_in_the_other_list()
+			{
+				var itemA1 = new ListAType
+					             {
+						             KeyId = 1,
+						             Name = "A"
+					             };
+				var itemA2 = new ListAType
+					             {
+						             KeyId = 2,
+						             Name = "A & B"
+					             };
+				var itemA3 = new ListAType
+					             {
+						             KeyId = 3,
+						             Name = "A & B"
+					             };
+				var itemB2 = new ListBType
+					             {
+						             KeyId = 2,
+						             Name = "A & B"
+					             };
+				var itemB3 = new ListBType
+					             {
+						             KeyId = 3,
+						             Name = "A & B"
+					             };
+				var itemB4 = new ListBType
+					             {
+						             KeyId = 4,
+						             Name = "B"
+					             };
+				var listA = new List<ListAType>
+					            {
+						            itemA1,
+						            itemA2,
+						            itemA3
+					            };
+				var listB = new List<ListBType>
+					            {
+						            itemB2,
+						            itemB3,
+						            itemB4
+					            };
+
+				var result = CallExtension(listA, listB).ToList();
+				Assert.IsNotNull(result);
+				Assert.IsTrue(result.Any());
+				Assert.IsTrue(result.All(item => item.Name == "A"));
+			}
+
+			[Test]
+			public void Should_return_the_list_being_selected_from_if_the_other_list_is_empty()
+			{
+				var listA = new List<ListAType>
+					            {
+						            new ListAType()
+					            };
+				var listB = new List<ListBType>();
+
+				var result = CallExtension(listA, listB);
+				Assert.IsNotNull(result);
+				Assert.IsTrue(result.Any());
+			}
+
+			[Test]
+			public void Should_return_the_list_being_selected_from_if_the_other_list_is_null()
+			{
+				var listA = new List<ListAType>
+					            {
+						            new ListAType()
+					            };
+				const List<ListBType> listB = null;
+
+				var result = CallExtension(listA, listB);
+				Assert.IsNotNull(result);
+				Assert.IsTrue(result.Any());
+			}
+
+			[Test]
+			public void Should_throw_an_exception_if_the_list_being_selected_from_is_null()
+			{
+				const List<ListAType> listA = null;
+				var listB = new List<ListBType>();
+
+				Assert.Throws<ArgumentNullException>(() => CallExtension(listA, listB));
+			}
+		}
+
+		public class TestItem : ITestItem
+		{
+			public int KeyId { get; set; }
+			public string Name { get; set; }
+		}
+
 		[TestFixture]
 		public class When_asked_if_an_IEnumerable_T_IsNullOrEmpty
 		{
@@ -18,9 +156,9 @@ namespace MvbaCoreTests.Extensions
 			public void Should_return_false_if_the_input_contains_items()
 			{
 				IList<int> input = new List<int>
-					{
-						6
-					};
+					                   {
+						                   6
+					                   };
 				input.IsNullOrEmpty().ShouldBeFalse();
 			}
 
@@ -36,6 +174,393 @@ namespace MvbaCoreTests.Extensions
 			{
 				const IList<int> input = null;
 				input.IsNullOrEmpty().ShouldBeTrue();
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_SelectWhereInOther
+		{
+			[Test]
+			public void Should_return_empty_if_the_list_being_selected_from_is_empty()
+			{
+				var itemA = new List<TestItem>();
+				var itemB = new List<TestItem>
+					            {
+						            new TestItem()
+					            };
+
+				var result = itemA.Intersect(itemB, a => a.KeyId);
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Any());
+			}
+
+			[Test]
+			public void Should_return_empty_if_the_other_list_is_empty()
+			{
+				var itemA = new List<TestItem>
+					            {
+						            new TestItem()
+					            };
+				var itemB = new List<TestItem>();
+
+				var result = itemA.Intersect(itemB, a => a.KeyId);
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Any());
+			}
+
+			[Test]
+			public void Should_return_empty_if_the_other_list_is_null()
+			{
+				var itemA = new List<TestItem>
+					            {
+						            new TestItem()
+					            };
+				const List<TestItem> itemB = null;
+
+				var result = itemA.Intersect(itemB, a => a.KeyId);
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Any());
+			}
+
+			[Test]
+			public void Should_return_only_the_items_in_list_being_selected_from_that_are_also_in_the_other_list()
+			{
+				var item1 = new TestItem
+					            {
+						            KeyId = 1,
+						            Name = "A"
+					            };
+				var item2 = new TestItem
+					            {
+						            KeyId = 2,
+						            Name = "A & B"
+					            };
+				var item3 = new TestItem
+					            {
+						            KeyId = 3,
+						            Name = "A & B"
+					            };
+				var item4 = new TestItem
+					            {
+						            KeyId = 4,
+						            Name = "B"
+					            };
+				var itemA = new List<TestItem>
+					            {
+						            item1,
+						            item2,
+						            item3
+					            };
+				var itemB = new List<TestItem>
+					            {
+						            item2,
+						            item3,
+						            item4
+					            };
+
+				var result = itemA.Intersect(itemB, a => a.KeyId).ToList();
+				Assert.IsNotNull(result);
+				Assert.IsTrue(result.Any());
+				Assert.IsTrue(result.All(item => item.Name == "A & B"));
+			}
+
+			[Test]
+			public void Should_throw_an_exception_if_the_list_being_selected_from_is_null()
+			{
+				const List<TestItem> itemA = null;
+				var itemB = new List<TestItem>();
+				Assert.Throws<ArgumentNullException>(() => itemA.Intersect(itemB, a => a.KeyId));
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_SelectWhereNotInOther_where_T_is_class : SelectWhereNotInOtherTestBase<TestItem, TestItem>
+		{
+			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
+			{
+				return listA.Except(listB, a => a.KeyId);
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_SelectWhereNotInOther_where_lists_contain_different_types :
+			SelectWhereNotInOtherTestBase<TestItem, OtherItem>
+		{
+			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<OtherItem> listB)
+			{
+				return listA.Except(listB, a => a.KeyId, b => b.KeyId, b => b == null);
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_SelectWhereNotInOther_where_lists_contain_the_same_type :
+			SelectWhereNotInOtherTestBase<TestItem, TestItem>
+		{
+			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
+			{
+				return listA.Except(listB, a => a.KeyId, a => a == null);
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_convert_an_enumerable_list_of_items_to_page_sets
+		{
+			private int _firstPageSize;
+			private List<int> _listOfItems;
+			private int _nthPageSize;
+
+			[SetUp]
+			public void SetUp()
+			{
+				_listOfItems = new List<int>();
+				_firstPageSize = 3;
+				_nthPageSize = 5;
+			}
+
+			[Test]
+			public void Should_return_a_set_of_pages()
+			{
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.ShouldNotBeNull();
+			}
+
+			[Test]
+			public void Should_return_an_empty_set_of_pages_when_the_list_is_null()
+			{
+				_listOfItems = null;
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.ShouldNotBeNull();
+			}
+
+			[Test]
+			public void Should_return_multiple_pages_when_the_list_is_longer_than_the__firstPageSize()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2,
+						               3,
+						               4,
+						               5,
+						               6,
+						               7,
+						               8,
+						               9
+					               };
+
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.Count().ShouldBeGreaterThan(1);
+			}
+
+			[Test]
+			public void Should_return_multiple_pages_with_the_last_page_size_equal_to___nthPageSize()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2,
+						               3,
+						               4,
+						               5,
+						               6,
+						               7,
+						               8
+					               };
+
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				var last = pageSets.Last().ToList();
+				last.Count.ShouldBeEqualTo(_nthPageSize);
+				last[0].ShouldBeEqualTo(_listOfItems[3]);
+				last[1].ShouldBeEqualTo(_listOfItems[4]);
+				last[2].ShouldBeEqualTo(_listOfItems[5]);
+				last[3].ShouldBeEqualTo(_listOfItems[6]);
+				last[4].ShouldBeEqualTo(_listOfItems[7]);
+			}
+
+			[Test]
+			public void Should_return_multiple_pages_with_the_last_page_size_equal_to_the_remaining_elements_in_the_list()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2,
+						               3,
+						               4,
+						               5,
+						               6,
+						               7,
+						               8,
+						               9,
+						               10
+					               };
+
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.Last().Count().ShouldBeEqualTo(_listOfItems.Count() - (_firstPageSize + _nthPageSize));
+			}
+
+			[Test]
+			public void Should_return_multiple_pages_with_the_pages_other_than_first_and_last_page_equal_to__nthPageSize()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2,
+						               3,
+						               4,
+						               5,
+						               6,
+						               7,
+						               8,
+						               9,
+						               10
+					               };
+
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.Skip(1).First().Count().ShouldBeEqualTo(_nthPageSize);
+			}
+
+			[Test]
+			public void Should_return_one_page_if_the_length_of_the_list_is_equal_to__firstPageSize()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2,
+						               3
+					               };
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize).ToList();
+				pageSets.First().Count.ShouldBeEqualTo(_firstPageSize);
+				var first = pageSets.First().ToList();
+				first.Count.ShouldBeEqualTo(_firstPageSize);
+				first[0].ShouldBeEqualTo(_listOfItems[0]);
+				first[1].ShouldBeEqualTo(_listOfItems[1]);
+				first[2].ShouldBeEqualTo(_listOfItems[2]);
+			}
+
+			[Test]
+			public void Should_return_one_page_if_the_length_of_the_list_is_less_than__firstPageSize()
+			{
+				_listOfItems = new List<int>
+					               {
+						               1,
+						               2
+					               };
+				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
+				pageSets.First().Count.ShouldBeEqualTo(_listOfItems.Count());
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_flatten_ranges
+		{
+			private List<Range<string>> _ranges;
+			private List<KeyValuePair<int, string>> _result;
+
+			[Test]
+			public void Given_a_list_with_1_range_having_end_equal_to_start_plus_1_should_return_2_results()
+			{
+				Test.Verify(
+					with_a_list_of_ranges,
+					that_has_one_range,
+					having_end_equal_to_start_plus_1,
+					when_asked_to_flatten,
+					should_return_2_result,
+					first_result_should_have_key_equal_to_range_start,
+					last_result_should_have_key_equal_to_range_end,
+					all_results_should_have_value_equal_to_range_payload
+					);
+			}
+
+			[Test]
+			public void Given_a_list_with_1_range_having_end_equal_to_start_should_return_1_result()
+			{
+				Test.Verify(
+					with_a_list_of_ranges,
+					that_has_one_range,
+					having_end_equal_to_start,
+					when_asked_to_flatten,
+					should_return_1_result,
+					first_result_should_have_key_equal_to_range_start,
+					all_results_should_have_value_equal_to_range_payload
+					);
+			}
+
+			[Test]
+			public void Given_an_empty_list_of_ranges_should_return_empty_result()
+			{
+				Test.Verify(
+					with_a_list_of_ranges,
+					that_is_empty,
+					when_asked_to_flatten,
+					should_return_empty_result
+					);
+			}
+
+			private void all_results_should_have_value_equal_to_range_payload()
+			{
+				_result.All(x => x.Value == _ranges.Last().Payload).ShouldBeTrue();
+			}
+
+			private void first_result_should_have_key_equal_to_range_start()
+			{
+				_result.First().Key.ShouldBeEqualTo(_ranges.Last().Start);
+			}
+
+			private void having_end_equal_to_start()
+			{
+				var range = _ranges.Last();
+				range.Start = 23;
+				range.End = range.Start;
+			}
+
+			private void having_end_equal_to_start_plus_1()
+			{
+				var range = _ranges.First();
+				range.Start = 42;
+				range.End = range.Start + 1;
+			}
+
+			private void last_result_should_have_key_equal_to_range_end()
+			{
+				_result.Last().Key.ShouldBeEqualTo(_ranges.First().End);
+			}
+
+			private void should_return_1_result()
+			{
+				_result.Count.ShouldBeEqualTo(1);
+			}
+
+			private void should_return_2_result()
+			{
+				_result.Count.ShouldBeEqualTo(2);
+			}
+
+			private void should_return_empty_result()
+			{
+				_result.ShouldBeEmpty();
+			}
+
+			private void that_has_one_range()
+			{
+				_ranges.Add(new Range<string>
+					            {
+						            Payload = _ranges.Count.ToString()
+					            });
+			}
+
+			private void that_is_empty()
+			{
+				_ranges.Clear();
+			}
+
+			private void when_asked_to_flatten()
+			{
+				_result = _ranges.FlattenRanges().ToList();
+			}
+
+			private void with_a_list_of_ranges()
+			{
+				_ranges = new List<Range<string>>();
 			}
 		}
 
@@ -66,10 +591,10 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					{
-						one,
-						item
-					};
+					            {
+						            one,
+						            item
+					            };
 				const string delimiter = "','";
 				var expect = one + delimiter + item;
 
@@ -96,10 +621,10 @@ namespace MvbaCoreTests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					{
-						one,
-						item
-					};
+					            {
+						            one,
+						            item
+					            };
 				const string delimiter = null;
 				var expect = one + "" + item;
 

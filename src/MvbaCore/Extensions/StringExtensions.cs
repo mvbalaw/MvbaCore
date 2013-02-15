@@ -227,6 +227,12 @@ namespace System
 			return !oldValue.IsNullOrEmpty() ? input.Replace(oldValue, newValue) : input;
 		}
 
+		public static int? SafeParseInt32(this string input)
+		{
+			int value;
+			return !Int32.TryParse(input, out value) ? (int?)null : value;
+		}
+
 		public static string TabsToNbsp([CanBeNull] this string input)
 		{
 			if (input == null)

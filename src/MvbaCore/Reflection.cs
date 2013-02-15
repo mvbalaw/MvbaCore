@@ -20,6 +20,8 @@ using CodeQuery;
 
 using FastReflection;
 
+using MvbaCore.Collections;
+
 namespace MvbaCore
 {
 	public static class Reflection

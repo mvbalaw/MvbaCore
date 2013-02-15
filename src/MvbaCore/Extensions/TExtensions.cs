@@ -7,7 +7,13 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+
+using System.IO;
+
 using JetBrains.Annotations;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 // ReSharper disable CheckNamespace
 namespace System
@@ -30,5 +36,44 @@ namespace System
 			}
 			return desiredType;
 		}
+
+		[NotNull]
+		public static Stream SearializeToJsonStream<T>(this T itemToSerialize)
+		{
+			var stream = new MemoryStream();
+			var writer = new StreamWriter(stream);
+			SerializeToJson(itemToSerialize, writer);
+			stream.Position = 0;
+			return stream;
+		}
+
+		public static void SerializeToJson<T>(this T itemToSerialize, StreamWriter streamWriter, IContractResolver contractResolver = null)
+		{
+			var jsonWriter = new JsonTextWriter(streamWriter)
+			{
+				Formatting = Formatting.Indented
+			};
+			var serializer = new JsonSerializer
+			{
+				NullValueHandling = NullValueHandling.Ignore,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.All
+			};
+			if (contractResolver != null)
+			{
+				serializer.ContractResolver = contractResolver;
+			}
+			serializer.Serialize(jsonWriter, itemToSerialize);
+			jsonWriter.Flush();
+		}
+
+		public static void SerializeToJsonFile<T>(this T itemToSerialize, string filePath)
+		{
+			using (var streamWriter = new StreamWriter(filePath))
+			{
+				SerializeToJson(itemToSerialize, streamWriter);
+			}
+		}
+
 	}
 }

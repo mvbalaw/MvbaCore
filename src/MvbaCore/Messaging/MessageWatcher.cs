@@ -168,8 +168,7 @@ namespace MvbaCore.Messaging
 				{
 					var files = _fileSystemService
 						.GetDirectoryInfo(_messageDir)
-						.GetFiles("*" + Constants.MessageHeaderFileExtension)
-						.OrderBy(x => x.LastWriteTime);
+						.GetFiles("*" + Constants.MessageHeaderFileExtension);
 					var currentMessages = _messages.Select(x => x.File).ToHashSet();
 					var messages = new List<MessageWrapper>();
 					foreach (var file in files.Where(x => !currentMessages.Contains(x.FullName)))
@@ -407,32 +406,35 @@ namespace MvbaCore.Messaging
 			{
 				LoadMessages();
 
+				var stopwatch = new Stopwatch();
+				stopwatch.Start();
+
 				var messageWrapper = _messages.FirstOrDefault(x => !x.Processed);
 				if (messageWrapper != null)
 				{
-					Logger.Log(NotificationSeverity.Info, "=> Processing " + Path.GetFileName(messageWrapper.File));
-
-					ProcessMessage(messageWrapper);
-
-					if (!_running)
+					do
 					{
-						break;
-					}
+						Logger.Log(NotificationSeverity.Info, "=> Processing " + Path.GetFileName(messageWrapper.File));
 
-					if (_messages.Count > 0)
-					{
-						continue;
-					}
+						ProcessMessage(messageWrapper);
 
-					foreach (var messageHandler in _messageHandlers)
+						messageWrapper = _messages.FirstOrDefault(x => !x.Processed);
+					} while (_running && messageWrapper != null && stopwatch.Elapsed.TotalSeconds < 10);
+
+					if (!_running || messageWrapper == null)
 					{
-						messageHandler.Quiesce();
+						foreach (var messageHandler in _messageHandlers)
+						{
+							messageHandler.Quiesce();
+						}
 					}
 				}
-
-				if (_running)
+				else
 				{
-					Thread.Sleep(_sleepTimeout);
+					if (_running)
+					{
+						Thread.Sleep(_sleepTimeout);
+					}
 				}
 			}
 		}

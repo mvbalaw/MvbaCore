@@ -15,6 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 using MvbaCore.Json;
 using MvbaCore.Logging;
 using MvbaCore.Services;
@@ -34,6 +36,7 @@ namespace MvbaCore.Messaging
 		void Quiesce();
 	}
 
+	[UsedImplicitly]
 	public class MessageRequest
 	{
 		public string CreatedBy { get; set; }
@@ -88,7 +91,7 @@ namespace MvbaCore.Messaging
 			_fileSystemService = fileSystemService;
 			_processMessage = processMessage;
 			_messageHandlers = messageHandlers;
-			_sleepTimeout = new TimeSpan(0, 0, 0, 0, 100);
+			_sleepTimeout = new TimeSpan(0, 0, 0, 2);
 			_timer = new Stopwatch();
 			_timer.Start();
 			_errorMessageDirectory = Path.Combine(_messageDir, _errorMessageDirectory);
@@ -419,9 +422,13 @@ namespace MvbaCore.Messaging
 						ProcessMessage(messageWrapper);
 
 						messageWrapper = _messages.FirstOrDefault(x => !x.Processed);
+//// ReSharper disable ConditionIsAlwaysTrueOrFalse
 					} while (_running && messageWrapper != null && stopwatch.Elapsed.TotalSeconds < 10);
+//// ReSharper restore ConditionIsAlwaysTrueOrFalse
 
+//// ReSharper disable ConditionIsAlwaysTrueOrFalse
 					if (!_running || messageWrapper == null)
+//// ReSharper restore ConditionIsAlwaysTrueOrFalse
 					{
 						foreach (var messageHandler in _messageHandlers)
 						{
@@ -431,7 +438,9 @@ namespace MvbaCore.Messaging
 				}
 				else
 				{
+//// ReSharper disable ConditionIsAlwaysTrueOrFalse
 					if (_running)
+//// ReSharper restore ConditionIsAlwaysTrueOrFalse
 					{
 						Thread.Sleep(_sleepTimeout);
 					}

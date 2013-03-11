@@ -41,6 +41,7 @@ namespace MvbaCore.Services
 		IEnumerable<string> GetNamesOfFilesInDirectory([NotNull] string directoryPath);
 
 		void MoveFile([NotNull] string oldFilePath, [NotNull] string newfilePath);
+		Stream OpenRead(String filePath);
 
 		[NotNull]
 		string[] ReadAllLines([NotNull] string filePath);
@@ -57,7 +58,7 @@ namespace MvbaCore.Services
 	{
 		public string GetCurrentWebApplicationPath()
 		{
-			string env = HostingEnvironment.ApplicationPhysicalPath;
+			var env = HostingEnvironment.ApplicationPhysicalPath;
 			return env;
 		}
 
@@ -179,11 +180,11 @@ namespace MvbaCore.Services
 			{
 				return;
 			}
-			foreach (string directory in Directory.GetDirectories(dirPath))
+			foreach (var directory in Directory.GetDirectories(dirPath))
 			{
 				DeleteDirectoryRecursive(directory);
 			}
-			foreach (string file in Directory.GetFiles(dirPath))
+			foreach (var file in Directory.GetFiles(dirPath))
 			{
 				File.Delete(file);
 			}
@@ -204,6 +205,11 @@ namespace MvbaCore.Services
 		public string[] GetFiles(string filePath, string searchPattern)
 		{
 			return Directory.GetFiles(filePath, searchPattern);
+		}
+
+		public Stream OpenRead(String filePath)
+		{
+			return File.OpenRead(filePath);
 		}
 	}
 }

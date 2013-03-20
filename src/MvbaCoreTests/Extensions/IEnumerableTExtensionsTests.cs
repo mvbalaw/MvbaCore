@@ -15,10 +15,13 @@ using System.Text;
 
 using FluentAssert;
 
+using JetBrains.Annotations;
+
 using NUnit.Framework;
 
 namespace MvbaCoreTests.Extensions
 {
+	[UsedImplicitly]
 	public class IEnumerableTExtensionsTest
 	{
 		public interface ITestItem
@@ -33,19 +36,19 @@ namespace MvbaCoreTests.Extensions
 			public string Name { get; set; }
 		}
 
-		public abstract class SelectWhereNotInOtherTestBase<ListAType, ListBType>
-			where ListAType : ITestItem, new()
-			where ListBType : ITestItem, new()
+		public abstract class SelectWhereNotInOtherTestBase<TListAType, TListBType>
+			where TListAType : ITestItem, new()
+			where TListBType : ITestItem, new()
 		{
-			public abstract IEnumerable<ListAType> CallExtension(IEnumerable<ListAType> listA, IEnumerable<ListBType> listB);
+			public abstract IEnumerable<TListAType> CallExtension(IEnumerable<TListAType> listA, IEnumerable<TListBType> listB);
 
 			[Test]
 			public void Should_return_empty_if_the_list_being_selected_from_is_empty()
 			{
-				var listA = new List<ListAType>();
-				var listB = new List<ListBType>
+				var listA = new List<TListAType>();
+				var listB = new List<TListBType>
 					            {
-						            new ListBType()
+						            new TListBType()
 					            };
 
 				var result = CallExtension(listA, listB);
@@ -56,43 +59,43 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Should_return_only_the_items_in_list_being_selected_from_that_are_not_in_the_other_list()
 			{
-				var itemA1 = new ListAType
+				var itemA1 = new TListAType
 					             {
 						             KeyId = 1,
 						             Name = "A"
 					             };
-				var itemA2 = new ListAType
+				var itemA2 = new TListAType
 					             {
 						             KeyId = 2,
 						             Name = "A & B"
 					             };
-				var itemA3 = new ListAType
+				var itemA3 = new TListAType
 					             {
 						             KeyId = 3,
 						             Name = "A & B"
 					             };
-				var itemB2 = new ListBType
+				var itemB2 = new TListBType
 					             {
 						             KeyId = 2,
 						             Name = "A & B"
 					             };
-				var itemB3 = new ListBType
+				var itemB3 = new TListBType
 					             {
 						             KeyId = 3,
 						             Name = "A & B"
 					             };
-				var itemB4 = new ListBType
+				var itemB4 = new TListBType
 					             {
 						             KeyId = 4,
 						             Name = "B"
 					             };
-				var listA = new List<ListAType>
+				var listA = new List<TListAType>
 					            {
 						            itemA1,
 						            itemA2,
 						            itemA3
 					            };
-				var listB = new List<ListBType>
+				var listB = new List<TListBType>
 					            {
 						            itemB2,
 						            itemB3,
@@ -108,11 +111,11 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Should_return_the_list_being_selected_from_if_the_other_list_is_empty()
 			{
-				var listA = new List<ListAType>
+				var listA = new List<TListAType>
 					            {
-						            new ListAType()
+						            new TListAType()
 					            };
-				var listB = new List<ListBType>();
+				var listB = new List<TListBType>();
 
 				var result = CallExtension(listA, listB);
 				Assert.IsNotNull(result);
@@ -122,11 +125,11 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Should_return_the_list_being_selected_from_if_the_other_list_is_null()
 			{
-				var listA = new List<ListAType>
+				var listA = new List<TListAType>
 					            {
-						            new ListAType()
+						            new TListAType()
 					            };
-				const List<ListBType> listB = null;
+				const List<TListBType> listB = null;
 
 				var result = CallExtension(listA, listB);
 				Assert.IsNotNull(result);
@@ -136,8 +139,8 @@ namespace MvbaCoreTests.Extensions
 			[Test]
 			public void Should_throw_an_exception_if_the_list_being_selected_from_is_null()
 			{
-				const List<ListAType> listA = null;
-				var listB = new List<ListBType>();
+				const List<TListAType> listA = null;
+				var listB = new List<TListBType>();
 
 				Assert.Throws<ArgumentNullException>(() => CallExtension(listA, listB));
 			}
@@ -568,7 +571,7 @@ namespace MvbaCoreTests.Extensions
 		public class When_asked_to_group_a_list
 		{
 			[Test]
-			public void Should_group_by_the_provided_descriminator()
+			public void Given_same_items_together_should_be_grouped__should_group_the_items()
 			{
 				var input = new[] { "a", "b", "b", "b", "c", "c", "d" };
 				var grouped = input.Group((current, previous) => current == previous);
@@ -579,6 +582,20 @@ namespace MvbaCoreTests.Extensions
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a|b, b, b|c, c|d|");
+			}
+
+			[Test]
+			public void Given_items_with_a_header_should_be_grouped__should_group_the_items()
+			{
+				var input = new[] { "a", "b", "b", "a", "c", "c", "a" };
+				var grouped = input.Group((current, previous) => current == previous || current != "a");
+				var sb = new StringBuilder();
+				foreach (var @group in grouped)
+				{
+					sb.Append(String.Join(", ", @group));
+					sb.Append('|');
+				}
+				sb.ToString().ShouldBeEqualTo(@"a, b, b|a, c, c|a|");
 			}
 		}
 

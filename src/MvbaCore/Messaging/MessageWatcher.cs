@@ -64,7 +64,7 @@ namespace MvbaCore.Messaging
 		private readonly IList<IMessageHandler> _messageHandlers;
 		private readonly Func<MessageWrapper, bool> _processMessage;
 
-		private readonly TimeSpan _sleepTimeout;
+		private readonly TimeSpan _sleepTimeout = TimeSpan.FromSeconds(2);
 		private readonly Stopwatch _timer;
 
 		private bool _directoryChanged;
@@ -91,7 +91,7 @@ namespace MvbaCore.Messaging
 			_fileSystemService = fileSystemService;
 			_processMessage = processMessage;
 			_messageHandlers = messageHandlers;
-			_sleepTimeout = new TimeSpan(0, 0, 0, 2);
+			
 			_timer = new Stopwatch();
 			_timer.Start();
 			_errorMessageDirectory = Path.Combine(_messageDir, _errorMessageDirectory);
@@ -189,7 +189,7 @@ namespace MvbaCore.Messaging
 					}
 					else
 					{
-						_messages = new List<MessageWrapper>();
+						_messages = _messages.Where(x => !x.Processed).ToList();
 					}
 				}
 				catch (IOException)
@@ -331,7 +331,7 @@ namespace MvbaCore.Messaging
 			_running = false;
 			try
 			{
-				_thread.Join(new TimeSpan(0, 0, 0, 10));
+				_thread.Join(TimeSpan.FromSeconds(10));
 			}
 			catch
 			{
@@ -341,7 +341,7 @@ namespace MvbaCore.Messaging
 			{
 				if (_thread.IsAlive)
 				{
-					Thread.Sleep(new TimeSpan(0, 0, 0, 2));
+					Thread.Sleep(TimeSpan.FromSeconds(2));
 				}
 			}
 
@@ -389,7 +389,7 @@ namespace MvbaCore.Messaging
 							if (_running)
 							{
 								// tries forever
-								Thread.Sleep(new TimeSpan(0, 0, 1));
+								Thread.Sleep(TimeSpan.FromSeconds(1));
 								continue;
 							}
 							return;

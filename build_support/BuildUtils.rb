@@ -17,7 +17,7 @@ class NUnitRunner
 		
 		assemblies.each do |assem|
 			file = File.expand_path("#{@sourceDir}/#{assem}/bin/#{@compileTarget}/#{assem}.dll")
-			sh "#{@nunitExe} #{file}"
+			Kernel::system "#{@nunitExe} #{file}"
 		end
 	end
 	
@@ -26,7 +26,7 @@ class NUnitRunner
 		
 		file = File.expand_path("#{@sourceDir}/#{assembly}/bin/#{@compileTarget}/#{assembly}.dll")
 		puts "#{@nunitExe} #{file} /include:#{category}"
-		sh "#{@nunitExe} #{file} /include:#{category}"
+		Kernel::system "#{@nunitExe} #{file} /include:#{category}"
 	end
 end
 
@@ -40,7 +40,7 @@ class MSBuildRunner
 		frameworkDir = File.join(ENV['windir'].dup, 'Microsoft.NET', 'Framework', version)
 		msbuildFile = File.join(frameworkDir, 'msbuild.exe')
 		
-		sh "#{msbuildFile} #{solutionFile} /nologo /maxcpucount /v:m /property:BuildInParallel=true /property:Configuration=#{compileMode} /t:#{target}"
+		Kernel::system "#{msbuildFile} #{solutionFile} /nologo /maxcpucount /v:m /property:BuildInParallel=true /property:Configuration=#{compileMode} /t:#{target}"
 	end
 end
 
@@ -53,7 +53,7 @@ class AspNetCompilerRunner
 		frameworkDir = File.join(ENV['windir'].dup, 'Microsoft.NET', 'Framework', 'v4.0.30319')
 		aspNetCompiler = File.join(frameworkDir, 'aspnet_compiler.exe')
 
-		sh "#{aspNetCompiler} -nologo -errorstack -c -p #{webPhysDir} -v #{webVirDir}"
+		Kernel::system "#{aspNetCompiler} -nologo -errorstack -c -p #{webPhysDir} -v #{webVirDir}"
 	end
 end
 

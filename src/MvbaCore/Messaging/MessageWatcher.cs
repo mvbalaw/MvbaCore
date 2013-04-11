@@ -50,9 +50,9 @@ namespace MvbaCore.Messaging
 	public class MessageWrapper
 	{
 		public string File { get; set; }
+		public DateTime FileDate { get; set; }
 		public MessageRequest Header { get; set; }
 		public bool Processed { get; set; }
-		public DateTime FileDate { get; set; }
 	}
 
 	public class MessageWatcher
@@ -63,6 +63,7 @@ namespace MvbaCore.Messaging
 		private readonly string _messageDir;
 		private readonly IList<IMessageHandler> _messageHandlers;
 		private readonly Func<MessageWrapper, bool> _processMessage;
+		private readonly Func<string, bool> _processMessageFileNamed;
 
 		private readonly TimeSpan _sleepTimeout = TimeSpan.FromSeconds(2);
 		private readonly Stopwatch _timer;
@@ -73,25 +74,53 @@ namespace MvbaCore.Messaging
 		private volatile bool _running;
 		private Thread _thread;
 
+		/// <summary>
+		///     Initializes the message watcher
+		/// </summary>
 		public MessageWatcher(string messageDir,
-							  IFileSystemService fileSystemService,
-							  params IMessageHandler[] messageHandlers)
+			IFileSystemService fileSystemService,
+			params IMessageHandler[] messageHandlers)
 			:
-				this(messageDir, fileSystemService, x => true, messageHandlers)
+				this(messageDir, fileSystemService, x => true, x => true, messageHandlers)
 		{
 		}
 
+		/// <summary>
+		///     Initializes the message watcher
+		/// </summary>
+		/// <param name="messageDir"></param>
+		/// <param name="fileSystemService"></param>
+		/// <param name="processMessage">a function to filter out messages by header info, defaults to x=&gt; true</param>
+		/// <param name="messageHandlers"></param>
 		public MessageWatcher(string messageDir,
-							  IFileSystemService fileSystemService,
-							  Func<MessageWrapper, bool> processMessage,
-							  params IMessageHandler[] messageHandlers)
+			IFileSystemService fileSystemService,
+			Func<MessageWrapper, bool> processMessage,
+			params IMessageHandler[] messageHandlers)
+			: this(messageDir, fileSystemService, x => true, processMessage, messageHandlers)
+		{
+		}
+
+		/// <summary>
+		///     Initializes the message watcher
+		/// </summary>
+		/// <param name="messageDir"></param>
+		/// <param name="fileSystemService"></param>
+		/// <param name="processMessageFileNamed">a function to filter out messages by file name, defaults to x=&gt; true</param>
+		/// <param name="processMessage">a function to filter out messages by header info, defaults to x=&gt; true</param>
+		/// <param name="messageHandlers"></param>
+		public MessageWatcher(string messageDir,
+			IFileSystemService fileSystemService,
+			Func<string, bool> processMessageFileNamed,
+			Func<MessageWrapper, bool> processMessage,
+			params IMessageHandler[] messageHandlers)
 		{
 			_messages = new List<MessageWrapper>();
 			_messageDir = messageDir;
 			_fileSystemService = fileSystemService;
+			_processMessageFileNamed = processMessageFileNamed;
 			_processMessage = processMessage;
 			_messageHandlers = messageHandlers;
-			
+
 			_timer = new Stopwatch();
 			_timer.Start();
 			_errorMessageDirectory = Path.Combine(_messageDir, _errorMessageDirectory);
@@ -132,11 +161,11 @@ namespace MvbaCore.Messaging
 			try
 			{
 				var message = new MessageWrapper
-				{
-					File = file.FullName,
-					FileDate = file.LastWriteTime,
-					Header = JsonUtility.DeserializeFromJsonFile<MessageRequest>(file.FullName)
-				};
+				              {
+					              File = file.FullName,
+					              FileDate = file.LastWriteTime,
+					              Header = JsonUtility.DeserializeFromJsonFile<MessageRequest>(file.FullName)
+				              };
 				if (_processMessage(message))
 				{
 					messages.Add(message);
@@ -171,7 +200,8 @@ namespace MvbaCore.Messaging
 				{
 					var files = _fileSystemService
 						.GetDirectoryInfo(_messageDir)
-						.GetFiles("*" + Constants.MessageHeaderFileExtension);
+						.GetFiles("*" + Constants.MessageHeaderFileExtension)
+						.Where(x => _processMessageFileNamed(x.FullName));
 					var currentMessages = _messages.Select(x => x.File).ToHashSet();
 					var messages = new List<MessageWrapper>();
 					foreach (var file in files.Where(x => !currentMessages.Contains(x.FullName)))
@@ -267,9 +297,9 @@ namespace MvbaCore.Messaging
 				}
 				messageWrapper.Processed = true;
 			}
-			catch (IOException)
+			catch (IOException e)
 			{
-				Console.WriteLine("================================================================ file contention for " + messageWrapper.File);
+				Console.WriteLine("================================================================ file contention for " + messageWrapper.File+" = "+e.Message);
 			}
 			catch (InvalidOperationException e)
 			{
@@ -307,9 +337,9 @@ namespace MvbaCore.Messaging
 				{
 					if (_fileSystemService.FileExists(Path.Combine(_messageDir, Path.GetFileNameWithoutExtension(headerFile) + Constants.MessageDataFileExtension)))
 					{
-						// ReSharper disable AssignNullToNotNullAttribute
+//// ReSharper disable AssignNullToNotNullAttribute
 						_fileSystemService.MoveFile(headerFile, Path.Combine(_messageDir, Path.GetFileName(headerFile)));
-						// ReSharper restore AssignNullToNotNullAttribute
+//// ReSharper restore AssignNullToNotNullAttribute
 					}
 				}
 			}
@@ -318,9 +348,9 @@ namespace MvbaCore.Messaging
 			}
 
 			_thread = new Thread(WatchForMessages)
-			{
-				IsBackground = true
-			};
+			          {
+				          IsBackground = true
+			          };
 			_running = true;
 			_thread.Start();
 		}

@@ -9,11 +9,12 @@
 //  * **************************************************************************
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+
+using JetBrains.Annotations;
 
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers;
@@ -52,6 +53,7 @@ namespace MvbaCore.Lucene
 		IList<LuceneSearchResult> FindMatches(string querystring, string queryType);
 	}
 
+	[UsedImplicitly]
 	public class LuceneSearcher : ILuceneSearcher
 	{
 		private const int MaxHits = 100000;
@@ -76,24 +78,24 @@ namespace MvbaCore.Lucene
 		{
 			try
 			{
-				var collector = TopScoreDocCollector.create(MaxHits, false);
+				var collector = TopScoreDocCollector.Create(MaxHits, false);
 				indexSearcher.Search(fullQuery, collector);
 				var hits = collector.TopDocs();
-				if (hits.totalHits == 0)
+				if (hits.TotalHits == 0)
 				{
 					return new List<LuceneSearchResult>();
 				}
 
-				var count = Math.Min(hits.totalHits, MaxHits);
+				var count = Math.Min(hits.TotalHits, MaxHits);
 				var mergedResults = Enumerable.Range(0, count)
-					.Select(x => indexSearcher.Doc(hits.scoreDocs[x].doc))
+					.Select(x => indexSearcher.Doc(hits.ScoreDocs[x].Doc))
 					.GroupBy(x =>
 						{
 							var field = _fields
 								.Where(y => y.IsUniqueKey)
 								.Select(y => x.GetField(y.Name))
 								.FirstOrDefault(y => y != null);
-							return field == null ? "" : field.StringValue();
+							return field == null ? "" : field.StringValue;
 						})
 					.Where(x => x.Key != "")
 					.OrderByDescending(x => x.Count())
@@ -112,19 +114,19 @@ namespace MvbaCore.Lucene
 
 		public IList<LuceneSearchResult> FindIntersection(string querystring)
 		{
-			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
+			var analyzer = new StandardAnalyzer(Version.LUCENE_30);
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
 				.Where(x => !x.IsSystemDescriminator)
 				.Select(x => x.Name)
 				.ToArray();
 			var systemDescriminator = _fields.FirstOrDefault(x => x.IsSystemDescriminator);
-			var parser = new MultiFieldQueryParser(Version.LUCENE_29,
+			var parser = new MultiFieldQueryParser(Version.LUCENE_30,
 			                                       fieldNames,
 			                                       analyzer);
 			var lowerQueryString = querystring.ToLower();
 
-			parser.SetDefaultOperator(QueryParser.Operator.AND);
+			parser.DefaultOperator = QueryParser.Operator.AND;
 			try
 			{
 				var escaped = ReplaceDashesWithSpecialString(lowerQueryString, true);
@@ -151,7 +153,7 @@ namespace MvbaCore.Lucene
 
 				// force it to be an 'and' search by keeping only those uniqueIDs
 				// that show up in the search result for each independent clause
-				parser.SetDefaultOperator(QueryParser.Operator.OR);
+				parser.DefaultOperator = QueryParser.Operator.OR;
 
 				var searchResultList = new List<LuceneSearchResult>();
 				foreach (var queryPart in clauses.Except(new[] { descriminatorClause }))
@@ -248,7 +250,7 @@ namespace MvbaCore.Lucene
 
 		public IList<LuceneSearchResult> FindUnion(string querystring)
 		{
-			var analyzer = new StandardAnalyzer(Version.LUCENE_29, new Hashtable());
+			var analyzer = new StandardAnalyzer(Version.LUCENE_30);
 			var fieldNames = _fields
 				.Where(x => x.IsSearchable)
 				.Where(x => !x.IsSystemDescriminator)
@@ -256,11 +258,13 @@ namespace MvbaCore.Lucene
 					x => querystring.Contains(String.Format("{0}:", x.Name)) || querystring.Contains(String.Format("{0} :", x.Name)))
 				.Select(x => x.Name)
 				.ToArray();
-			var parser = new QueryParser(Version.LUCENE_29,
+			var parser = new QueryParser(Version.LUCENE_30,
 			                             fieldNames[0],
-			                             analyzer);
+			                             analyzer)
+			             {
+				             DefaultOperator = QueryParser.Operator.OR
+			             };
 
-			parser.SetDefaultOperator(QueryParser.Operator.OR);
 			try
 			{
 				var escaped = ReplaceDashesWithSpecialString(querystring.ToLower(), true);

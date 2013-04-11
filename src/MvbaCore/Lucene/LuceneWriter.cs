@@ -59,7 +59,7 @@ namespace MvbaCore.Lucene
 				{
 					writer.Commit();
 					writer.Optimize();
-					writer.Close();
+					writer.Dispose();
 				}
 				catch
 				{
@@ -92,8 +92,8 @@ namespace MvbaCore.Lucene
 				if (abstractField is Field)
 				{
 					var field = (Field)abstractField;
-					var value = LuceneSearcher.ReplaceDashesWithSpecialString(field.StringValue(), false);
-					if (field.IsTokenized())
+					var value = LuceneSearcher.ReplaceDashesWithSpecialString(field.StringValue, false);
+					if (field.IsTokenized)
 					{
 						value = value + (" " + value).Replace(" ", " " + LuceneConstants.WildcardEndsWithSearchEnabler); 
 					}
@@ -110,7 +110,7 @@ namespace MvbaCore.Lucene
 			{
 				return;
 			}
-			var analyzer = new StandardAnalyzer(Version.LUCENE_29);
+			var analyzer = new StandardAnalyzer(Version.LUCENE_30);
 			string luceneDirectory = _luceneFileSystem.GetLuceneDirectory();
 			var fsDirectory = FSDirectory.Open(new DirectoryInfo(luceneDirectory));
 			bool create = !Directory.GetFiles(luceneDirectory).Any();

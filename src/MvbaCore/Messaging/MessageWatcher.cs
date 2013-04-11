@@ -299,7 +299,16 @@ namespace MvbaCore.Messaging
 			}
 			catch (IOException e)
 			{
-				Console.WriteLine("================================================================ file contention for " + messageWrapper.File+" = "+e.Message);
+				if (e.Message.StartsWith("Could not find file"))
+				{
+					MoveMessageRequestToErrorDirectory(messageWrapper.File);
+					Logger.Log(NotificationSeverity.Error, "=> Error while processing " + messageWrapper.File, e);
+					messageWrapper.Processed = true;
+				}
+				else
+				{
+					Console.WriteLine("================================================================ file contention for " + messageWrapper.File + " = " + e.Message);
+				}
 			}
 			catch (InvalidOperationException e)
 			{

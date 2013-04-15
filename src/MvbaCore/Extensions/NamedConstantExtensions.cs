@@ -38,16 +38,34 @@ namespace MvbaCore.Extensions
 				var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
 				if (defaultField == null)
 				{
-					NoDefaults.Add(type);
+					lock (NoDefaults)
+					{
+						if (!NoDefaults.Contains(type))
+						{
+							NoDefaults.Add(type);
+						}
+					}
 					return null;
 				}
 				defaultValue = defaultField.GetValue(null);
 				if (defaultValue == null)
 				{
-					NoDefaults.Add(type);
+					lock (NoDefaults)
+					{
+						if (!NoDefaults.Contains(type))
+						{
+							NoDefaults.Add(type);
+						}
+					}
 					return null;
 				}
-				Defaults.Add(type, defaultValue);
+				lock (Defaults)
+				{
+					if (!Defaults.ContainsKey(type))
+					{
+						Defaults.Add(type, defaultValue);
+					}
+				}
 			}
 			return (T)defaultValue;
 		}

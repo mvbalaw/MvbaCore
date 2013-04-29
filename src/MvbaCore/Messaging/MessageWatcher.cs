@@ -57,6 +57,7 @@ namespace MvbaCore.Messaging
 
 	public class MessageWatcher
 	{
+		private const string ErrorReasonFileExtension = ".reason.txt";
 		private readonly string _archiveDirectory = "Archive";
 		private readonly string _errorMessageDirectory = "Errors";
 		private readonly IFileSystemService _fileSystemService;
@@ -154,6 +155,27 @@ namespace MvbaCore.Messaging
 					Logger.Log(NotificationSeverity.Error, "Unable to create Archive message directory: " + e);
 				}
 			}
+		}
+
+		private void HandleError(MessageWrapper messageWrapper, string reason, Exception exception = null)
+		{
+			MoveMessageRequestToErrorDirectory(messageWrapper.File);
+			if (exception == null)
+			{
+				Logger.Log(NotificationSeverity.Error, reason);
+//// ReSharper disable AssignNullToNotNullAttribute
+				File.WriteAllText(Path.Combine(_errorMessageDirectory, Path.GetFileName(messageWrapper.File + ErrorReasonFileExtension)), reason);
+//// ReSharper restore AssignNullToNotNullAttribute
+			}
+			else
+			{
+				Logger.Log(NotificationSeverity.Error, reason, exception);
+//// ReSharper disable AssignNullToNotNullAttribute
+				File.WriteAllText(Path.Combine(_errorMessageDirectory, Path.GetFileName(messageWrapper.File + ErrorReasonFileExtension)),reason+Environment.NewLine+exception);
+//// ReSharper restore AssignNullToNotNullAttribute
+			}
+		
+			messageWrapper.Processed = true;
 		}
 
 		private void LoadMessage(ICollection<MessageWrapper> messages, FileInfo file)
@@ -256,20 +278,30 @@ namespace MvbaCore.Messaging
 		{
 			try
 			{
-				var handler = _messageHandlers.FirstOrDefault(x => x.CanHandle(messageWrapper.Header));
-				if (handler == null)
+				if (!_fileSystemService.FileExists(messageWrapper.File))
 				{
-					MoveMessageRequestToErrorDirectory(messageWrapper.File);
-					Logger.Log(NotificationSeverity.Error, "=> Don't have a handler for " + messageWrapper.File);
 					messageWrapper.Processed = true;
+
+					return; // was already handled
+				}
+				var handlers = _messageHandlers.Where(x => x.CanHandle(messageWrapper.Header)).ToList();
+				if (!handlers.Any())
+				{
+					HandleError(messageWrapper, "=> Don't have a handler for " + messageWrapper.File);
 					return;
 				}
+				if (handlers.Count > 1)
+				{
+					HandleError(messageWrapper, "=> Found multiple handlers for " + messageWrapper.File);
+					return;
+				}
+
 				var dataFileName =
 					// ReSharper disable AssignNullToNotNullAttribute
 					Path.Combine(Path.GetDirectoryName(messageWrapper.File), Path.GetFileNameWithoutExtension(messageWrapper.File)) +
 					// ReSharper restore AssignNullToNotNullAttribute
 					Constants.MessageDataFileExtension;
-				var deleteFile = handler.Handle(messageWrapper.Header, dataFileName);
+				var deleteFile = handlers.Single().Handle(messageWrapper.Header, dataFileName);
 				if (deleteFile)
 				{
 					// ReSharper disable AssignNullToNotNullAttribute
@@ -293,7 +325,7 @@ namespace MvbaCore.Messaging
 				}
 				else
 				{
-					MoveMessageRequestToErrorDirectory(messageWrapper.File);
+					HandleError(messageWrapper, "=> Failed to process " + messageWrapper.File);
 				}
 				messageWrapper.Processed = true;
 			}
@@ -301,9 +333,7 @@ namespace MvbaCore.Messaging
 			{
 				if (e.Message.StartsWith("Could not find file"))
 				{
-					MoveMessageRequestToErrorDirectory(messageWrapper.File);
-					Logger.Log(NotificationSeverity.Error, "=> Error while processing " + messageWrapper.File, e);
-					messageWrapper.Processed = true;
+					HandleError(messageWrapper, "=> Error while processing " + messageWrapper.File, e);
 				}
 				else
 				{
@@ -312,9 +342,7 @@ namespace MvbaCore.Messaging
 			}
 			catch (InvalidOperationException e)
 			{
-				MoveMessageRequestToErrorDirectory(messageWrapper.File);
-				Logger.Log(NotificationSeverity.Error, "=> Error while processing " + messageWrapper.File, e);
-				messageWrapper.Processed = true;
+				HandleError(messageWrapper, "=> Error while processing " + messageWrapper.File, e);
 			}
 			catch (Exception e)
 			{
@@ -322,16 +350,12 @@ namespace MvbaCore.Messaging
 				{
 					if (!e.Message.EndsWith("Could not initialize proxy - no Session."))
 					{
-						MoveMessageRequestToErrorDirectory(messageWrapper.File);
-						Logger.Log(NotificationSeverity.Error, "=> Error while processing " + messageWrapper.File, e);
-						messageWrapper.Processed = true;
+						HandleError(messageWrapper, "=> Error while processing " + messageWrapper.File, e);
 					}
 				}
 				else
 				{
-					MoveMessageRequestToErrorDirectory(messageWrapper.File);
-					Logger.Log(NotificationSeverity.Error, "=> Error while processing " + messageWrapper.File, e);
-					messageWrapper.Processed = true;
+					HandleError(messageWrapper, "=> Error while processing " + messageWrapper.File, e);
 				}
 			}
 		}
@@ -349,6 +373,10 @@ namespace MvbaCore.Messaging
 //// ReSharper disable AssignNullToNotNullAttribute
 						_fileSystemService.MoveFile(headerFile, Path.Combine(_messageDir, Path.GetFileName(headerFile)));
 //// ReSharper restore AssignNullToNotNullAttribute
+					}
+					if (_fileSystemService.FileExists(headerFile + ErrorReasonFileExtension))
+					{
+						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
 					}
 				}
 			}

@@ -37,6 +37,8 @@ namespace MvbaCore.FileSystem
 
 	public class FileWatcher
 	{
+		private const string ErrorReasonFileExtension = ".reason.txt";
+
 		private readonly string _archiveDirectory = "Archive";
 		private readonly string _errorDirectory = "Errors";
 		private readonly IList<IFileHandler> _fileHandlers;
@@ -190,15 +192,24 @@ namespace MvbaCore.FileSystem
 		{
 			try
 			{
-				var handler = _fileHandlers.FirstOrDefault(x => x.CanHandle(fileWrapper));
-				if (handler == null)
+				if (!_fileSystemService.FileExists(fileWrapper.FileName))
 				{
-					MoveFileToErrorDirectory(fileWrapper.FileName);
-					Logger.Log(NotificationSeverity.Error, "=> Don't have a handler for " + fileWrapper.FileName);
 					fileWrapper.Processed = true;
+					return; // was already handled
+				}
+
+				var handlers = _fileHandlers.Where(x => x.CanHandle(fileWrapper)).ToList();
+				if (!handlers.Any())
+				{
+					HandleError(fileWrapper, "=> Don't have a handler for " + fileWrapper.FileName);
 					return;
 				}
-				var deleteFile = handler.Handle(fileWrapper);
+				if (handlers.Count > 1)
+				{
+					HandleError(fileWrapper, "=> Found multiple handlers for " + fileWrapper.FileName);
+					return;
+				}
+				var deleteFile = handlers.Single().Handle(fileWrapper);
 				if (deleteFile)
 				{
 // ReSharper disable AssignNullToNotNullAttribute
@@ -212,15 +223,13 @@ namespace MvbaCore.FileSystem
 				}
 				else
 				{
-					MoveFileToErrorDirectory(fileWrapper.FileName);
+					HandleError(fileWrapper, "=> Could not process " + fileWrapper.FileName);
 				}
 				fileWrapper.Processed = true;
 			}
 			catch (InvalidOperationException e)
 			{
-				MoveFileToErrorDirectory(fileWrapper.FileName);
-				Logger.Log(NotificationSeverity.Error, "=> Error while processing " + fileWrapper.FileName, e);
-				fileWrapper.Processed = true;
+				HandleError(fileWrapper, "=> Error while processing " + fileWrapper.FileName, e);
 			}
 			catch (Exception e)
 			{
@@ -228,18 +237,35 @@ namespace MvbaCore.FileSystem
 				{
 					if (!e.Message.EndsWith("Could not initialize proxy - no Session."))
 					{
-						MoveFileToErrorDirectory(fileWrapper.FileName);
-						Logger.Log(NotificationSeverity.Error, "=> Error while processing " + fileWrapper.FileName, e);
-						fileWrapper.Processed = true;
+						HandleError(fileWrapper, "=> Error while processing " + fileWrapper.FileName, e);
 					}
 				}
 				else
 				{
-					MoveFileToErrorDirectory(fileWrapper.FileName);
-					Logger.Log(NotificationSeverity.Error, "=> Error while processing " + fileWrapper.FileName, e);
-					fileWrapper.Processed = true;
+					HandleError(fileWrapper, "=> Error while processing " + fileWrapper.FileName, e);
 				}
 			}
+		}
+
+		private void HandleError(FileWrapper fileWrapper, string reason, Exception exception = null)
+		{
+			MoveFileToErrorDirectory(fileWrapper.FileName);
+			if (exception == null)
+			{
+				Logger.Log(NotificationSeverity.Error, reason);
+//// ReSharper disable AssignNullToNotNullAttribute
+				File.WriteAllText(Path.Combine(_errorDirectory, Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension)), reason);
+//// ReSharper restore AssignNullToNotNullAttribute
+			}
+			else
+			{
+				Logger.Log(NotificationSeverity.Error, reason, exception);
+//// ReSharper disable AssignNullToNotNullAttribute
+				File.WriteAllText(Path.Combine(_errorDirectory, Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension)), reason + Environment.NewLine + exception);
+//// ReSharper restore AssignNullToNotNullAttribute
+			}
+
+			fileWrapper.Processed = true;
 		}
 
 		public void Start()
@@ -253,6 +279,10 @@ namespace MvbaCore.FileSystem
 // ReSharper disable AssignNullToNotNullAttribute
 					_fileSystemService.MoveFile(headerFile, Path.Combine(_sourceDir, Path.GetFileName(headerFile)));
 // ReSharper restore AssignNullToNotNullAttribute
+					if (_fileSystemService.FileExists(headerFile + ErrorReasonFileExtension))
+					{
+						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
+					}
 				}
 			}
 			catch

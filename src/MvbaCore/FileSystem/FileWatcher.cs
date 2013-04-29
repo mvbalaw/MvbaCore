@@ -276,13 +276,15 @@ namespace MvbaCore.FileSystem
 				var previousErrorHeaderFiles = _fileSystemService.GetFiles(_errorDirectory, "*");
 				foreach (var headerFile in previousErrorHeaderFiles)
 				{
+					if (headerFile.EndsWith(ErrorReasonFileExtension) ||
+						_fileSystemService.FileExists(headerFile + ErrorReasonFileExtension))
+					{
+						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
+						continue;
+					}
 // ReSharper disable AssignNullToNotNullAttribute
 					_fileSystemService.MoveFile(headerFile, Path.Combine(_sourceDir, Path.GetFileName(headerFile)));
 // ReSharper restore AssignNullToNotNullAttribute
-					if (_fileSystemService.FileExists(headerFile + ErrorReasonFileExtension))
-					{
-						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
-					}
 				}
 			}
 			catch

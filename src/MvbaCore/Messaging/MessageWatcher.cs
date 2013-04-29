@@ -368,15 +368,17 @@ namespace MvbaCore.Messaging
 				var previousErrorHeaderFiles = _fileSystemService.GetFiles(_errorMessageDirectory, "*" + Constants.MessageHeaderFileExtension);
 				foreach (var headerFile in previousErrorHeaderFiles)
 				{
+					if (headerFile.EndsWith(ErrorReasonFileExtension) ||
+						_fileSystemService.FileExists(Path.Combine(_messageDir, Path.GetFileNameWithoutExtension(headerFile) + Constants.MessageDataFileExtension)))
+					{
+						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
+						continue;
+					}
 					if (_fileSystemService.FileExists(Path.Combine(_messageDir, Path.GetFileNameWithoutExtension(headerFile) + Constants.MessageDataFileExtension)))
 					{
 //// ReSharper disable AssignNullToNotNullAttribute
 						_fileSystemService.MoveFile(headerFile, Path.Combine(_messageDir, Path.GetFileName(headerFile)));
 //// ReSharper restore AssignNullToNotNullAttribute
-					}
-					if (_fileSystemService.FileExists(headerFile + ErrorReasonFileExtension))
-					{
-						_fileSystemService.DeleteFile(headerFile + ErrorReasonFileExtension);
 					}
 				}
 			}

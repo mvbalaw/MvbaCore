@@ -55,7 +55,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\FluentAssert\FluentAssert.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=4.5.1230.4, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL" />
+    <Reference Include="JetBrains.Annotations, Version=4.5.1230.4, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\JetBrains.Annotations\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Lucene\Lucene.Net.dll</HintPath>

@@ -33,7 +33,9 @@ namespace System
 			}
 		}
 
-		public static string AddSpacesToSentence(this string text)
+		[NotNull]
+		[Pure]
+		public static string AddSpacesToSentence([CanBeNull] this string text)
 		{
 			if (string.IsNullOrEmpty(text))
 			{
@@ -54,7 +56,9 @@ namespace System
 			return newText.ToString();
 		}
 
-		public static string GetFirstTwoWordsInSentence(this string text)
+		[NotNull]
+		[Pure]
+		public static string GetFirstTwoWordsInSentence([CanBeNull] this string text)
 		{
 			if (string.IsNullOrEmpty(text))
 			{
@@ -81,7 +85,9 @@ namespace System
 			return newText.ToString();
 		}
 
-		public static string GetMD5Hash(this string input)
+		[NotNull]
+		[Pure]
+		public static string GetMD5Hash([NotNull] this string input)
 		{
 			var md5 = new MD5CryptoServiceProvider();
 			var bytes = Encoding.ASCII.GetBytes(input);
@@ -90,6 +96,9 @@ namespace System
 			return hash.Join("");
 		}
 
+		[NotNull]
+		[Pure]
+		[ContractAnnotation("separator:null => halt")]
 		public static IList<IList<string>> GroupBy([NotNull] this string[] lines, string separator)
 		{
 			if (separator == null)
@@ -125,7 +134,9 @@ namespace System
 			return groups;
 		}
 
-		public static byte[] HexToBytes(this string hexEncodedBytes, int start, int end)
+		[NotNull]
+		[Pure]
+		public static byte[] HexToBytes([NotNull] this string hexEncodedBytes, int start, int end)
 		{
 			var length = end - start;
 			const string tagName = "hex";
@@ -143,12 +154,16 @@ namespace System
 			return result;
 		}
 
-		public static bool IsNullOrEmpty(this string input)
+		[Pure]
+		[ContractAnnotation("input:null => true")]
+		public static bool IsNullOrEmpty([CanBeNull] this string input)
 		{
 			return input.IsNullOrEmpty(false);
 		}
 
-		public static bool IsNullOrEmpty(this string input, bool trim)
+		[Pure]
+		[ContractAnnotation("input:null => true")]
+		public static bool IsNullOrEmpty([CanBeNull] this string input, bool trim)
 		{
 			if (String.IsNullOrEmpty(input))
 			{
@@ -157,6 +172,8 @@ namespace System
 			return trim && String.IsNullOrEmpty(input.Trim());
 		}
 
+		[CanBeNull, Pure]
+		[ContractAnnotation("input:null => null; input:notnull => notnull")]
 		public static string NewlinesToBr([CanBeNull] this string input)
 		{
 			if (input == null)
@@ -166,11 +183,12 @@ namespace System
 			return input.Replace(Environment.NewLine, "<br />");
 		}
 
+		[CanBeNull]
+		[Pure]
 		public static string PrefixWithAOrAn([NotNull] this string str)
 		{
 			if (str.IsNullOrEmpty())
 			{
-				//throw new ArgumentNullException("str", "cannot pluralize a null or empty string");
 				return str;
 			}
 
@@ -218,6 +236,9 @@ namespace System
 			return "a " + str;
 		}
 
+		[CanBeNull]
+		[Pure]
+		[ContractAnnotation("input:null => null; input:notnull => notnull")]
 		public static string ReplaceIfExists([CanBeNull] this string input, string oldValue, string newValue)
 		{
 			if (input == null)
@@ -227,12 +248,17 @@ namespace System
 			return !oldValue.IsNullOrEmpty() ? input.Replace(oldValue, newValue) : input;
 		}
 
-		public static int? SafeParseInt32(this string input)
+		[Pure]
+		[ContractAnnotation("input:null => null")]
+		public static int? SafeParseInt32([CanBeNull] this string input)
 		{
 			int value;
 			return !Int32.TryParse(input, out value) ? (int?)null : value;
 		}
 
+		[CanBeNull]
+		[Pure]
+		[ContractAnnotation("input:null => null; input:notnull => notnull")]
 		public static string TabsToNbsp([CanBeNull] this string input)
 		{
 			if (input == null)
@@ -242,6 +268,9 @@ namespace System
 			return input.Replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 		}
 
+		[Pure]
+		[CanBeNull]
+		[ContractAnnotation("str:null => null; str:notnull => notnull")]
 		public static string ToCamelCase([CanBeNull] this string str)
 		{
 			if (String.IsNullOrEmpty(str))
@@ -252,11 +281,16 @@ namespace System
 			return str;
 		}
 
-		public static string ToNonNull(this string input)
+		[NotNull]
+		[Pure]
+		public static string ToNonNull([CanBeNull] this string input)
 		{
 			return input ?? "";
 		}
 
+		[NotNull]
+		[ContractAnnotation("str:null => halt; str:notnull => notnull")]
+		[Pure]
 		public static string ToPlural([NotNull] this string str)
 		{
 			if (str.IsNullOrEmpty())
@@ -287,7 +321,10 @@ namespace System
 			return str + "s";
 		}
 
-		public static string ToTitleCase(this string value, bool lowerCaseTheRemainder = true)
+		[Pure]
+		[NotNull]
+		[ContractAnnotation("value:null => halt; value:notnull => notnull")]
+		public static string ToTitleCase([NotNull] this string value, bool lowerCaseTheRemainder = true)
 		{
 			if (value.Length == 0)
 			{
@@ -313,7 +350,10 @@ namespace System
 			Diagnostics.Trace.WriteLine(DateTime.Now + " " + message + " " + additionalInfo);
 		}
 
-		public static string TrimIfLongerThan(this string value, int maxLength)
+		[NotNull]
+		[Pure]
+		[ContractAnnotation("value:null => halt;")]
+		public static string TrimIfLongerThan([NotNull] this string value, int maxLength)
 		{
 			return value.Length > maxLength ? value.Substring(0, maxLength) : value;
 		}

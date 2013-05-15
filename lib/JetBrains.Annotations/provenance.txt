@@ -1,4 +1,4 @@
-source: Resharper 4.5
+source: Resharper 8
 
 license source: http://www.jetbrains.com/resharper/buy/opensource_license.html#openSource_licenseTerms
 5. LICENSE TO DISTRIBUTE JETBRAINS.ANNOTATIONS

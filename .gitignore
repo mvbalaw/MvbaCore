@@ -9,3 +9,4 @@ _ReSharper.*/
 dist
 CommonAssemblyInfo.cs
 TestResult.xml
+dist.bat

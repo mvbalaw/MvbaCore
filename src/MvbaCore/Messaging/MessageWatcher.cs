@@ -159,6 +159,10 @@ namespace MvbaCore.Messaging
 
 		private void HandleError(MessageWrapper messageWrapper, string reason, Exception exception = null)
 		{
+			if (!_fileSystemService.FileExists(messageWrapper.File))
+			{
+				return;
+			}
 			MoveMessageRequestToErrorDirectory(messageWrapper.File);
 			if (exception == null)
 			{
@@ -208,8 +212,11 @@ namespace MvbaCore.Messaging
 			}
 			catch (Exception deserializeFileException)
 			{
-				MoveMessageRequestToErrorDirectory(file.FullName);
-				Logger.Log(NotificationSeverity.Error, "=> Bad Message in file " + file, deserializeFileException);
+				if (_fileSystemService.FileExists(file.FullName))
+				{
+					MoveMessageRequestToErrorDirectory(file.FullName);
+					Logger.Log(NotificationSeverity.Error, "=> Bad Message in file " + file, deserializeFileException);
+				}
 			}
 		}
 

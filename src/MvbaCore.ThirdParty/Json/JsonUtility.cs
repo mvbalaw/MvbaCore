@@ -15,7 +15,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace MvbaCore.Json
+namespace MvbaCore.ThirdParty.Json
 {
 	public static class JsonUtility
 	{
@@ -54,7 +54,7 @@ namespace MvbaCore.Json
 
 		private static JsonSerializerSettings GetJsonSerializerSettings()
 		{
-			var contractResolver = new HandlePrivateSettersDefaultContractResolver();
+			var contractResolver = new ThirdParty.Json.HandlePrivateSettersDefaultContractResolver();
 			var settings = new JsonSerializerSettings
 			{
 				ContractResolver = contractResolver

@@ -7,10 +7,11 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+
 using System;
 using System.Linq;
 
-namespace MvbaCore.Lucene
+namespace MvbaCore.ThirdParty.Lucene
 {
 	public interface ILuceneIndexer
 	{

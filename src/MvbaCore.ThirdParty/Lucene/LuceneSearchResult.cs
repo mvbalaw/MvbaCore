@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 using Lucene.Net.Documents;
 
-namespace MvbaCore.Lucene
+namespace MvbaCore.ThirdParty.Lucene
 {
 	public class LuceneSearchResult
 	{

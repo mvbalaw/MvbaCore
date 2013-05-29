@@ -7,11 +7,11 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
-namespace MvbaCore.Lucene
+
+namespace MvbaCore.ThirdParty.Lucene
 {
-	public interface ILuceneFileSystem
+	public static class LuceneConstants
 	{
-		void DeleteLockFile();
-		string GetLuceneDirectory();
+		public static readonly string WildcardEndsWithSearchEnabler = "qq";
 	}
 }

@@ -60,7 +60,13 @@ desc "Compiles the app"
 task :compile => [:clean, :version] do
   MSBuildRunner.compile :compilemode => COMPILE_TARGET, :solutionfile => 'src/MvbaCore.sln', :clrversion => CLR_VERSION
     
-  outDir = "src/MvbaCore/bin/#{COMPILE_TARGET}"
+  outDir = "src/MvbaCore.ThirdParty.Tests/bin/#{COMPILE_TARGET}"
+    
+  Dir.glob(File.join(outDir, "*.{dll,pdb}")){|file| 		
+	copy(file, props[:archive]) if File.file?(file)
+  }
+  
+  outDir = "src/MvbaCoreTests/bin/#{COMPILE_TARGET}"
     
   Dir.glob(File.join(outDir, "*.{dll,pdb}")){|file| 		
 	copy(file, props[:archive]) if File.file?(file)
@@ -73,7 +79,7 @@ task :test => [:unit_test]
 desc "Runs MvbaCore.Tests unit tests"
 task :unit_test => :compile do
   runner = NUnitRunner.new :compilemode => COMPILE_TARGET, :source => 'src', :platform => 'x86'
-  runner.executeTests ['MvbaCoreTests']
+  runner.executeTests ['MvbaCoreTests','MvbaCore.ThirdParty.Tests']
 end
 
 desc "Target used for the CI server"

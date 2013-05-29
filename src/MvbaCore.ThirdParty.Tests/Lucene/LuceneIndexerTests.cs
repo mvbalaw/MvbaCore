@@ -12,7 +12,7 @@ using FluentAssert;
 
 using Lucene.Net.Index;
 
-using MvbaCore.Lucene;
+using MvbaCore.ThirdParty.Lucene;
 
 using NUnit.Framework;
 
@@ -20,7 +20,7 @@ using Rhino.Mocks;
 
 using StructureMap.AutoMocking;
 
-namespace MvbaCoreTests.Lucene
+namespace MvbaCore.ThirdParty.Tests.Lucene
 {
 	public class LuceneIndexerTests
 	{

@@ -20,7 +20,7 @@ using Lucene.Net.Store;
 using Directory = System.IO.Directory;
 using Version = Lucene.Net.Util.Version;
 
-namespace MvbaCore.Lucene
+namespace MvbaCore.ThirdParty.Lucene
 {
 	public interface ILuceneWriter
 	{

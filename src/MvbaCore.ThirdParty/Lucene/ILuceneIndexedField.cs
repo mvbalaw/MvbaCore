@@ -7,12 +7,13 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
-namespace MvbaCore.Lucene
+namespace MvbaCore.ThirdParty.Lucene
 {
-	public interface IEntityIndexUpdater
+	public interface ILuceneIndexedField
 	{
-		void DeleteFromIndex<T>(T entity, ILuceneWriter luceneWriter);
-		bool IsMatch<T>(T entity);
-		void UpdateIndex<T>(T entity, ILuceneWriter luceneWriter);
+	    bool IsSystemDescriminator { get; }
+		bool IsSearchable { get; }
+		bool IsUniqueKey { get; }
+		string Name { get; }
 	}
 }

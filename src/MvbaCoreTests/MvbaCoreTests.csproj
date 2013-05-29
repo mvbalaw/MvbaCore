@@ -59,10 +59,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\JetBrains.Annotations\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Lucene\Lucene.Net.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\NUnit\nunit.framework.dll</HintPath>
@@ -80,17 +76,6 @@
       <HintPath>..\..\lib\StructureMap\StructureMap.AutoMocking.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeQuery\FieldInfoExtensionsTests.cs" />
@@ -113,8 +98,6 @@
     <Compile Include="Extensions\Int32ExtensionsTests.cs" />
     <Compile Include="Extensions\NamedConstantExtensionsTests.cs" />
     <Compile Include="Extensions\TExtensionsTests.cs" />
-    <Compile Include="Lucene\LuceneIndexerTests.cs" />
-    <Compile Include="Lucene\LuceneSearcherTests.cs" />
     <Compile Include="MergeSorterTests.cs" />
     <Compile Include="NamedConstantTests.cs" />
     <Compile Include="NotificationMessageTests.cs" />

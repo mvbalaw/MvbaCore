@@ -17,11 +17,11 @@ using System.Threading;
 
 using JetBrains.Annotations;
 
-using MvbaCore.Json;
 using MvbaCore.Logging;
 using MvbaCore.Services;
+using MvbaCore.ThirdParty.Json;
 
-namespace MvbaCore.Messaging
+namespace MvbaCore.ThirdParty.Messaging
 {
 	public static class Constants
 	{

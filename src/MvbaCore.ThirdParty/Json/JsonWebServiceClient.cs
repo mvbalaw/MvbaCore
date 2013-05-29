@@ -14,7 +14,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace MvbaCore.Json
+namespace MvbaCore.ThirdParty.Json
 {
 	public interface IJsonWebServiceClient
 	{

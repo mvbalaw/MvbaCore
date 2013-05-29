@@ -25,7 +25,7 @@ using MvbaCore.Extensions;
 
 using Version = Lucene.Net.Util.Version;
 
-namespace MvbaCore.Lucene
+namespace MvbaCore.ThirdParty.Lucene
 {
 	public class QueryType : NamedConstant<QueryType>
 	{

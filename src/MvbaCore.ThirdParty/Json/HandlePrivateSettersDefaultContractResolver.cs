@@ -13,7 +13,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace MvbaCore.Json
+namespace MvbaCore.ThirdParty.Json
 {
 	/// <summary>
 	/// see: http://daniel.wertheim.se/2010/11/06/json-net-private-setters/

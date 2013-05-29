@@ -12,11 +12,11 @@ using FluentAssert;
 
 using JetBrains.Annotations;
 
-using MvbaCore.Lucene;
+using MvbaCore.ThirdParty.Lucene;
 
 using NUnit.Framework;
 
-namespace MvbaCoreTests.Lucene
+namespace MvbaCore.ThirdParty.Tests.Lucene
 {
 	[UsedImplicitly]
 	public class LuceneSearcherTests

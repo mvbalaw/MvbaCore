@@ -1,4 +1,4 @@
-
+# encoding: utf-8
 require 'albacore'
 
 PRODUCT_NAME = "MvbaCore"
@@ -18,7 +18,6 @@ beginning = Time.now
 default_settings = { :artifacts => ARTIFACTS, 
 					 :stage => STAGE
 					}
-
 
 def read_config(settings_directory, env)
 	settings = {}
@@ -44,6 +43,7 @@ puts "Rakefile settings:"
 settings.each { |key, val| puts "#{key} => #{val}" }
 puts
 
+
 desc "** Default **"
 task :default => [:build, :copy_artifacts, :test, :archive] do
   puts "Build Succeeded - time elapsed: #{Time.now - beginning} seconds"
@@ -61,7 +61,6 @@ assemblyinfo :assemblyinfo do |asm|
   asm.copyright = COPYRIGHT 
   asm.output_file = "src/CommonAssemblyInfo.cs"
 end
-
 
 desc "Builds the #{PRODUCT_NAME} solution"
 msbuild :build => [:clean, :assemblyinfo] do |msb|
@@ -109,6 +108,7 @@ zip :archive do |zip|
   zip.output_path = [settings[:artifacts]]
   puts "Artifacts are available in the artifact folder: #{settings[:artifacts]}"
 end
+
 
 def copy_output_files(fromDir, filePattern, outDir)
   Dir.glob(File.join(fromDir, filePattern)){|file| 		

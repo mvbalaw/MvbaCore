@@ -78,6 +78,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CodeQuery\FieldInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\PropertyInfoExtensionsTests.cs" />
     <Compile Include="CodeQuery\TypeExtensionsTests.cs" />

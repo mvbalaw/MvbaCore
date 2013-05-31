@@ -1,9 +1,0 @@
-name: Json.Net
-author: James Newton-King
-license: The MIT License (MIT)
-
-Json.NET 4.0 Release 8 
-https://github.com/JamesNK/Newtonsoft.Json
-
-+ our speed improvement patch
-https://github.com/handcraftsman

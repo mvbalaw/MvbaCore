@@ -11,9 +11,9 @@
 using System;
 using System.Collections.Generic;
 
-using CodeQuery;
-
 using FluentAssert;
+
+using MvbaCore.CodeQuery;
 
 using NUnit.Framework;
 

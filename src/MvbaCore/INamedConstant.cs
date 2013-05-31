@@ -7,10 +7,14 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+
+using JetBrains.Annotations;
+
 namespace MvbaCore
 {
 	public interface INamedConstant
 	{
-		string Key { get; }
+		[NotNull]
+		string Key { [Pure] get; }
 	}
 }

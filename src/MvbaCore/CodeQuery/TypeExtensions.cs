@@ -7,14 +7,16 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+
 using System;
 
-// ReSharper disable CheckNamespace
-namespace CodeQuery
-// ReSharper restore CheckNamespace
+using JetBrains.Annotations;
+
+namespace MvbaCore.CodeQuery
 {
 	public static class TypeExtensions
 	{
+		[Pure]
 		public static bool IsGenericAssignableFrom(this Type target, Type source)
 		{
 			if (!target.IsGenericType)

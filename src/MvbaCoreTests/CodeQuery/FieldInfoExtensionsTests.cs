@@ -11,9 +11,9 @@
 using System.ComponentModel;
 using System.Linq;
 
-using CodeQuery;
-
 using FluentAssert;
+
+using MvbaCore.CodeQuery;
 
 using NUnit.Framework;
 

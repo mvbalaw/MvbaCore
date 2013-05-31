@@ -15,30 +15,32 @@ using System.Reflection;
 
 using JetBrains.Annotations;
 
-// ReSharper disable CheckNamespace
-namespace CodeQuery
-// ReSharper restore CheckNamespace
+namespace MvbaCore.CodeQuery
 {
 	public static class FieldInfoExtensions
 	{
 		[NotNull]
+		[Pure]
 		public static IEnumerable<T> CustomAttributesOfType<T>([NotNull] this FieldInfo input) where T : Attribute
 		{
 			return ((MemberInfo)input).CustomAttributesOfType<T>();
 		}
 
+		[Pure]
 		public static bool HasAttributeOfType<TAttributeType>([NotNull] this FieldInfo input) where TAttributeType : Attribute
 		{
 			return input.CustomAttributesOfType<TAttributeType>().Any();
 		}
 
 		[NotNull]
+		[Pure]
 		public static IEnumerable<FieldInfo> ThatAreStatic([NotNull] this IEnumerable<FieldInfo> items)
 		{
 			return items.Where(x => x.IsStatic);
 		}
 
 		[NotNull]
+		[Pure]
 		public static IEnumerable<FieldInfo> WithAttributeOfType<TAttributeType>([NotNull] this IEnumerable<FieldInfo> input) where TAttributeType : Attribute
 		{
 			return input.Where(x => x.HasAttributeOfType<TAttributeType>());

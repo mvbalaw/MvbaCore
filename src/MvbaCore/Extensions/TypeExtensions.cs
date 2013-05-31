@@ -10,9 +10,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using CodeQuery;
-
 using JetBrains.Annotations;
+
+using MvbaCore.CodeQuery;
 
 // ReSharper disable CheckNamespace
 namespace System

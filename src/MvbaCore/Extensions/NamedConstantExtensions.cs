@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using CodeQuery;
-
 using JetBrains.Annotations;
+
+using MvbaCore.CodeQuery;
 
 namespace MvbaCore.Extensions
 {
@@ -24,6 +24,7 @@ namespace MvbaCore.Extensions
 		private static readonly HashSet<Type> NoDefaults = new HashSet<Type>();
 
 		[CanBeNull]
+		[Pure]
 		public static T DefaultValue<T>() where T : NamedConstant<T>
 		{
 			var type = typeof(T);
@@ -71,6 +72,7 @@ namespace MvbaCore.Extensions
 		}
 
 		[NotNull]
+		[Pure]
 		public static T OrDefault<T>([CanBeNull] this T value) where T : NamedConstant<T>
 		{
 			if (value != null)

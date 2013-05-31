@@ -16,10 +16,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using CodeQuery;
-
 using FastReflection;
 
+using MvbaCore.CodeQuery;
 using MvbaCore.Collections;
 
 namespace MvbaCore

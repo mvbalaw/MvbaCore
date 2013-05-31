@@ -15,13 +15,12 @@ using System.Reflection;
 
 using JetBrains.Annotations;
 
-// ReSharper disable CheckNamespace
-namespace CodeQuery
-// ReSharper restore CheckNamespace
+namespace MvbaCore.CodeQuery
 {
 	internal static class MemberInfoExtensions
 	{
 		[NotNull]
+		[Pure]
 		internal static IEnumerable<T> CustomAttributesOfType<T>([NotNull] this MemberInfo input) where T : Attribute
 		{
 			return input.GetCustomAttributes(typeof(T), true).Cast<T>();

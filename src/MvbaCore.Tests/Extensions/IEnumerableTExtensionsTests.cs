@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -571,20 +572,6 @@ namespace MvbaCore.Tests.Extensions
 		public class When_asked_to_group_a_list
 		{
 			[Test]
-			public void Given_same_items_together_should_be_grouped__should_group_the_items()
-			{
-				var input = new[] { "a", "b", "b", "b", "c", "c", "d" };
-				var grouped = input.Group((current, previous) => current == previous);
-				var sb = new StringBuilder();
-				foreach (var @group in grouped)
-				{
-					sb.Append(String.Join(", ", @group));
-					sb.Append('|');
-				}
-				sb.ToString().ShouldBeEqualTo(@"a|b, b, b|c, c|d|");
-			}
-
-			[Test]
 			public void Given_items_with_a_header_should_be_grouped__should_group_the_items()
 			{
 				var input = new[] { "a", "b", "b", "a", "c", "c", "a" };
@@ -596,6 +583,20 @@ namespace MvbaCore.Tests.Extensions
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a, b, b|a, c, c|a|");
+			}
+
+			[Test]
+			public void Given_same_items_together_should_be_grouped__should_group_the_items()
+			{
+				var input = new[] { "a", "b", "b", "b", "c", "c", "d" };
+				var grouped = input.Group((current, previous) => current == previous);
+				var sb = new StringBuilder();
+				foreach (var @group in grouped)
+				{
+					sb.Append(String.Join(", ", @group));
+					sb.Append('|');
+				}
+				sb.ToString().ShouldBeEqualTo(@"a|b, b, b|c, c|d|");
 			}
 		}
 
@@ -646,6 +647,63 @@ namespace MvbaCore.Tests.Extensions
 				var expect = one + "" + item;
 
 				Assert.AreEqual(expect, items.Join(delimiter));
+			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_memoize_an_IEnumerable
+		{
+			[Test]
+			public void Given_maximum_1_and_1_is_read__should_be_able_to_re_stream_the_entire_enumerable()
+			{
+				var count = new[] { 1 };
+				var memoized = Generate(count).Memoize(1);
+				var first = memoized.First();
+				first.ShouldBeEqualTo(1);
+				var secondSet = memoized.ToList();
+				secondSet.ShouldContainAllInOrder(Enumerable.Range(1, 10));
+			}
+
+			[Test]
+			public void Given_maximum_1_and_a_set_of_2_is_read_and_a_set_of_1_is_read__should_return_the_initial_values_from_the_input_each_time()
+			{
+				var count = new[] { 1 };
+				var memoized = Generate(count).Memoize(1);
+				var firstSet = memoized.Take(2).ToList();
+				firstSet.ShouldBeEqualTo(Enumerable.Range(1, 2));
+				var second = memoized.First();
+				second.ShouldBeEqualTo(1);
+			}
+
+			[Test]
+			[ExpectedException(typeof(InternalBufferOverflowException))]
+			public void Given_maximum_1_and_more_than_1_are_read__should_throw_an_exception_if_another_set_with_more_than_maximum_is_read()
+			{
+				var count = new[] { 1 };
+				var memoized = Generate(count).Memoize(1);
+				var firstSet = memoized.Take(2).ToList();
+				firstSet.ShouldBeEqualTo(Enumerable.Range(1, 2));
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+				memoized.Take(2).ToList();
+// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+			}
+
+			[Test]
+			public void Given_no_maximum__should_be_able_to_re_stream_the_entire_enumerable()
+			{
+				var count = new[] { 0 };
+				var memoized = Generate(count).Memoize();
+				var firstSet = memoized.ToList();
+				var secondSet = memoized.ToList();
+				firstSet.ShouldContainAllInOrder(secondSet);
+			}
+
+			private static IEnumerable<int> Generate(IList<int> count)
+			{
+				for (var i = 0; i < 10; i++)
+				{
+					yield return count[0]++;
+				}
 			}
 		}
 

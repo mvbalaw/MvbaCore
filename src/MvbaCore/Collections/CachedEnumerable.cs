@@ -10,24 +10,31 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MvbaCore.Collections
 {
 	public class CachedEnumerable<T> : IEnumerable<T>
 	{
 		// original: http://wilsonhut.wordpress.com/tag/memoize/
-		private readonly List<T> _cache = new List<T>();
+		private readonly List<T> _cache;
+		private readonly int? _max;
 		private readonly IEnumerable<T> _originalEnumerable;
 		private IEnumerator<T> _originalEnumerator;
+		private bool _readBeyondCache;
 
-		public CachedEnumerable(IEnumerable<T> enumerable)
+		public CachedEnumerable(IEnumerable<T> enumerable, int? max)
 		{
 			_originalEnumerable = enumerable;
+			_max = max;
+			_cache = max != null ? new List<T>(max.Value) : new List<T>();
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			for (int index = 0; index < _cache.Count; index++)
+// ReSharper disable ForCanBeConvertedToForeach
+			for (var index = 0; index < _cache.Count; index++)
+// ReSharper restore ForCanBeConvertedToForeach
 			{
 				var t = _cache[index];
 				yield return t;
@@ -36,11 +43,44 @@ namespace MvbaCore.Collections
 			{
 				_originalEnumerator = _originalEnumerable.GetEnumerator();
 			}
-			while (_originalEnumerator.MoveNext())
+			if (_readBeyondCache)
 			{
-				T item = _originalEnumerator.Current;
-				_cache.Add(item);
-				yield return item;
+				throw new InternalBufferOverflowException("Cannot re-stream unmemoized data.");
+			}
+			if (_max == null)
+			{
+				while (_originalEnumerator.MoveNext())
+				{
+					var item = _originalEnumerator.Current;
+					_cache.Add(item);
+					yield return item;
+				}
+			}
+			else
+			{
+				for (var i = 0; i < _max.Value; i++)
+				{
+					if (!_originalEnumerator.MoveNext())
+					{
+						yield break;
+					}
+					var item = _originalEnumerator.Current;
+					_cache.Add(item);
+					yield return item;
+				}
+
+				if (_originalEnumerator.MoveNext())
+				{
+					_readBeyondCache = true;
+					var item = _originalEnumerator.Current;
+					yield return item;
+
+					while (_originalEnumerator.MoveNext())
+					{
+						item = _originalEnumerator.Current;
+						yield return item;
+					}
+				}
 			}
 		}
 

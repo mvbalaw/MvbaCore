@@ -14,7 +14,6 @@ using System.Text;
 
 using JetBrains.Annotations;
 
-using MvbaCore;
 using MvbaCore.Collections;
 
 namespace System.Linq
@@ -202,9 +201,9 @@ namespace System.Collections.Generic
 			return result.ToString();
 		}
 
-		public static CachedEnumerable<T> Memoize<T>(this IEnumerable<T> enumerable)
+		public static CachedEnumerable<T> Memoize<T>(this IEnumerable<T> enumerable, int? max = null)
 		{
-			return new CachedEnumerable<T>(enumerable);
+			return new CachedEnumerable<T>(enumerable, max);
 		}
 
 		public static string SeparateWith<T>(this IEnumerable<T> input, Func<T, string> getValueToSeparate, string separator)

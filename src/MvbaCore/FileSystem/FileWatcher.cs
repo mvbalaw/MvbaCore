@@ -95,7 +95,7 @@ namespace MvbaCore.FileSystem
 			}
 		}
 
-		private void LoadFile(ICollection<FileWrapper> files, FileInfo file)
+		private void LoadFile(ICollection<FileWrapper> files, FileSystemInfo file)
 		{
 			try
 			{
@@ -156,7 +156,9 @@ namespace MvbaCore.FileSystem
 			catch (ApplicationException aException)
 			{
 				var handled = false;
+// ReSharper disable RedundantComparisonWithNull
 				if (aException.InnerException != null && aException.InnerException is IOException)
+// ReSharper restore RedundantComparisonWithNull
 				{
 					var ioException = aException.InnerException as IOException;
 					if (ioException.Message.StartsWith("Cannot create a file when that file already exists"))
@@ -250,19 +252,21 @@ namespace MvbaCore.FileSystem
 		private void HandleError(FileWrapper fileWrapper, string reason, Exception exception = null)
 		{
 			MoveFileToErrorDirectory(fileWrapper.FileName);
+			string fileName = Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension);
+//// ReSharper disable AssignNullToNotNullAttribute
+// ReSharper disable AssignNullToNotNullAttribute
+			string path = Path.Combine(_errorDirectory, fileName);
+// ReSharper restore AssignNullToNotNullAttribute
+//// ReSharper restore AssignNullToNotNullAttribute
 			if (exception == null)
 			{
 				Logger.Log(NotificationSeverity.Error, reason);
-//// ReSharper disable AssignNullToNotNullAttribute
-				File.WriteAllText(Path.Combine(_errorDirectory, Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension)), reason);
-//// ReSharper restore AssignNullToNotNullAttribute
+				File.WriteAllText(path, reason);
 			}
 			else
 			{
 				Logger.Log(NotificationSeverity.Error, reason, exception);
-//// ReSharper disable AssignNullToNotNullAttribute
-				File.WriteAllText(Path.Combine(_errorDirectory, Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension)), reason + Environment.NewLine + exception);
-//// ReSharper restore AssignNullToNotNullAttribute
+				File.WriteAllText(path, reason + Environment.NewLine + exception);
 			}
 
 			fileWrapper.Processed = true;
@@ -287,7 +291,9 @@ namespace MvbaCore.FileSystem
 // ReSharper restore AssignNullToNotNullAttribute
 				}
 			}
+// ReSharper disable EmptyGeneralCatchClause
 			catch
+// ReSharper restore EmptyGeneralCatchClause
 			{
 			}
 
@@ -307,7 +313,9 @@ namespace MvbaCore.FileSystem
 			{
 				_thread.Join(new TimeSpan(0, 0, 0, 10));
 			}
+// ReSharper disable EmptyGeneralCatchClause
 			catch
+// ReSharper restore EmptyGeneralCatchClause
 			{
 			}
 
@@ -326,7 +334,9 @@ namespace MvbaCore.FileSystem
 					_thread.Abort();
 				}
 			}
+// ReSharper disable EmptyGeneralCatchClause
 			catch
+// ReSharper restore EmptyGeneralCatchClause
 			{
 			}
 			Logger.Log(NotificationSeverity.Info, "Stopped...");

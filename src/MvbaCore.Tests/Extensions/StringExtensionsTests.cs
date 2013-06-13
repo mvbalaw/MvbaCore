@@ -374,7 +374,9 @@ namespace MvbaCore.Tests.Extensions
 				public void Should_throw_an_exception()
 				{
 					var lines = new string[0];
+// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 					lines.GroupBy(null);
+// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				}
 			}
 

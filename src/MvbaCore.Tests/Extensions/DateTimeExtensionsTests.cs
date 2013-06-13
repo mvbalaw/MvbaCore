@@ -124,7 +124,7 @@ namespace MvbaCore.Tests.Extensions
 			{
 				if (_currentDate.Day == 1)
 				{
-					_currentDate.AddDays(1);
+					_currentDate = _currentDate.AddDays(1);
 				}
 				_otherDate = _currentDate.AddDays(-1);
 			}

@@ -36,7 +36,7 @@ namespace MvbaCore.Services
 		public string GetLoginName(IPrincipal principal)
 		{
 			var identity = principal.Identity;
-			string fullNetworkIdentity = identity.Name;
+			var fullNetworkIdentity = identity.Name;
 			return fullNetworkIdentity.Substring(fullNetworkIdentity.IndexOf("\\") + 1);
 		}
 	}

@@ -20,7 +20,6 @@ using MvbaCore.Services;
 
 namespace MvbaCore.FileSystem
 {
-
 	public interface IFileHandler
 	{
 		bool CanHandle(FileWrapper fileWrapper);
@@ -30,9 +29,9 @@ namespace MvbaCore.FileSystem
 
 	public class FileWrapper
 	{
+		public DateTime FileDate { get; set; }
 		public string FileName { get; set; }
 		public bool Processed { get; set; }
-		public DateTime FileDate { get; set; }
 	}
 
 	public class FileWatcher
@@ -55,8 +54,8 @@ namespace MvbaCore.FileSystem
 		private Thread _thread;
 
 		public FileWatcher(string sourceDir,
-						   IFileSystemService fileSystemService,
-						   params IFileHandler[] fileHandlers)
+			IFileSystemService fileSystemService,
+			params IFileHandler[] fileHandlers)
 		{
 			_files = new List<FileWrapper>();
 			_sourceDir = sourceDir;
@@ -77,7 +76,6 @@ namespace MvbaCore.FileSystem
 			EnsureDirectoryExists("Results", _resultsDirectory);
 		}
 
-
 		private void EnsureDirectoryExists(string name, string path)
 		{
 			if (!_fileSystemService.DirectoryExists(path))
@@ -95,15 +93,38 @@ namespace MvbaCore.FileSystem
 			}
 		}
 
+		private void HandleError(FileWrapper fileWrapper, string reason, Exception exception = null)
+		{
+			MoveFileToErrorDirectory(fileWrapper.FileName);
+			var fileName = Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension);
+//// ReSharper disable AssignNullToNotNullAttribute
+// ReSharper disable AssignNullToNotNullAttribute
+			var path = Path.Combine(_errorDirectory, fileName);
+// ReSharper restore AssignNullToNotNullAttribute
+//// ReSharper restore AssignNullToNotNullAttribute
+			if (exception == null)
+			{
+				Logger.Log(NotificationSeverity.Error, reason);
+				File.WriteAllText(path, reason);
+			}
+			else
+			{
+				Logger.Log(NotificationSeverity.Error, reason, exception);
+				File.WriteAllText(path, reason + Environment.NewLine + exception);
+			}
+
+			fileWrapper.Processed = true;
+		}
+
 		private void LoadFile(ICollection<FileWrapper> files, FileSystemInfo file)
 		{
 			try
 			{
 				var fileWrapper = new FileWrapper
-				{
-					FileName = file.FullName,
-					FileDate = file.LastWriteTime,
-				};
+				                  {
+					                  FileName = file.FullName,
+					                  FileDate = file.LastWriteTime,
+				                  };
 				files.Add(fileWrapper);
 			}
 			catch (IOException ioException)
@@ -249,29 +270,6 @@ namespace MvbaCore.FileSystem
 			}
 		}
 
-		private void HandleError(FileWrapper fileWrapper, string reason, Exception exception = null)
-		{
-			MoveFileToErrorDirectory(fileWrapper.FileName);
-			string fileName = Path.GetFileName(fileWrapper.FileName + ErrorReasonFileExtension);
-//// ReSharper disable AssignNullToNotNullAttribute
-// ReSharper disable AssignNullToNotNullAttribute
-			string path = Path.Combine(_errorDirectory, fileName);
-// ReSharper restore AssignNullToNotNullAttribute
-//// ReSharper restore AssignNullToNotNullAttribute
-			if (exception == null)
-			{
-				Logger.Log(NotificationSeverity.Error, reason);
-				File.WriteAllText(path, reason);
-			}
-			else
-			{
-				Logger.Log(NotificationSeverity.Error, reason, exception);
-				File.WriteAllText(path, reason + Environment.NewLine + exception);
-			}
-
-			fileWrapper.Processed = true;
-		}
-
 		public void Start()
 		{
 			// try to re-run previous failures on startup
@@ -298,9 +296,9 @@ namespace MvbaCore.FileSystem
 			}
 
 			_thread = new Thread(WatchForFiles)
-			{
-				IsBackground = true
-			};
+			          {
+				          IsBackground = true
+			          };
 			_running = true;
 			_thread.Start();
 		}
@@ -358,10 +356,13 @@ namespace MvbaCore.FileSystem
 
 					ProcessFile(fileWrapper);
 
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 					if (!_running)
+// ReSharper disable HeuristicUnreachableCode
 					{
 						break;
 					}
+// ReSharper restore HeuristicUnreachableCode
 
 					if (_files.Count > 0)
 					{
@@ -374,6 +375,7 @@ namespace MvbaCore.FileSystem
 					}
 				}
 
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 				if (_running)
 				{
 					Thread.Sleep(_sleepTimeout);

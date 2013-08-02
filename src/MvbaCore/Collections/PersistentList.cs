@@ -15,9 +15,9 @@ using System.Linq;
 
 namespace MvbaCore.Collections
 {
-	// ReSharper disable PossibleInterfaceMemberAmbiguity
+// ReSharper disable PossibleInterfaceMemberAmbiguity
 	public interface IPersistentList<T> : IList<T>, ICollection
-		// ReSharper restore PossibleInterfaceMemberAmbiguity
+// ReSharper restore PossibleInterfaceMemberAmbiguity
 		where T : class
 	{
 		IList<T> Actual { set; }
@@ -87,17 +87,17 @@ namespace MvbaCore.Collections
 
 		public IPersistentList<T> Sort(Func<T, T, int> compare)
 		{
-			int count = _actual.Count;
+			var count = _actual.Count;
 			if (count < 2)
 			{
 				return this;
 			}
 			// in-place insertion sort
 			// http://en.wikipedia.org/wiki/Insertion_sort
-			for (int i = 1; i < count; i++)
+			for (var i = 1; i < count; i++)
 			{
 				var current = _actual[i];
-				int j = i - 1;
+				var j = i - 1;
 				for (; j >= 0; j--)
 				{
 					var item = _actual[j];
@@ -157,7 +157,7 @@ namespace MvbaCore.Collections
 		{
 			if (BeforeRemove(this, item))
 			{
-				bool toReturn = _actual.Remove(item);
+				var toReturn = _actual.Remove(item);
 				AfterRemove(this);
 				return toReturn;
 			}

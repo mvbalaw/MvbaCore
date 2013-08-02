@@ -19,7 +19,7 @@ namespace MvbaCore.Tests.Extensions
 			firstRow = firstRow ?? 0;
 			count = count ?? records.Count;
 
-			int recordsCount = records.Count - firstRow.Value;
+			var recordsCount = records.Count - firstRow.Value;
 
 			if (count > recordsCount)
 			{

@@ -54,7 +54,8 @@ namespace MvbaCore.Tests.FileSystem
 				foreach (var actual in result)
 				{
 					var expected = _input[count + 1].Split('|');
-					header.Length.Times(j => { actual[header[j]].ShouldBeEqualTo(expected[j]); });
+					var actual1 = actual;
+					header.Length.Times(j => actual1[header[j]].ShouldBeEqualTo(expected[j]));
 					count++;
 				}
 			}

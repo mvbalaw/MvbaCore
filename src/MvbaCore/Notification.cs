@@ -27,14 +27,7 @@ namespace MvbaCore
 		{
 		}
 
-		public Notification(Notification notification)
-// ReSharper disable IntroduceOptionalParameters.Global
-			: this(notification, default(T))
-// ReSharper restore IntroduceOptionalParameters.Global
-		{
-		}
-
-		public Notification(Notification notification, T item)
+		public Notification(Notification notification, T item = default(T))
 		{
 			Item = item;
 			Add(notification);

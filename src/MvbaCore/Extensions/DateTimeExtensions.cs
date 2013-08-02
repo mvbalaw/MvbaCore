@@ -26,8 +26,8 @@ namespace MvbaCore.Extensions
 				return other.MonthsToEndOfYear() + ((current.YearsSince(other) - 1) * 12) + current.Month;
 			}
 
-			int currentMonth = current.Month;
-			int otherMonth = other.Month;
+			var currentMonth = current.Month;
+			var otherMonth = other.Month;
 
 			if (otherMonth == currentMonth)
 			{

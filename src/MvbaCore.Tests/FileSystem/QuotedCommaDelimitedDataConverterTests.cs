@@ -1,12 +1,12 @@
-﻿//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
+﻿//   * **************************************************************************
+//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//   * This source code is subject to terms and conditions of the MIT License.
+//   * A copy of the license can be found in the License.txt file
+//   * at the root of this distribution.
+//   * By using this source code in any fashion, you are agreeing to be bound by
+//   * the terms of the MIT License.
+//   * You must not remove this notice from this software.
+//   * **************************************************************************
 
 using System;
 using System.Linq;
@@ -35,12 +35,12 @@ namespace MvbaCore.Tests.FileSystem
 			public void BeforeEachTest()
 			{
 				_input = new[]
-					         {
-						         "\"H1\",\"H2\",\"H3\",\"H4\"",
-						         "\"Obama\",\"Nobel\",\"Peace\",\"2009\"",
-						         "\"Bush\",\"No\",\"Nobel\",\"\"",
-						         "\"Gandhi\",\"Deserved\",\"Nobel\",\"\""
-					         };
+				         {
+					         "\"H1\",\"H2\",\"H3\",\"H4\"",
+					         "\"Obama\",\"Nobel\",\"Peace\",\"2009\"",
+					         "\"Bush\",\"No\",\"Nobel\",\"\"",
+					         "\"Gandhi\",\"Deserved\",\"Nobel\",\"\""
+				         };
 
 				_quotedCommaDelimitedDataConverter = new QuotedCommaDelimitedDataConverter();
 			}
@@ -51,11 +51,12 @@ namespace MvbaCore.Tests.FileSystem
 				var result = _quotedCommaDelimitedDataConverter.Convert(_input);
 
 				var header = SplitOnDelimiter(_input[0]);
-				int count = 0;
+				var count = 0;
 				foreach (var actual in result)
 				{
 					var expected = SplitOnDelimiter(_input[count + 1]);
-					header.Length.Times(j => { actual[header[j]].ShouldBeEqualTo(expected[j]); });
+					var actual1 = actual;
+					header.Length.Times(j => actual1[header[j]].ShouldBeEqualTo(expected[j]));
 					count++;
 				}
 			}

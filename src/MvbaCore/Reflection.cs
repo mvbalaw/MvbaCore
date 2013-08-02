@@ -1,12 +1,12 @@
-//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution. 
-//  * By using this source code in any fashion, you are agreeing to be bound by 
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
+//   * **************************************************************************
+//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//   * This source code is subject to terms and conditions of the MIT License.
+//   * A copy of the license can be found in the License.txt file
+//   * at the root of this distribution.
+//   * By using this source code in any fashion, you are agreeing to be bound by
+//   * the terms of the MIT License.
+//   * You must not remove this notice from this software.
+//   * **************************************************************************
 
 using System;
 using System.Collections.Generic;
@@ -31,10 +31,32 @@ namespace MvbaCore
 			Property
 		}
 
+// ReSharper disable InconsistentNaming
 		private static readonly StringDictionary _emptyCustomDestinationPropertyNameToSourcePropertyNameMap = new StringDictionary();
-
 		private static readonly LruCache<Type, Dictionary<string, GenericGetter>> _getters = new LruCache<Type, Dictionary<string, GenericGetter>>(50);
 		private static readonly LruCache<Type, Dictionary<string, GenericSetter>> _setters = new LruCache<Type, Dictionary<string, GenericSetter>>(50);
+		// ReSharper restore InconsistentNaming
+
+		/// <summary>
+		///     http://stackoverflow.com/questions/232535/how-to-use-reflection-to-call-generic-method
+		/// </summary>
+		public static object CallGenericMethod<TContainer>(TContainer container, Type genericType, string methodName, params object[] parameters)
+		{
+			MethodInfo method;
+			if (parameters == null || !parameters.Any())
+			{
+				method = typeof(TContainer).GetMethod(methodName);
+			}
+			else
+			{
+				var parameterTypes = parameters.Select(x => x == null ? typeof(object) : x.GetType()).ToArray();
+				method = typeof(TContainer).GetMethod(methodName, parameterTypes) ??
+					GetMethodExt(typeof(TContainer), methodName, BindingFlags.Public | BindingFlags.Instance, parameterTypes);
+			}
+			var generic = method.MakeGenericMethod(genericType);
+			var result = generic.Invoke(container, parameters);
+			return result;
+		}
 
 		public static bool CouldBeNull(Type type)
 		{
@@ -95,7 +117,7 @@ namespace MvbaCore
 
 		public static string GetControllerName<TControllerType>()
 		{
-			string name = typeof(TControllerType).Name;
+			var name = typeof(TControllerType).Name;
 			return GetControllerName(name);
 		}
 
@@ -118,27 +140,27 @@ namespace MvbaCore
 					.GetFields()
 					.Where(x => !x.IsLiteral)
 					.Select(x => new GenericSetter
-					{
-						Name = x.Name,
-						StorageType = x.FieldType,
-						SetValue = (Action<object, object>)(x.SetValue),
-						AccessorType = AccessorType.Field
-					});
+					             {
+						             Name = x.Name,
+						             StorageType = x.FieldType,
+						             SetValue = (Action<object, object>)(x.SetValue),
+						             AccessorType = AccessorType.Field
+					             });
 
 				var destinationProperties = destinationType
 					.GetProperties()
 					.ThatHaveASetter()
 					.Select(x =>
-						{
-							var fastProperty = new FastProperty(x);
-							return new GenericSetter
-							{
-								Name = x.Name,
-								StorageType = x.PropertyType,
-								SetValue = fastProperty.CanWrite ? fastProperty.Set : (Action<object, object>)null,
-								AccessorType = AccessorType.Property
-							};
-						})
+					{
+						var fastProperty = new FastProperty(x);
+						return new GenericSetter
+						       {
+							       Name = x.Name,
+							       StorageType = x.PropertyType,
+							       SetValue = fastProperty.CanWrite ? fastProperty.Set : (Action<object, object>)null,
+							       AccessorType = AccessorType.Property
+						       };
+					})
 					.Where(x => x.SetValue != null);
 
 				destinationAccessors = new Dictionary<string, GenericSetter>(100);
@@ -183,7 +205,7 @@ namespace MvbaCore
 		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
 		{
 			var lowerCustomDictionary = new StringDictionary();
-			foreach (string item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
+			foreach (var item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
 			{
 				lowerCustomDictionary.Add(item.ToLower(), customDestinationPropertyNameToSourcePropertyNameMap[item].ToLower());
 			}
@@ -192,18 +214,18 @@ namespace MvbaCore
 			var destinationAccessors = GetDestinationAccessors(destinationType);
 
 			return (from entry in destinationAccessors
-			        let key = lowerCustomDictionary[entry.Key] ?? entry.Key
-			        where sourceAccessors.ContainsKey(key)
-			        let sourceAccessor = sourceAccessors[key]
-			        let destinationAccessor = entry.Value
-			        select new PropertyMappingInfo
-			        {
-			        	Name = destinationAccessor.Name,
-			        	SourcePropertyType = sourceAccessor.StorageType,
-			        	DestinationPropertyType = destinationAccessor.StorageType,
-			        	GetValueFromSource = sourceAccessor.GetValue,
-			        	SetValueToDestination = destinationAccessor.SetValue
-			        }).ToList();
+				let key = lowerCustomDictionary[entry.Key] ?? entry.Key
+				where sourceAccessors.ContainsKey(key)
+				let sourceAccessor = sourceAccessors[key]
+				let destinationAccessor = entry.Value
+				select new PropertyMappingInfo
+				       {
+					       Name = destinationAccessor.Name,
+					       SourcePropertyType = sourceAccessor.StorageType,
+					       DestinationPropertyType = destinationAccessor.StorageType,
+					       GetValueFromSource = sourceAccessor.GetValue,
+					       SetValueToDestination = destinationAccessor.SetValue
+				       }).ToList();
 		}
 
 		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType)
@@ -214,7 +236,7 @@ namespace MvbaCore
 		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
 		{
 			var lowerCustomDictionary = new StringDictionary();
-			foreach (string item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
+			foreach (var item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
 			{
 				lowerCustomDictionary.Add(item.ToLower(), customDestinationPropertyNameToSourcePropertyNameMap[item].ToLower());
 			}
@@ -222,42 +244,42 @@ namespace MvbaCore
 			var destinationAccessors = GetDestinationAccessors(destinationType);
 
 			return (from entry in destinationAccessors
-			        let key = lowerCustomDictionary[entry.Key] ?? entry.Key
-			        where sourceAccessors.ContainsKey(key)
-			        let sourceAccessor = sourceAccessors[key]
-			        let destinationAccessor = entry.Value
-			        where sourceAccessor.AccessorType == AccessorType.Property
-			        where destinationAccessor.AccessorType == AccessorType.Property
-			        select new PropertyMappingInfo
-			        {
-			        	Name = destinationAccessor.Name,
-			        	SourcePropertyType = sourceAccessor.StorageType,
-			        	DestinationPropertyType = destinationAccessor.StorageType,
-			        	GetValueFromSource = sourceAccessor.GetValue,
-			        	SetValueToDestination = destinationAccessor.SetValue
-			        }).ToList();
+				let key = lowerCustomDictionary[entry.Key] ?? entry.Key
+				where sourceAccessors.ContainsKey(key)
+				let sourceAccessor = sourceAccessors[key]
+				let destinationAccessor = entry.Value
+				where sourceAccessor.AccessorType == AccessorType.Property
+				where destinationAccessor.AccessorType == AccessorType.Property
+				select new PropertyMappingInfo
+				       {
+					       Name = destinationAccessor.Name,
+					       SourcePropertyType = sourceAccessor.StorageType,
+					       DestinationPropertyType = destinationAccessor.StorageType,
+					       GetValueFromSource = sourceAccessor.GetValue,
+					       SetValueToDestination = destinationAccessor.SetValue
+				       }).ToList();
 		}
 
 		public static MethodCallData GetMethodCallData<TClass>(Expression<Func<TClass, object>> methodCall) where TClass : class
 		{
-			string className = typeof(TClass).Name;
-			string methodName = GetMethodName(methodCall);
+			var className = typeof(TClass).Name;
+			var methodName = GetMethodName(methodCall);
 
 			var expression = GetMethodCallExpression(methodCall);
 			var parameters = expression.Method.GetParameters();
 			var parameterDictionary = parameters.Select((x, i) => new
-			{
-				x.Name,
-				Value = GetValueAsString(expression.Arguments[i])
-			}
+			                                                      {
+				                                                      x.Name,
+				                                                      Value = GetValueAsString(expression.Arguments[i])
+			                                                      }
 				).ToDictionary(x => x.Name, x => x.Value);
 
 			return new MethodCallData
-			{
-				MethodName = methodName,
-				ClassName = className,
-				ParameterValues = parameterDictionary
-			};
+			       {
+				       MethodName = methodName,
+				       ClassName = className,
+				       ParameterValues = parameterDictionary
+			       };
 		}
 
 		public static MethodCallExpression GetMethodCallExpression<T, TReturn>(Expression<Func<T, TReturn>> expression)
@@ -281,156 +303,12 @@ namespace MvbaCore
 			return methodCallExpression;
 		}
 
-		[DebuggerStepThrough]
-		public static string GetMethodName<T, TReturn>(Expression<Func<T, TReturn>> expression)
-		{
-			var methodCallExpression = GetMethodCallExpression(expression);
-			return methodCallExpression.Method.Name;
-		}
-
-		public static string GetMultiLevelPropertyName(params string[] propertyNames)
-		{
-			return propertyNames.Join(".");
-		}
-
-		private static List<string> GetNames(MemberExpression memberExpression)
-		{
-			var names = new List<string>
-			{
-				memberExpression.Member.Name
-			};
-			while (memberExpression.Expression as MemberExpression != null)
-			{
-				memberExpression = (MemberExpression)memberExpression.Expression;
-				names.Insert(0, memberExpression.Member.Name);
-			}
-			return names;
-		}
-
-		[DebuggerStepThrough]
-		public static string GetPropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
-		{
-			string names = GetPropertyName(expression.Body as MemberExpression);
-			if (names != null)
-			{
-				return names;
-			}
-			names = GetPropertyName(expression.Body as UnaryExpression);
-			if (names != null)
-			{
-				return names;
-			}
-			throw new ArgumentException("expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
-		}
-
-		public static string GetPropertyName(MemberExpression memberExpression)
-		{
-			if (memberExpression == null)
-			{
-				return null;
-			}
-			var names = GetNames(memberExpression);
-			string name = names.Join(".");
-			return name;
-		}
-
-		public static string GetPropertyName(UnaryExpression unaryExpression)
-		{
-			if (unaryExpression == null)
-			{
-				return null;
-			}
-			var memberExpression = unaryExpression.Operand as MemberExpression;
-			return GetPropertyName(memberExpression);
-		}
-
-		[DebuggerStepThrough]
-		public static string GetPropertyName<T>(Expression<Func<T>> expression)
-		{
-			var memberExpression = expression.Body as MemberExpression;
-			if (memberExpression == null)
-			{
-				throw new ArgumentException("expression must be in the form: () => instance.Property");
-			}
-			var names = GetNames(memberExpression);
-			string name = names.Count > 1 ? names.Skip(1).Join(".") : names.Join(".");
-			return name;
-		}
-
-		private static Dictionary<string, GenericGetter> GetSourceAccessors(Type sourceType)
-		{
-			var sourceAccessors = _getters[sourceType];
-			if (sourceAccessors == null)
-			{
-				var sourceFields = sourceType
-					.GetFields()
-					.Select(x =>
-					        new GenericGetter
-					        {
-					        	Name = x.Name,
-					        	StorageType = x.FieldType,
-					        	GetValue = x.GetValue,
-					        	AccessorType = AccessorType.Field
-					        }
-					);
-				var sourceProperties = sourceType
-					.GetProperties()
-					.ThatHaveAGetter()
-					.Select(x => new GenericGetter
-					{
-						Name = x.Name,
-						StorageType = x.PropertyType,
-						GetValue = new FastProperty(x).Get,
-						AccessorType = AccessorType.Property
-					});
-
-				sourceAccessors = new Dictionary<string, GenericGetter>(100);
-				foreach (var accessor in sourceProperties.Concat(sourceFields))
-				{
-					sourceAccessors.Add(accessor.Name.ToLower(), accessor);
-				}
-
-				_getters.Add(sourceType, sourceAccessors);
-			}
-			return sourceAccessors;
-		}
-
-		///<summary>
-		///    http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
-		///</summary>
-		private static object GetValue(Expression expression)
-		{
-			var lambda = Expression.Lambda<Func<object>>(Expression.Convert(expression, typeof(object)));
-			var func = lambda.Compile();
-			return func.Invoke();
-		}
-
 		/// <summary>
-		/// http://stackoverflow.com/questions/232535/how-to-use-reflection-to-call-generic-method
+		///     Search for a method by name, parameter types, and binding flags.  Unlike GetMethod(), does 'loose' matching on
+		///     generic
+		///     parameter types, and searches base interfaces.
 		/// </summary>
-		public static object CallGenericMethod<TContainer>(TContainer container, Type genericType, string methodName, params object[] parameters)
-		{
-			MethodInfo method;
-			if (parameters == null || !parameters.Any())
-			{
-				method = typeof(TContainer).GetMethod(methodName);
-			}
-			else
-			{
-				var parameterTypes = parameters.Select(x => x == null ? typeof(object) : x.GetType()).ToArray();
-				method = typeof(TContainer).GetMethod(methodName, parameterTypes) ?? 
-					GetMethodExt(typeof(TContainer), methodName, BindingFlags.Public|BindingFlags.Instance, parameterTypes);
-			}
-			var generic = method.MakeGenericMethod(genericType);
-			var result = generic.Invoke(container, parameters);
-			return result;
-		}
-
-		/// <summary>
-		/// Search for a method by name, parameter types, and binding flags.  Unlike GetMethod(), does 'loose' matching on generic
-		/// parameter types, and searches base interfaces.
-		/// </summary>
-		/// <exception cref="AmbiguousMatchException"/>
+		/// <exception cref="AmbiguousMatchException" />
 		private static MethodInfo GetMethodExt(this Type thisType, string name, BindingFlags bindingFlags, params Type[] parameterTypes)
 		{
 			// http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
@@ -485,64 +363,129 @@ namespace MvbaCore
 			}
 		}
 
-
-		/// <summary>
-		/// Determines if the two types are either identical, or are both generic parameters or generic types
-		/// with generic parameters in the same locations (generic parameters match any other generic paramter,
-		/// but NOT concrete types).
-		/// </summary>
-		private static bool IsSimilarType(this Type thisType, Type type)
+		[DebuggerStepThrough]
+		public static string GetMethodName<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
-			// from http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
+			var methodCallExpression = GetMethodCallExpression(expression);
+			return methodCallExpression.Method.Name;
+		}
 
-			// Ignore any 'ref' types
-			if (thisType.IsByRef)
-			{
-				thisType = thisType.GetElementType();
-			}
-			if (type.IsByRef)
-			{
-				type = type.GetElementType();
-			}
+		public static string GetMultiLevelPropertyName(params string[] propertyNames)
+		{
+			return propertyNames.Join(".");
+		}
 
-			// Handle array types
-			if (thisType.IsArray && type.IsArray)
+		private static List<string> GetNames(MemberExpression memberExpression)
+		{
+			var names = new List<string>
+			            {
+				            memberExpression.Member.Name
+			            };
+			while (memberExpression.Expression as MemberExpression != null)
 			{
-				return thisType.GetElementType().IsSimilarType(type.GetElementType());
+				memberExpression = (MemberExpression)memberExpression.Expression;
+				names.Insert(0, memberExpression.Member.Name);
 			}
+			return names;
+		}
 
-			// If the types are identical, or they're both generic parameters or the special 'T' type, treat as a match
-			if (thisType == type || ((thisType.IsGenericParameter || thisType == typeof(TMatch)) && (type.IsGenericParameter || type == typeof(TMatch))))
+		[DebuggerStepThrough]
+		public static string GetPropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
+		{
+			var names = GetPropertyName(expression.Body as MemberExpression);
+			if (names != null)
 			{
-				return true;
+				return names;
 			}
-
-			// Handle any generic arguments
-			if (thisType.IsGenericType && type.IsGenericType)
+			names = GetPropertyName(expression.Body as UnaryExpression);
+			if (names != null)
 			{
-				var thisArguments = thisType.GetGenericArguments();
-				var arguments = type.GetGenericArguments();
-				if (thisArguments.Length == arguments.Length)
-				{
-					for (var i = 0; i < thisArguments.Length; ++i)
-					{
-						if (!thisArguments[i].IsSimilarType(arguments[i]))
+				return names;
+			}
+			throw new ArgumentException("expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
+		}
+
+		public static string GetPropertyName(MemberExpression memberExpression)
+		{
+			if (memberExpression == null)
+			{
+				return null;
+			}
+			var names = GetNames(memberExpression);
+			var name = names.Join(".");
+			return name;
+		}
+
+		public static string GetPropertyName(UnaryExpression unaryExpression)
+		{
+			if (unaryExpression == null)
+			{
+				return null;
+			}
+			var memberExpression = unaryExpression.Operand as MemberExpression;
+			return GetPropertyName(memberExpression);
+		}
+
+		[DebuggerStepThrough]
+		public static string GetPropertyName<T>(Expression<Func<T>> expression)
+		{
+			var memberExpression = expression.Body as MemberExpression;
+			if (memberExpression == null)
+			{
+				throw new ArgumentException("expression must be in the form: () => instance.Property");
+			}
+			var names = GetNames(memberExpression);
+			var name = names.Count > 1 ? names.Skip(1).Join(".") : names.Join(".");
+			return name;
+		}
+
+		private static Dictionary<string, GenericGetter> GetSourceAccessors(Type sourceType)
+		{
+			var sourceAccessors = _getters[sourceType];
+			if (sourceAccessors == null)
+			{
+				var sourceFields = sourceType
+					.GetFields()
+					.Select(x =>
+						new GenericGetter
 						{
-							return false;
+							Name = x.Name,
+							StorageType = x.FieldType,
+							GetValue = x.GetValue,
+							AccessorType = AccessorType.Field
 						}
-					}
-					return true;
-				}
-			}
+					);
+				var sourceProperties = sourceType
+					.GetProperties()
+					.ThatHaveAGetter()
+					.Select(x => new GenericGetter
+					             {
+						             Name = x.Name,
+						             StorageType = x.PropertyType,
+						             GetValue = new FastProperty(x).Get,
+						             AccessorType = AccessorType.Property
+					             });
 
-			return false;
+				sourceAccessors = new Dictionary<string, GenericGetter>(100);
+				foreach (var accessor in sourceProperties.Concat(sourceFields))
+				{
+					sourceAccessors.Add(accessor.Name.ToLower(), accessor);
+				}
+
+				_getters.Add(sourceType, sourceAccessors);
+			}
+			return sourceAccessors;
 		}
 
 		/// <summary>
-		/// Special type used to match any generic parameter type in GetMethodExt().
+		///     http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
 		/// </summary>
-		public class TMatch
-		{ }
+		private static object GetValue(Expression expression)
+		{
+			var lambda = Expression.Lambda<Func<object>>(Expression.Convert(expression, typeof(object)));
+			var func = lambda.Compile();
+			return func.Invoke();
+		}
 
 		public static string GetValueAsString(Expression expression)
 		{
@@ -582,7 +525,7 @@ namespace MvbaCore
 			if (type.IsValueType)
 			{
 				if (type.IsGenericType &&
-				    type.DeclaringType == null)
+					type.DeclaringType == null)
 				{
 					// e.g. decimal?
 					return true;
@@ -591,10 +534,55 @@ namespace MvbaCore
 			return false;
 		}
 
+		/// <summary>
+		///     Determines if the two types are either identical, or are both generic parameters or generic types
+		///     with generic parameters in the same locations (generic parameters match any other generic paramter,
+		///     but NOT concrete types).
+		/// </summary>
+		private static bool IsSimilarType(this Type thisType, Type type)
+		{
+			// from http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
+
+			// Ignore any 'ref' types
+			if (thisType.IsByRef)
+			{
+				thisType = thisType.GetElementType();
+			}
+			if (type.IsByRef)
+			{
+				type = type.GetElementType();
+			}
+
+			// Handle array types
+			if (thisType.IsArray && type.IsArray)
+			{
+				return thisType.GetElementType().IsSimilarType(type.GetElementType());
+			}
+
+			// If the types are identical, or they're both generic parameters or the special 'T' type, treat as a match
+			if (thisType == type || ((thisType.IsGenericParameter || thisType == typeof(TMatch)) && (type.IsGenericParameter || type == typeof(TMatch))))
+			{
+				return true;
+			}
+
+			// Handle any generic arguments
+			if (thisType.IsGenericType && type.IsGenericType)
+			{
+				var thisArguments = thisType.GetGenericArguments();
+				var arguments = type.GetGenericArguments();
+				if (thisArguments.Length == arguments.Length)
+				{
+					return !thisArguments.Where((t, i) => !t.IsSimilarType(arguments[i])).Any();
+				}
+			}
+
+			return false;
+		}
+
 		public static bool IsUserType(Type type)
 		{
 			var assembly = type.Assembly;
-			string company = GetAttribute<AssemblyCompanyAttribute>(assembly).Company;
+			var company = GetAttribute<AssemblyCompanyAttribute>(assembly).Company;
 			return company != "Microsoft Corporation";
 		}
 
@@ -612,6 +600,13 @@ namespace MvbaCore
 			public string Name { get; set; }
 			public Action<object, object> SetValue { get; set; }
 			public Type StorageType { get; set; }
+		}
+
+		/// <summary>
+		///     Special type used to match any generic parameter type in GetMethodExt().
+		/// </summary>
+		public class TMatch
+		{
 		}
 	}
 }

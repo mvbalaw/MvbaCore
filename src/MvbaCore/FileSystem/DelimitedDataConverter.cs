@@ -59,6 +59,7 @@ namespace MvbaCore.FileSystem
 			return headerRow;
 		}
 
+// ReSharper disable once ParameterTypeCanBeEnumerable.Global
 		public static IEnumerable<string> JoinQuoted(string[] strings, string delimiter)
 		{
 			var output = new List<string>();

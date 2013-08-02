@@ -18,8 +18,8 @@ namespace MvbaCore.Comparers
 	{
 		public int Compare(string x, string y)
 		{
-			int xNumber = Regex.Match(x, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
-			int yNumber = Regex.Match(y, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
+			var xNumber = Regex.Match(x, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
+			var yNumber = Regex.Match(y, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
 			return xNumber.CompareTo(yNumber);
 		}
 	}

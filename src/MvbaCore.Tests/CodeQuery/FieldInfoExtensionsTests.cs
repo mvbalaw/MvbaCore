@@ -1,12 +1,12 @@
-//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
+//   * **************************************************************************
+//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//   * This source code is subject to terms and conditions of the MIT License.
+//   * A copy of the license can be found in the License.txt file
+//   * at the root of this distribution.
+//   * By using this source code in any fashion, you are agreeing to be bound by
+//   * the terms of the MIT License.
+//   * You must not remove this notice from this software.
+//   * **************************************************************************
 
 using System.ComponentModel;
 using System.Linq;
@@ -49,14 +49,14 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_return_False_if_there_are_no_matching_attributes()
 			{
-				bool hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<TestAttribute>();
+				var hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<TestAttribute>();
 				hasAttributeOfType.ShouldBeFalse();
 			}
 
 			[Test]
 			public void Should_return_True_if_there_are_matching_attributes()
 			{
-				bool hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<ReadOnlyAttribute>();
+				var hasAttributeOfType = typeof(TestClass).GetField("Id").HasAttributeOfType<ReadOnlyAttribute>();
 				hasAttributeOfType.ShouldBeTrue();
 			}
 

@@ -255,6 +255,7 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_null_if_the_input_is_null()
 			{
 				const string test = null;
+// ReSharper disable once ExpressionIsAlwaysNull
 				test.ToCamelCase().ShouldBeNull();
 			}
 		}
@@ -274,6 +275,7 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_null_if_the_input_is_null()
 			{
 				const string input = null;
+// ReSharper disable once ExpressionIsAlwaysNull
 				var result = input.NewlinesToBr();
 				Assert.IsNull(result);
 			}
@@ -285,7 +287,7 @@ namespace MvbaCore.Tests.Extensions
 			[Test]
 			public void Should_replace_the_tabs()
 			{
-				var input = "food" + "\t" + "bar";
+				const string input = "food" + "\t" + "bar";
 				var result = input.TabsToNbsp();
 				Assert.AreEqual("food&nbsp;&nbsp;&nbsp;&nbsp;bar", result);
 			}
@@ -294,6 +296,7 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_null_if_the_input_is_null()
 			{
 				const string input = null;
+// ReSharper disable once ExpressionIsAlwaysNull
 				var result = input.NewlinesToBr();
 				Assert.IsNull(result);
 			}
@@ -642,6 +645,7 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_null_if_the_input_is_null()
 			{
 				const string input = null;
+// ReSharper disable once ExpressionIsAlwaysNull
 				var result = input.ReplaceIfExists(OldValue, NewValue);
 				Assert.IsNull(result);
 			}

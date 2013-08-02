@@ -19,8 +19,8 @@ namespace MvbaCore
 		{
 			var list1Pointer = list1.GetEnumerator();
 			var list2Pointer = list2.GetEnumerator();
-			bool list1HasItems = list1Pointer.MoveNext();
-			bool list2HasItems = list2Pointer.MoveNext();
+			var list1HasItems = list1Pointer.MoveNext();
+			var list2HasItems = list2Pointer.MoveNext();
 
 			while (list1HasItems || list2HasItems)
 			{
@@ -48,7 +48,7 @@ namespace MvbaCore
 				list2Item = list2Pointer.Current;
 				list1Item = list1Pointer.Current;
 
-				int comparisonResult = compare(list1Item, list2Item);
+				var comparisonResult = compare(list1Item, list2Item);
 				if (comparisonResult <= 0)
 				{
 					yield return list1Item;

@@ -1,12 +1,12 @@
-//  * **************************************************************************
-//  * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//  * This source code is subject to terms and conditions of the MIT License.
-//  * A copy of the license can be found in the License.txt file
-//  * at the root of this distribution.
-//  * By using this source code in any fashion, you are agreeing to be bound by
-//  * the terms of the MIT License.
-//  * You must not remove this notice from this software.
-//  * **************************************************************************
+//   * **************************************************************************
+//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
+//   * This source code is subject to terms and conditions of the MIT License.
+//   * A copy of the license can be found in the License.txt file
+//   * at the root of this distribution.
+//   * By using this source code in any fashion, you are agreeing to be bound by
+//   * the terms of the MIT License.
+//   * You must not remove this notice from this software.
+//   * **************************************************************************
 
 using System;
 using System.ComponentModel;
@@ -31,20 +31,21 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_return_False_if_there_are_no_matching_attributes()
 			{
-				bool hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<TestAttribute>();
+				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<TestAttribute>();
 				hasAttributeOfType.ShouldBeFalse();
 			}
 
 			[Test]
 			public void Should_return_True_if_there_are_matching_attributes()
 			{
-				bool hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<ReadOnlyAttribute>();
+				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<ReadOnlyAttribute>();
 				hasAttributeOfType.ShouldBeTrue();
 			}
 
 			public class TestClass
 			{
 				[ReadOnly(true)]
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 				public int Id { get; private set; }
 			}
 		}
@@ -83,6 +84,7 @@ namespace MvbaCore.Tests.CodeQuery
 					get { throw new NotImplementedException(); }
 				}
 
+// ReSharper disable once UnusedMember.Local
 				private string Name { get; set; }
 			}
 		}
@@ -121,6 +123,7 @@ namespace MvbaCore.Tests.CodeQuery
 					set { throw new NotImplementedException(); }
 				}
 
+// ReSharper disable once UnusedMember.Local
 				private string Name { get; set; }
 			}
 		}
@@ -147,6 +150,7 @@ namespace MvbaCore.Tests.CodeQuery
 			public class TestClass
 			{
 				[ReadOnly(true)]
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 				public int Id { get; private set; }
 
 				public string Name { get; set; }
@@ -174,6 +178,7 @@ namespace MvbaCore.Tests.CodeQuery
 			public class TestClass
 			{
 				[ReadOnly(true)]
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 				public int Id { get; private set; }
 			}
 		}
@@ -192,6 +197,7 @@ namespace MvbaCore.Tests.CodeQuery
 			public class TestClass
 			{
 				[ReadOnly(true)]
+// ReSharper disable once UnusedAutoPropertyAccessor.Local
 				public int Id { get; private set; }
 			}
 		}

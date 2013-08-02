@@ -17,7 +17,7 @@ namespace System
 {
 	public static class CharExtensions
 	{
-		private static readonly char[] Vowels = new[] { 'a', 'e', 'i', 'o', 'u' };
+		private static readonly char[] Vowels = { 'a', 'e', 'i', 'o', 'u' };
 
 		public static bool IsVowel(this char ch)
 		{

@@ -423,6 +423,7 @@ namespace MvbaCore.Tests
 			}
 		}
 
+		[UsedImplicitly]
 		public class When_asked_to_get_method_call_data
 		{
 			[TestFixture]
@@ -514,6 +515,7 @@ namespace MvbaCore.Tests
 					return _total;
 				}
 
+// ReSharper disable once UnusedParameter.Global
 				public string GetFor(TestCalculator input)
 				{
 					return "OK";

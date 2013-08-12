@@ -155,9 +155,8 @@ namespace MvbaCore
 		{
 		}
 
-// ReSharper disable MemberCanBeProtected.Global
+// ReSharper disable once MemberCanBeProtected.Global
 		public Notification(NotificationMessage notificationMessage)
-// ReSharper restore MemberCanBeProtected.Global
 			: base(notificationMessage)
 		{
 		}

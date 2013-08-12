@@ -608,9 +608,8 @@ namespace MvbaCore.Tests
 				int TheProperty { get; }
 			}
 
-// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable once ClassNeverInstantiated.Global
 			public class TestObject
-// ReSharper restore ClassNeverInstantiated.Global
 			{
 				public int Id { get; set; }
 			}

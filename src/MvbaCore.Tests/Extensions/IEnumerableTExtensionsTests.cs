@@ -41,7 +41,7 @@ namespace MvbaCore.Tests.Extensions
 			where TListAType : ITestItem, new()
 			where TListBType : ITestItem, new()
 		{
-			public abstract IEnumerable<TListAType> CallExtension(IEnumerable<TListAType> listA, IEnumerable<TListBType> listB);
+			protected abstract IEnumerable<TListAType> CallExtension(IEnumerable<TListAType> listA, IEnumerable<TListBType> listB);
 
 			[Test]
 			public void Should_return_empty_if_the_list_being_selected_from_is_empty()
@@ -280,7 +280,7 @@ namespace MvbaCore.Tests.Extensions
 		[TestFixture]
 		public class When_asked_to_SelectWhereNotInOther_where_T_is_class : SelectWhereNotInOtherTestBase<TestItem, TestItem>
 		{
-			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
+			protected override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
 			{
 				return listA.Except(listB, a => a.KeyId);
 			}
@@ -290,7 +290,7 @@ namespace MvbaCore.Tests.Extensions
 		public class When_asked_to_SelectWhereNotInOther_where_lists_contain_different_types :
 			SelectWhereNotInOtherTestBase<TestItem, OtherItem>
 		{
-			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<OtherItem> listB)
+			protected override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<OtherItem> listB)
 			{
 				return listA.Except(listB, a => a.KeyId, b => b.KeyId, b => b == null);
 			}
@@ -300,7 +300,7 @@ namespace MvbaCore.Tests.Extensions
 		public class When_asked_to_SelectWhereNotInOther_where_lists_contain_the_same_type :
 			SelectWhereNotInOtherTestBase<TestItem, TestItem>
 		{
-			public override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
+			protected override IEnumerable<TestItem> CallExtension(IEnumerable<TestItem> listA, IEnumerable<TestItem> listB)
 			{
 				return listA.Except(listB, a => a.KeyId, a => a == null);
 			}

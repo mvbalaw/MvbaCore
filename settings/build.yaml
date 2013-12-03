@@ -1,2 +1,2 @@
-:artifacts: '//archive1/term/SERVER/BuildAgents/MvbaCore/master'
+:artifacts: '//fsdev/dev/Build Artifacts/MvbaCore/master'
 :stage: 'c:/projects/MvbaCore/build'

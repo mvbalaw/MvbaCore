@@ -22,7 +22,7 @@ namespace MvbaCore.Logging
 				textWriter = Console.Error;
 			}
 
-			var description = severity.ToString() + ": " + text;
+			var description = severity + " on " +Environment.MachineName+": "+ text;
 			if (exception != null)
 			{
 				description += Environment.NewLine + exception;

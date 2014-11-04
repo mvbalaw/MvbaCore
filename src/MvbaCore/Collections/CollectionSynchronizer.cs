@@ -79,9 +79,26 @@ namespace MvbaCore.Collections
 		/// <param name = "isNullOrEmptyComparer">e.g.  county=>county.CountyId &lt;= 0</param>
 		public void Synchronize<TKey>(Func<T, TKey> getComparisonKey, Func<T, bool> isNullOrEmptyComparer)
 		{
-			_removed = _previousState.Except(_newState, getComparisonKey, isNullOrEmptyComparer);
-			_added = _newState.Except(_previousState, getComparisonKey, isNullOrEmptyComparer);
-			_unchanged = _newState.Intersect(_previousState, getComparisonKey);
+			var previousStateKeyLookup = _previousState.Where(x => !isNullOrEmptyComparer(x)).ToDictionary(getComparisonKey);
+			var newStateKeyLookup = _newState.Where(x => !isNullOrEmptyComparer(x)).ToDictionary(getComparisonKey);
+
+			_removed = previousStateKeyLookup.Where(x => !newStateKeyLookup.ContainsKey(x.Key)).Select(x => x.Value).ToList();
+			var added = new List<T>();
+			var unchanged = new List<T>();
+			foreach (var newItem in newStateKeyLookup)
+			{
+				T previousItem;
+				if (previousStateKeyLookup.TryGetValue(newItem.Key, out previousItem))
+				{
+					unchanged.Add(previousItem);
+				}
+				else
+				{
+					added.Add(newItem.Value);
+				}
+			}
+			_added = added;
+			_unchanged = unchanged;
 		}
 	}
 }

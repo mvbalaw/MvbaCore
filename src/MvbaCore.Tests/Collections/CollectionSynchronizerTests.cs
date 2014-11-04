@@ -37,6 +37,7 @@ namespace MvbaCore.Tests.Collections
 
 		public class TestItem
 		{
+			public string Id { get; set; }
 			public int KeyId { get; set; }
 			public string Name { get; set; }
 		}
@@ -56,7 +57,7 @@ namespace MvbaCore.Tests.Collections
 		}
 
 		[TestFixture]
-		public class When_asked_to_synchronize_two_lists
+		public class When_asked_to_synchronize_two_lists_using_a_specific_field
 		{
 			private List<TestItem> _listA;
 			private List<TestItem> _listB;
@@ -67,31 +68,37 @@ namespace MvbaCore.Tests.Collections
 			{
 				var itemA1 = new TestItem
 				{
+					Id = "A1",
 					KeyId = 1,
 					Name = "A"
 				};
 				var itemA2 = new TestItem
 				{
+					Id = "AB2",
 					KeyId = 2,
 					Name = "A & B"
 				};
 				var itemA3 = new TestItem
 				{
+					Id = "AB3",
 					KeyId = 3,
 					Name = "A & B"
 				};
 				var itemB2 = new TestItem
 				{
+					Id = "AB2",
 					KeyId = 2,
 					Name = "A & B"
 				};
 				var itemB3 = new TestItem
 				{
+					Id = "AB3",
 					KeyId = 3,
 					Name = "A & B"
 				};
 				var itemB4 = new TestItem
 				{
+					Id = "B4",
 					KeyId = 4,
 					Name = "B"
 				};
@@ -114,6 +121,99 @@ namespace MvbaCore.Tests.Collections
 			{
 				_synchronizer = new CollectionSynchronizer<TestItem>(_listA, _listB);
 				_synchronizer.Synchronize(item => item.KeyId, item => item == null);
+			}
+
+			[Test]
+			public void Should_populate_Added_with_items_that_are_in_listA_that_are_not_in_listB()
+			{
+				AssertCorrectContents(_synchronizer.Added, "A");
+			}
+
+			[Test]
+			public void Should_populate_Removed_with_items_that_are_in_listB_that_are_not_in_listA()
+			{
+				AssertCorrectContents(_synchronizer.Removed, "B");
+			}
+
+			[Test]
+			public void Should_populate_Unchanged_with_items_that_are_in_both_listA_and_listB()
+			{
+				AssertCorrectContents(_synchronizer.Unchanged, "A & B");
+			}
+
+			private static void AssertCorrectContents(IEnumerable<TestItem> result, string expectedName)
+			{
+				var list = result.ToList();
+				list.ShouldNotBeNull();
+				list.Any().ShouldBeTrue();
+				list.All(item => item.Name == expectedName).ShouldBeTrue();
+			}
+		}
+		[TestFixture]
+		public class When_asked_to_synchronize_two_lists_using_a_combination_of_fields
+		{
+			private List<TestItem> _listA;
+			private List<TestItem> _listB;
+			private CollectionSynchronizer<TestItem> _synchronizer;
+
+			[TestFixtureSetUp]
+			public void BeforeFirstTest()
+			{
+				var itemA1 = new TestItem
+				{
+					Id = "A1",
+					KeyId = 1,
+					Name = "A"
+				};
+				var itemA2 = new TestItem
+				{
+					Id = "AB2",
+					KeyId = 2,
+					Name = "A & B"
+				};
+				var itemA3 = new TestItem
+				{
+					Id = "AB3",
+					KeyId = 3,
+					Name = "A & B"
+				};
+				var itemB2 = new TestItem
+				{
+					Id = "AB2",
+					KeyId = 2,
+					Name = "A & B"
+				};
+				var itemB3 = new TestItem
+				{
+					Id = "AB3",
+					KeyId = 3,
+					Name = "A & B"
+				};
+				var itemB4 = new TestItem
+				{
+					Id = "B4",
+					KeyId = 4,
+					Name = "B"
+				};
+				_listA = new List<TestItem>
+					{
+						itemA1,
+						itemA2,
+						itemA3
+					};
+				_listB = new List<TestItem>
+					{
+						itemB2,
+						itemB3,
+						itemB4
+					};
+			}
+
+			[SetUp]
+			public void BeforeEachTest()
+			{
+				_synchronizer = new CollectionSynchronizer<TestItem>(_listA, _listB);
+				_synchronizer.Synchronize(item => new{item.KeyId,item.Name}, item => item == null);
 			}
 
 			[Test]

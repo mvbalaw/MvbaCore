@@ -25,12 +25,6 @@ namespace MvbaCore.Tests.Extensions
 	[UsedImplicitly]
 	public class IEnumerableTExtensionsTest
 	{
-		public interface ITestItem
-		{
-			int KeyId { get; set; }
-			string Name { get; set; }
-		}
-
 		public class OtherItem : ITestItem
 		{
 			public int KeyId { get; set; }
@@ -48,9 +42,9 @@ namespace MvbaCore.Tests.Extensions
 			{
 				var listA = new List<TListAType>();
 				var listB = new List<TListBType>
-					            {
-						            new TListBType()
-					            };
+				            {
+					            new TListBType()
+				            };
 
 				var result = CallExtension(listA, listB);
 				Assert.IsNotNull(result);
@@ -61,47 +55,47 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_only_the_items_in_list_being_selected_from_that_are_not_in_the_other_list()
 			{
 				var itemA1 = new TListAType
-					             {
-						             KeyId = 1,
-						             Name = "A"
-					             };
+				             {
+					             KeyId = 1,
+					             Name = "A"
+				             };
 				var itemA2 = new TListAType
-					             {
-						             KeyId = 2,
-						             Name = "A & B"
-					             };
+				             {
+					             KeyId = 2,
+					             Name = "A & B"
+				             };
 				var itemA3 = new TListAType
-					             {
-						             KeyId = 3,
-						             Name = "A & B"
-					             };
+				             {
+					             KeyId = 3,
+					             Name = "A & B"
+				             };
 				var itemB2 = new TListBType
-					             {
-						             KeyId = 2,
-						             Name = "A & B"
-					             };
+				             {
+					             KeyId = 2,
+					             Name = "A & B"
+				             };
 				var itemB3 = new TListBType
-					             {
-						             KeyId = 3,
-						             Name = "A & B"
-					             };
+				             {
+					             KeyId = 3,
+					             Name = "A & B"
+				             };
 				var itemB4 = new TListBType
-					             {
-						             KeyId = 4,
-						             Name = "B"
-					             };
+				             {
+					             KeyId = 4,
+					             Name = "B"
+				             };
 				var listA = new List<TListAType>
-					            {
-						            itemA1,
-						            itemA2,
-						            itemA3
-					            };
+				            {
+					            itemA1,
+					            itemA2,
+					            itemA3
+				            };
 				var listB = new List<TListBType>
-					            {
-						            itemB2,
-						            itemB3,
-						            itemB4
-					            };
+				            {
+					            itemB2,
+					            itemB3,
+					            itemB4
+				            };
 
 				var result = CallExtension(listA, listB).ToList();
 				Assert.IsNotNull(result);
@@ -113,9 +107,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_the_list_being_selected_from_if_the_other_list_is_empty()
 			{
 				var listA = new List<TListAType>
-					            {
-						            new TListAType()
-					            };
+				            {
+					            new TListAType()
+				            };
 				var listB = new List<TListBType>();
 
 				var result = CallExtension(listA, listB);
@@ -127,9 +121,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_the_list_being_selected_from_if_the_other_list_is_null()
 			{
 				var listA = new List<TListAType>
-					            {
-						            new TListAType()
-					            };
+				            {
+					            new TListAType()
+				            };
 				const List<TListBType> listB = null;
 
 				var result = CallExtension(listA, listB);
@@ -160,9 +154,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_false_if_the_input_contains_items()
 			{
 				IList<int> input = new List<int>
-					                   {
-						                   6
-					                   };
+				                   {
+					                   6
+				                   };
 				input.IsNullOrEmpty().ShouldBeFalse();
 			}
 
@@ -189,9 +183,9 @@ namespace MvbaCore.Tests.Extensions
 			{
 				var itemA = new List<TestItem>();
 				var itemB = new List<TestItem>
-					            {
-						            new TestItem()
-					            };
+				            {
+					            new TestItem()
+				            };
 
 				var result = itemA.Intersect(itemB, a => a.KeyId);
 				Assert.IsNotNull(result);
@@ -202,9 +196,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_empty_if_the_other_list_is_empty()
 			{
 				var itemA = new List<TestItem>
-					            {
-						            new TestItem()
-					            };
+				            {
+					            new TestItem()
+				            };
 				var itemB = new List<TestItem>();
 
 				var result = itemA.Intersect(itemB, a => a.KeyId);
@@ -216,9 +210,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_empty_if_the_other_list_is_null()
 			{
 				var itemA = new List<TestItem>
-					            {
-						            new TestItem()
-					            };
+				            {
+					            new TestItem()
+				            };
 				const List<TestItem> itemB = null;
 
 				var result = itemA.Intersect(itemB, a => a.KeyId);
@@ -230,37 +224,37 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_only_the_items_in_list_being_selected_from_that_are_also_in_the_other_list()
 			{
 				var item1 = new TestItem
-					            {
-						            KeyId = 1,
-						            Name = "A"
-					            };
+				            {
+					            KeyId = 1,
+					            Name = "A"
+				            };
 				var item2 = new TestItem
-					            {
-						            KeyId = 2,
-						            Name = "A & B"
-					            };
+				            {
+					            KeyId = 2,
+					            Name = "A & B"
+				            };
 				var item3 = new TestItem
-					            {
-						            KeyId = 3,
-						            Name = "A & B"
-					            };
+				            {
+					            KeyId = 3,
+					            Name = "A & B"
+				            };
 				var item4 = new TestItem
-					            {
-						            KeyId = 4,
-						            Name = "B"
-					            };
+				            {
+					            KeyId = 4,
+					            Name = "B"
+				            };
 				var itemA = new List<TestItem>
-					            {
-						            item1,
-						            item2,
-						            item3
-					            };
+				            {
+					            item1,
+					            item2,
+					            item3
+				            };
 				var itemB = new List<TestItem>
-					            {
-						            item2,
-						            item3,
-						            item4
-					            };
+				            {
+					            item2,
+					            item3,
+					            item4
+				            };
 
 				var result = itemA.Intersect(itemB, a => a.KeyId).ToList();
 				Assert.IsNotNull(result);
@@ -340,17 +334,17 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_multiple_pages_when_the_list_is_longer_than_the__firstPageSize()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2,
-						               3,
-						               4,
-						               5,
-						               6,
-						               7,
-						               8,
-						               9
-					               };
+				               {
+					               1,
+					               2,
+					               3,
+					               4,
+					               5,
+					               6,
+					               7,
+					               8,
+					               9
+				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
 				pageSets.Count().ShouldBeGreaterThan(1);
@@ -360,16 +354,16 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_multiple_pages_with_the_last_page_size_equal_to___nthPageSize()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2,
-						               3,
-						               4,
-						               5,
-						               6,
-						               7,
-						               8
-					               };
+				               {
+					               1,
+					               2,
+					               3,
+					               4,
+					               5,
+					               6,
+					               7,
+					               8
+				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
 				var last = pageSets.Last().ToList();
@@ -385,18 +379,18 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_multiple_pages_with_the_last_page_size_equal_to_the_remaining_elements_in_the_list()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2,
-						               3,
-						               4,
-						               5,
-						               6,
-						               7,
-						               8,
-						               9,
-						               10
-					               };
+				               {
+					               1,
+					               2,
+					               3,
+					               4,
+					               5,
+					               6,
+					               7,
+					               8,
+					               9,
+					               10
+				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
 				pageSets.Last().Count().ShouldBeEqualTo(_listOfItems.Count() - (_firstPageSize + _nthPageSize));
@@ -406,18 +400,18 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_multiple_pages_with_the_pages_other_than_first_and_last_page_equal_to__nthPageSize()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2,
-						               3,
-						               4,
-						               5,
-						               6,
-						               7,
-						               8,
-						               9,
-						               10
-					               };
+				               {
+					               1,
+					               2,
+					               3,
+					               4,
+					               5,
+					               6,
+					               7,
+					               8,
+					               9,
+					               10
+				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
 				pageSets.Skip(1).First().Count().ShouldBeEqualTo(_nthPageSize);
@@ -427,11 +421,11 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_one_page_if_the_length_of_the_list_is_equal_to__firstPageSize()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2,
-						               3
-					               };
+				               {
+					               1,
+					               2,
+					               3
+				               };
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize).ToList();
 				pageSets.First().Count.ShouldBeEqualTo(_firstPageSize);
 				var first = pageSets.First().ToList();
@@ -445,10 +439,10 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_one_page_if_the_length_of_the_list_is_less_than__firstPageSize()
 			{
 				_listOfItems = new List<int>
-					               {
-						               1,
-						               2
-					               };
+				               {
+					               1,
+					               2
+				               };
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
 				pageSets.First().Count.ShouldBeEqualTo(_listOfItems.Count());
 			}
@@ -547,9 +541,9 @@ namespace MvbaCore.Tests.Extensions
 			private void that_has_one_range()
 			{
 				_ranges.Add(new Range<string>
-					            {
-						            Payload = _ranges.Count.ToString()
-					            });
+				            {
+					            Payload = _ranges.Count.ToString()
+				            });
 			}
 
 			private void that_is_empty()
@@ -609,10 +603,10 @@ namespace MvbaCore.Tests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					            {
-						            one,
-						            item
-					            };
+				            {
+					            one,
+					            item
+				            };
 				const string delimiter = "','";
 				var expect = one + delimiter + item;
 
@@ -639,10 +633,10 @@ namespace MvbaCore.Tests.Extensions
 				const int one = 1;
 				const int item = 3;
 				var items = new List<int>
-					            {
-						            one,
-						            item
-					            };
+				            {
+					            one,
+					            item
+				            };
 				const string delimiter = null;
 				var expect = one + "" + item;
 
@@ -751,6 +745,479 @@ namespace MvbaCore.Tests.Extensions
 				result.First().Count.ShouldBeEqualTo(5);
 				result.Last().Count.ShouldBeEqualTo(3);
 			}
+		}
+
+		[TestFixture]
+		public class When_asked_to_synchronize_2_lists
+		{
+			[TestFixture]
+			public class Given_list_items_are_unordered
+			{
+				private List<SyncTestItem> _listA;
+				private List<SyncTestItem> _listB;
+
+				[TestFixtureSetUp]
+				public void BeforeFirstTest()
+				{
+					var itemA1 = new SyncTestItem
+					             {
+						             Data = "A1",
+						             KeyId = 1,
+						             ExpectedStatus = SynchronizationStatus.Removed,
+					             };
+					var itemA2 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+					var itemA3 = new SyncTestItem
+					             {
+						             Data = "AB3c",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+
+					var itemB1 = new SyncTestItem
+					             {
+						             Data = "AB3k",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+					var itemB2 = new SyncTestItem
+					             {
+						             Data = "B4",
+						             KeyId = 4,
+						             ExpectedStatus = SynchronizationStatus.Added
+					             };
+					var itemB3 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+
+					_listA = new List<SyncTestItem>
+					         {
+						         itemA2,
+						         itemA1,
+						         itemA3
+					         };
+					_listB = new List<SyncTestItem>
+					         {
+						         itemB1,
+						         itemB2,
+						         itemB3
+					         };
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				{
+					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Changed)
+						.Select(x => x.OldItem)
+						.ToList();
+					changed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(changed, SynchronizationStatus.Changed);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_the_same_contents_as_Unchanged()
+				{
+					var unchanged = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Unchanged)
+						.Select(x => x.OldItem)
+						.ToList();
+					unchanged.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(unchanged, SynchronizationStatus.Unchanged);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listA_that_are_not_in_listB_as_Added()
+				{
+					var added = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Added)
+						.Select(x => x.NewItem)
+						.ToList();
+					added.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(added, SynchronizationStatus.Added);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listB_that_are_not_in_listA_as_Removed()
+				{
+					var removed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Removed)
+						.Select(x => x.OldItem)
+						.ToList();
+					removed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(removed, SynchronizationStatus.Removed);
+				}
+
+				private static void AssertCorrectContents(IEnumerable<SyncTestItem> result, SynchronizationStatus expectedName)
+				{
+					var list = result.ToList();
+					list.ShouldNotBeNull();
+					list.Any().ShouldBeTrue();
+					list.All(item => item.ExpectedStatus == expectedName).ShouldBeTrue();
+				}
+			}
+
+			[TestFixture]
+			public class Given_previous_list_items_are_ordered_and_new_list_items_are_ordered
+			{
+				private IOrderedEnumerable<SyncTestItem> _listA;
+				private IOrderedEnumerable<SyncTestItem> _listB;
+
+				[TestFixtureSetUp]
+				public void BeforeFirstTest()
+				{
+					var itemA1 = new SyncTestItem
+					             {
+						             Data = "A1",
+						             KeyId = 1,
+						             ExpectedStatus = SynchronizationStatus.Removed,
+					             };
+					var itemA2 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+					var itemA3 = new SyncTestItem
+					             {
+						             Data = "AB3c",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+
+					var itemB1 = new SyncTestItem
+					             {
+						             Data = "AB3k",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+					var itemB2 = new SyncTestItem
+					             {
+						             Data = "B4",
+						             KeyId = 4,
+						             ExpectedStatus = SynchronizationStatus.Added
+					             };
+					var itemB3 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+
+					_listA = new List<SyncTestItem>
+					         {
+						         itemA2,
+						         itemA1,
+						         itemA3
+					         }.OrderBy(x => x.KeyId);
+					_listB = new List<SyncTestItem>
+					         {
+						         itemB1,
+						         itemB2,
+						         itemB3
+					         }.OrderBy(x => x.KeyId);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				{
+					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Changed)
+						.Select(x => x.OldItem)
+						.ToList();
+					changed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(changed, SynchronizationStatus.Changed);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_the_same_contents_as_Unchanged()
+				{
+					var unchanged = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Unchanged)
+						.Select(x => x.OldItem)
+						.ToList();
+					unchanged.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(unchanged, SynchronizationStatus.Unchanged);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listA_that_are_not_in_listB_as_Added()
+				{
+					var added = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Added)
+						.Select(x => x.NewItem)
+						.ToList();
+					added.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(added, SynchronizationStatus.Added);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listB_that_are_not_in_listA_as_Removed()
+				{
+					var removed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Removed)
+						.Select(x => x.OldItem)
+						.ToList();
+					removed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(removed, SynchronizationStatus.Removed);
+				}
+
+				private static void AssertCorrectContents(IEnumerable<SyncTestItem> result, SynchronizationStatus expectedName)
+				{
+					var list = result.ToList();
+					list.ShouldNotBeNull();
+					list.Any().ShouldBeTrue();
+					list.All(item => item.ExpectedStatus == expectedName).ShouldBeTrue();
+				}
+			}
+
+			[TestFixture]
+			public class Given_previous_list_items_are_ordered_but_new_list_items_are_unordered
+			{
+				private IOrderedEnumerable<SyncTestItem> _listA;
+				private List<SyncTestItem> _listB;
+
+				[TestFixtureSetUp]
+				public void BeforeFirstTest()
+				{
+					var itemA1 = new SyncTestItem
+					             {
+						             Data = "A1",
+						             KeyId = 1,
+						             ExpectedStatus = SynchronizationStatus.Removed,
+					             };
+					var itemA2 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+					var itemA3 = new SyncTestItem
+					             {
+						             Data = "AB3c",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+
+					var itemB1 = new SyncTestItem
+					             {
+						             Data = "AB3k",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+					var itemB2 = new SyncTestItem
+					             {
+						             Data = "B4",
+						             KeyId = 4,
+						             ExpectedStatus = SynchronizationStatus.Added
+					             };
+					var itemB3 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+
+					_listA = new List<SyncTestItem>
+					         {
+						         itemA2,
+						         itemA1,
+						         itemA3
+					         }.OrderBy(x => x.KeyId);
+					_listB = new List<SyncTestItem>
+					         {
+						         itemB1,
+						         itemB2,
+						         itemB3
+					         };
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				{
+					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Changed)
+						.Select(x => x.OldItem)
+						.ToList();
+					changed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(changed, SynchronizationStatus.Changed);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_the_same_contents_as_Unchanged()
+				{
+					var unchanged = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Unchanged)
+						.Select(x => x.OldItem)
+						.ToList();
+					unchanged.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(unchanged, SynchronizationStatus.Unchanged);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listA_that_are_not_in_listB_as_Added()
+				{
+					var added = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Added)
+						.Select(x => x.NewItem)
+						.ToList();
+					added.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(added, SynchronizationStatus.Added);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listB_that_are_not_in_listA_as_Removed()
+				{
+					var removed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Removed)
+						.Select(x => x.OldItem)
+						.ToList();
+					removed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(removed, SynchronizationStatus.Removed);
+				}
+
+				private static void AssertCorrectContents(IEnumerable<SyncTestItem> result, SynchronizationStatus expectedName)
+				{
+					var list = result.ToList();
+					list.ShouldNotBeNull();
+					list.Any().ShouldBeTrue();
+					list.All(item => item.ExpectedStatus == expectedName).ShouldBeTrue();
+				}
+			}
+
+			[TestFixture]
+			public class Given_previous_list_items_are_unordered_but_new_list_items_are_ordered
+			{
+				private List<SyncTestItem> _listA;
+				private IOrderedEnumerable<SyncTestItem> _listB;
+
+				[TestFixtureSetUp]
+				public void BeforeFirstTest()
+				{
+					var itemA1 = new SyncTestItem
+					             {
+						             Data = "A1",
+						             KeyId = 1,
+						             ExpectedStatus = SynchronizationStatus.Removed,
+					             };
+					var itemA2 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+					var itemA3 = new SyncTestItem
+					             {
+						             Data = "AB3c",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+
+					var itemB1 = new SyncTestItem
+					             {
+						             Data = "AB3k",
+						             KeyId = 3,
+						             ExpectedStatus = SynchronizationStatus.Changed
+					             };
+					var itemB2 = new SyncTestItem
+					             {
+						             Data = "B4",
+						             KeyId = 4,
+						             ExpectedStatus = SynchronizationStatus.Added
+					             };
+					var itemB3 = new SyncTestItem
+					             {
+						             Data = "AB2",
+						             KeyId = 2,
+						             ExpectedStatus = SynchronizationStatus.Unchanged
+					             };
+
+					_listA = new List<SyncTestItem>
+					         {
+						         itemA2,
+						         itemA1,
+						         itemA3
+					         };
+					_listB = new List<SyncTestItem>
+					         {
+						         itemB1,
+						         itemB2,
+						         itemB3
+					         }.OrderBy(x => x.KeyId);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				{
+					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Changed)
+						.Select(x => x.OldItem)
+						.ToList();
+					changed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(changed, SynchronizationStatus.Changed);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_the_same_contents_as_Unchanged()
+				{
+					var unchanged = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Unchanged)
+						.Select(x => x.OldItem)
+						.ToList();
+					unchanged.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(unchanged, SynchronizationStatus.Unchanged);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listA_that_are_not_in_listB_as_Added()
+				{
+					var added = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Added)
+						.Select(x => x.NewItem)
+						.ToList();
+					added.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(added, SynchronizationStatus.Added);
+				}
+
+				[Test]
+				public void Should_mark_items_that_are_in_listB_that_are_not_in_listA_as_Removed()
+				{
+					var removed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
+						.Where(x => x.Status == SynchronizationStatus.Removed)
+						.Select(x => x.OldItem)
+						.ToList();
+					removed.Count.ShouldBeEqualTo(1);
+					AssertCorrectContents(removed, SynchronizationStatus.Removed);
+				}
+
+				private static void AssertCorrectContents(IEnumerable<SyncTestItem> result, SynchronizationStatus expectedName)
+				{
+					var list = result.ToList();
+					list.ShouldNotBeNull();
+					list.Any().ShouldBeTrue();
+					list.All(item => item.ExpectedStatus == expectedName).ShouldBeTrue();
+				}
+			}
+
+			public class SyncTestItem
+			{
+				public string Data { get; set; }
+				public SynchronizationStatus ExpectedStatus { get; set; }
+				public int KeyId { get; set; }
+			}
+		}
+
+		public interface ITestItem
+		{
+			int KeyId { get; set; }
+			string Name { get; set; }
 		}
 	}
 }

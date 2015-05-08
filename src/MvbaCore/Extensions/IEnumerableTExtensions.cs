@@ -41,15 +41,15 @@ namespace System.Collections.Generic
 		}
 
 		public static IEnumerable<T> Except<T, TKey>(this IEnumerable<T> a, IEnumerable<T> other, Func<T, TKey> getJoinKey,
-		                                             Func<T, bool> isNullOrEmptyComparer)
+			Func<T, bool> isNullOrEmptyComparer)
 		{
 			return a.Except(other, getJoinKey, getJoinKey, isNullOrEmptyComparer);
 		}
 
 		public static IEnumerable<T> Except<T, TK, TKey>(this IEnumerable<T> a, IEnumerable<TK> other,
-		                                                 Func<T, TKey> getJoinKeyForItemsInThis,
-		                                                 Func<TK, TKey> getJoinKeyForItemsInOther,
-		                                                 Func<TK, bool> isNullOrEmptyComparer)
+			Func<T, TKey> getJoinKeyForItemsInThis,
+			Func<TK, TKey> getJoinKeyForItemsInOther,
+			Func<TK, bool> isNullOrEmptyComparer)
 		{
 			if (a == null)
 			{
@@ -71,17 +71,17 @@ namespace System.Collections.Generic
 			}
 
 			return from itemA in aLocal
-			       join itemB in otherLocal on getJoinKeyForItemsInThis(itemA) equals getJoinKeyForItemsInOther(itemB) into c
-			       from itemC in c.DefaultIfEmpty()
-			       where isNullOrEmptyComparer(itemC)
-			       select itemA;
+				join itemB in otherLocal on getJoinKeyForItemsInThis(itemA) equals getJoinKeyForItemsInOther(itemB) into c
+				from itemC in c.DefaultIfEmpty()
+				where isNullOrEmptyComparer(itemC)
+				select itemA;
 		}
 
 		[NotNull]
 		public static IEnumerable<KeyValuePair<int, T>> FlattenRanges<T>(this IEnumerable<Range<T>> items)
 		{
 			return items.SelectMany(x => Enumerable.Range(x.Start, x.End - x.Start + 1)
-			                                       .Select(y => new KeyValuePair<int, T>(y, x.Payload)));
+				.Select(y => new KeyValuePair<int, T>(y, x.Payload)));
 		}
 
 		[NotNull]
@@ -133,13 +133,13 @@ namespace System.Collections.Generic
 		{
 			var counter = 0;
 			Func<T, T, bool> keepGoing = (current, previous) =>
+			{
+				if (++counter > setSize)
 				{
-					if (++counter > setSize)
-					{
-						counter = 0;
-					}
-					return counter != 0;
-				};
+					counter = 0;
+				}
+				return counter != 0;
+			};
 			foreach (var list in items.Group(keepGoing).Select(set => set.ToList()))
 			{
 				if (list.Count < setSize && fillPartialSetWithDefaultItems)
@@ -172,8 +172,8 @@ namespace System.Collections.Generic
 			}
 
 			return from itemA in aLocal
-			       join itemB in otherLocal on getJoinKey(itemA) equals getJoinKey(itemB)
-			       select itemA;
+				join itemB in otherLocal on getJoinKey(itemA) equals getJoinKey(itemB)
+				select itemA;
 		}
 
 		public static bool IsNullOrEmpty<T>([CanBeNull] this IEnumerable<T> list)
@@ -211,6 +211,193 @@ namespace System.Collections.Generic
 			return input.Select(getValueToSeparate).Join(separator);
 		}
 
+		/// <summary>
+		///     synchronizes previousItems with newItems and returns the results.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="newItems">all current items, order does not matter</param>
+		/// <param name="getItemKeyValue"> e.g. county=>county.Id</param>
+		/// <param name="equals">e.g.  (county1,County2)=>county1.Name == county2.Name && county1.Gps == county2.Gps</param>
+		/// <param name="previousItems">all previous items, order does not matter</param>
+		public static IEnumerable<SynchronizationResult<T>> Synchronize<T, TKey>(
+			this IEnumerable<T> previousItems,
+			IEnumerable<T> newItems,
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> equals)
+			where TKey : IComparable<TKey>
+		{
+			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+		}
+
+		/// <summary>
+		///     synchronizes previousItems with newItems and returns the results.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="newItems">all current items, order does not matter</param>
+		/// <param name="getItemKeyValue"> e.g. county=>county.Id</param>
+		/// <param name="equals">e.g.  (county1,County2)=>county1.Name == county2.Name && county1.Gps == county2.Gps</param>
+		/// <param name="previousItems">all previous items, sorted by KeyValue</param>
+		public static IEnumerable<SynchronizationResult<T>> Synchronize<T, TKey>(
+			this IOrderedEnumerable<T> previousItems,
+			IEnumerable<T> newItems,
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> equals)
+			where TKey : IComparable<TKey>
+		{
+			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+		}
+
+		/// <summary>
+		///     synchronizes previousItems with newItems and returns the results.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="newItems">all current items, sorted by KeyValue</param>
+		/// <param name="getItemKeyValue"> e.g. county=>county.Id</param>
+		/// <param name="equals">e.g.  (county1,County2)=>county1.Name == county2.Name && county1.Gps == county2.Gps</param>
+		/// <param name="previousItems">all previous items, sorted by KeyValue</param>
+		public static IEnumerable<SynchronizationResult<T>> Synchronize<T, TKey>(
+			this IOrderedEnumerable<T> previousItems,
+			IOrderedEnumerable<T> newItems,
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> equals)
+			where TKey : IComparable<TKey>
+		{
+			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+		}
+
+		/// <summary>
+		///     synchronizes previousItems with newItems and returns the results.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="newItems">all current items, sorted by KeyValue</param>
+		/// <param name="getItemKeyValue"> e.g. county=>county.Id</param>
+		/// <param name="equals">e.g.  (county1,County2)=>county1.Name == county2.Name && county1.Gps == county2.Gps</param>
+		/// <param name="previousItems">all previous items, order does not matter</param>
+		public static IEnumerable<SynchronizationResult<T>> Synchronize<T, TKey>(
+			this IEnumerable<T> previousItems,
+			IOrderedEnumerable<T> newItems,
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> equals)
+			where TKey : IComparable<TKey>
+		{
+			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems, getItemKeyValue, @equals);
+		}
+
+		private static IEnumerable<SynchronizationResult<T>> SynchronizeInternal<T, TKey>(
+// ReSharper disable ParameterTypeCanBeEnumerable.Local
+			this IEnumerable<T> previousSortedByKey,
+			IEnumerable<T> newSortedByKey,
+			// ReSharper restore ParameterTypeCanBeEnumerable.Local
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> @equals) where TKey : IComparable<TKey>
+		{
+			var previousEnumerator = previousSortedByKey.GetEnumerator();
+			var newEnumerator = newSortedByKey.GetEnumerator();
+			var havePrevious = previousEnumerator.MoveNext();
+			var haveNew = newEnumerator.MoveNext();
+			var previousItem = default(T);
+			var previousItemKey = default(TKey);
+			if (havePrevious)
+			{
+				previousItem = previousEnumerator.Current;
+				previousItemKey = getItemKeyValue(previousItem);
+			}
+			var newItem = default(T);
+			var newItemKey = default(TKey);
+			if (haveNew)
+			{
+				newItem = newEnumerator.Current;
+				newItemKey = getItemKeyValue(newItem);
+			}
+			while (havePrevious && haveNew)
+			{
+				var keyComparisonResult = previousItemKey.CompareTo(newItemKey);
+				if (keyComparisonResult == 0)
+				{
+					// item key matched, check for data changes
+					yield return new SynchronizationResult<T>(
+						previousItem,
+						newItem,
+						@equals(previousItem, newItem)
+							? SynchronizationStatus.Unchanged
+							: SynchronizationStatus.Changed);
+
+					havePrevious = previousEnumerator.MoveNext();
+					if (havePrevious)
+					{
+						previousItem = previousEnumerator.Current;
+						previousItemKey = getItemKeyValue(previousItem);
+					}
+
+					haveNew = newEnumerator.MoveNext();
+					if (haveNew)
+					{
+						newItem = newEnumerator.Current;
+						newItemKey = getItemKeyValue(newItem);
+					}
+					continue;
+				}
+				if (keyComparisonResult > 0)
+				{
+					// newItem was added
+					yield return new SynchronizationResult<T>(default(T), newItem, SynchronizationStatus.Added);
+					haveNew = newEnumerator.MoveNext();
+					if (haveNew)
+					{
+						newItem = newEnumerator.Current;
+						newItemKey = getItemKeyValue(newItem);
+						continue;
+					}
+					break;
+				}
+				// previousItem was removed
+				yield return new SynchronizationResult<T>(previousItem, default(T), SynchronizationStatus.Removed);
+				havePrevious = previousEnumerator.MoveNext();
+				if (havePrevious)
+				{
+					previousItem = previousEnumerator.Current;
+					previousItemKey = getItemKeyValue(previousItem);
+					continue;
+				}
+				break;
+			}
+
+			while (haveNew) // remainder of newSortedByKey were added
+			{
+				yield return new SynchronizationResult<T>(default(T), newEnumerator.Current, SynchronizationStatus.Added);
+				haveNew = newEnumerator.MoveNext();
+			}
+
+			while (havePrevious) // remainder of previousSortedByKey were deleted
+			{
+				yield return new SynchronizationResult<T>(previousEnumerator.Current, default(T), SynchronizationStatus.Removed);
+				havePrevious = previousEnumerator.MoveNext();
+			}
+		}
+
+		/// <summary>
+		///     synchronizes previousItems with newItems and returns the results.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="newItems">all current items, sorted by KeyValue</param>
+		/// <param name="getItemKeyValue"> e.g. county=>county.Id</param>
+		/// <param name="equals">e.g.  (county1,County2)=>county1.Name == county2.Name && county1.Gps == county2.Gps</param>
+		/// <param name="previousItems">all previous items, sorted by KeyValue</param>
+		public static IEnumerable<SynchronizationResult<T>> SynchronizeOrdered<T, TKey>(
+			this IEnumerable<T> previousItems,
+			IEnumerable<T> newItems,
+			Func<T, TKey> getItemKeyValue,
+			Func<T, T, bool> equals)
+			where TKey : IComparable<TKey>
+		{
+			return SynchronizeInternal(previousItems, newItems, getItemKeyValue, @equals);
+		}
+
 		[NotNull]
 		public static HashSet<T> ToHashSet<T>([NotNull] this IEnumerable<T> items)
 		{
@@ -236,6 +423,28 @@ namespace System.Collections.Generic
 		}
 	}
 
+	public class SynchronizationResult<T>
+	{
+		public SynchronizationResult(T oldItem, T newItem, SynchronizationStatus status)
+		{
+			OldItem = oldItem;
+			NewItem = newItem;
+			Status = status;
+		}
+
+		public T NewItem { get; private set; }
+		public T OldItem { get; private set; }
+		public SynchronizationStatus Status { get; private set; }
+	}
+
+	public enum SynchronizationStatus
+	{
+		Unchanged = 0,
+		Added = 10,
+		Removed = 20,
+		Changed = 30
+	}
+
 	public class Range<T>
 	{
 		public int End { get; set; }
@@ -245,9 +454,6 @@ namespace System.Collections.Generic
 
 	public class ContinuingEnumerator<T> : IEnumerable<T>
 	{
-		private readonly IEnumerator<T> _enumerator;
-		private readonly Func<T, T, bool> _keepGrouping;
-
 		public ContinuingEnumerator(IEnumerator<T> enumerator, Func<T, T, bool> keepGrouping, T current)
 		{
 			Current = current;
@@ -255,9 +461,8 @@ namespace System.Collections.Generic
 			_keepGrouping = keepGrouping;
 		}
 
-		public T Current { get; private set; }
-
-		public bool HasNext { get; private set; }
+		private readonly IEnumerator<T> _enumerator;
+		private readonly Func<T, T, bool> _keepGrouping;
 
 		public IEnumerator<T> GetEnumerator()
 		{
@@ -280,5 +485,9 @@ namespace System.Collections.Generic
 		{
 			return GetEnumerator();
 		}
+
+		public T Current { get; private set; }
+
+		public bool HasNext { get; private set; }
 	}
 }

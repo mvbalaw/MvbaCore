@@ -225,7 +225,7 @@ namespace System.Collections.Generic
 			IEnumerable<T> newItems,
 			Func<T, TKey> getItemKeyValue,
 			Func<T, T, bool> equals)
-			where TKey : IComparable<TKey>
+			where TKey : IComparable
 		{
 			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
 		}
@@ -244,7 +244,7 @@ namespace System.Collections.Generic
 			IEnumerable<T> newItems,
 			Func<T, TKey> getItemKeyValue,
 			Func<T, T, bool> equals)
-			where TKey : IComparable<TKey>
+			where TKey : IComparable
 		{
 			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
 		}
@@ -263,7 +263,7 @@ namespace System.Collections.Generic
 			IOrderedEnumerable<T> newItems,
 			Func<T, TKey> getItemKeyValue,
 			Func<T, T, bool> equals)
-			where TKey : IComparable<TKey>
+			where TKey : IComparable
 		{
 			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
 		}
@@ -282,7 +282,7 @@ namespace System.Collections.Generic
 			IOrderedEnumerable<T> newItems,
 			Func<T, TKey> getItemKeyValue,
 			Func<T, T, bool> equals)
-			where TKey : IComparable<TKey>
+			where TKey : IComparable
 		{
 			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems, getItemKeyValue, @equals);
 		}
@@ -293,7 +293,7 @@ namespace System.Collections.Generic
 			IEnumerable<T> newSortedByKey,
 			// ReSharper restore ParameterTypeCanBeEnumerable.Local
 			Func<T, TKey> getItemKeyValue,
-			Func<T, T, bool> @equals) where TKey : IComparable<TKey>
+			Func<T, T, bool> @equals) where TKey : IComparable
 		{
 			var previousEnumerator = previousSortedByKey.GetEnumerator();
 			var newEnumerator = newSortedByKey.GetEnumerator();
@@ -393,7 +393,7 @@ namespace System.Collections.Generic
 			IEnumerable<T> newItems,
 			Func<T, TKey> getItemKeyValue,
 			Func<T, T, bool> equals)
-			where TKey : IComparable<TKey>
+			where TKey : IComparable
 		{
 			return SynchronizeInternal(previousItems, newItems, getItemKeyValue, @equals);
 		}

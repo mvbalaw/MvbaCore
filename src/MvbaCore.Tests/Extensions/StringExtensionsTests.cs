@@ -418,7 +418,7 @@ namespace MvbaCore.Tests.Extensions
 				{
 					var lines = new[] { "a", "a", "a" };
 					var grouped = lines.GroupBy("a");
-					grouped.Count.ShouldBeEqualTo(lines.Count());
+					grouped.Count.ShouldBeEqualTo(lines.Length);
 					grouped.First().Count.ShouldBeEqualTo(0);
 					grouped.Skip(1).First().Count.ShouldBeEqualTo(0);
 					grouped.Skip(2).First().Count.ShouldBeEqualTo(0);
@@ -433,7 +433,7 @@ namespace MvbaCore.Tests.Extensions
 				{
 					var lines = new[] { "a" };
 					var grouped = lines.GroupBy("a");
-					grouped.Count.ShouldBeEqualTo(lines.Count());
+					grouped.Count.ShouldBeEqualTo(lines.Length);
 					grouped.First().Count.ShouldBeEqualTo(0);
 				}
 			}

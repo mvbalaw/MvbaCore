@@ -36,7 +36,7 @@ namespace MvbaCore.Tests.Extensions
 			public void Given_a_positive_value_should_perform_the_action__value__times()
 			{
 				var counter = 0;
-				(5).Times(() => counter = counter + 1);
+				5.Times(() => counter = counter + 1);
 				counter.ShouldBeEqualTo(5);
 			}
 

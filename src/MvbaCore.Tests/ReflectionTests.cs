@@ -371,7 +371,7 @@ namespace MvbaCore.Tests
 			public enum MyEnum
 			{
 				Color = 1
-			};
+			}
 
 			public struct MyStruct
 			{

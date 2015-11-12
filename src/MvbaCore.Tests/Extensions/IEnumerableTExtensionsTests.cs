@@ -393,7 +393,7 @@ namespace MvbaCore.Tests.Extensions
 				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
-				pageSets.Last().Count().ShouldBeEqualTo(_listOfItems.Count() - (_firstPageSize + _nthPageSize));
+				pageSets.Last().Count.ShouldBeEqualTo(_listOfItems.Count - (_firstPageSize + _nthPageSize));
 			}
 
 			[Test]
@@ -414,7 +414,7 @@ namespace MvbaCore.Tests.Extensions
 				               };
 
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
-				pageSets.Skip(1).First().Count().ShouldBeEqualTo(_nthPageSize);
+				pageSets.Skip(1).First().Count.ShouldBeEqualTo(_nthPageSize);
 			}
 
 			[Test]
@@ -444,7 +444,7 @@ namespace MvbaCore.Tests.Extensions
 					               2
 				               };
 				var pageSets = _listOfItems.ToPageSets(_firstPageSize, _nthPageSize);
-				pageSets.First().Count.ShouldBeEqualTo(_listOfItems.Count());
+				pageSets.First().Count.ShouldBeEqualTo(_listOfItems.Count);
 			}
 		}
 
@@ -731,7 +731,7 @@ namespace MvbaCore.Tests.Extensions
 			{
 				var input = "abcdefghij".Select(x => x.ToString()).ToList();
 				var result = input.InSetsOf(5).ToList();
-				result.Count().ShouldBeEqualTo(2);
+				result.Count.ShouldBeEqualTo(2);
 				result.First().Count.ShouldBeEqualTo(5);
 				result.Last().Count.ShouldBeEqualTo(5);
 			}
@@ -763,7 +763,7 @@ namespace MvbaCore.Tests.Extensions
 					             {
 						             Data = "A1",
 						             KeyId = 1,
-						             ExpectedStatus = SynchronizationStatus.Removed,
+						             ExpectedStatus = SynchronizationStatus.Removed
 					             };
 					var itemA2 = new SyncTestItem
 					             {
@@ -877,7 +877,7 @@ namespace MvbaCore.Tests.Extensions
 					             {
 						             Data = "A1",
 						             KeyId = 1,
-						             ExpectedStatus = SynchronizationStatus.Removed,
+						             ExpectedStatus = SynchronizationStatus.Removed
 					             };
 					var itemA2 = new SyncTestItem
 					             {
@@ -991,7 +991,7 @@ namespace MvbaCore.Tests.Extensions
 					             {
 						             Data = "A1",
 						             KeyId = 1,
-						             ExpectedStatus = SynchronizationStatus.Removed,
+						             ExpectedStatus = SynchronizationStatus.Removed
 					             };
 					var itemA2 = new SyncTestItem
 					             {
@@ -1105,7 +1105,7 @@ namespace MvbaCore.Tests.Extensions
 					             {
 						             Data = "A1",
 						             KeyId = 1,
-						             ExpectedStatus = SynchronizationStatus.Removed,
+						             ExpectedStatus = SynchronizationStatus.Removed
 					             };
 					var itemA2 = new SyncTestItem
 					             {

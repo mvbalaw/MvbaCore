@@ -58,7 +58,7 @@ namespace MvbaCore.Tests.CodeQuery
 			{
 				var propertyInfos = typeof(NoGettersTestClass).GetProperties().ThatHaveAGetter().ToList();
 				propertyInfos.ShouldNotBeNull();
-				propertyInfos.Count().ShouldBeEqualTo(0);
+				propertyInfos.Count.ShouldBeEqualTo(0);
 			}
 
 			[Test]
@@ -136,7 +136,7 @@ namespace MvbaCore.Tests.CodeQuery
 			{
 				var propertyInfos = typeof(TestClass).GetProperties().WithAttributeOfType<TestAttribute>().ToList();
 				propertyInfos.ShouldNotBeNull();
-				propertyInfos.Count().ShouldBeEqualTo(0);
+				propertyInfos.Count.ShouldBeEqualTo(0);
 			}
 
 			[Test]

@@ -221,7 +221,7 @@ namespace System
 
 			var shouldPrefixWithAn = new HashSet<string>
 				                         {
-					                         "utt",
+					                         "utt"
 				                         };
 
 			var lower = str.ToLower();

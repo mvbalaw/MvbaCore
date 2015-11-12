@@ -23,7 +23,7 @@ namespace MvbaCore.Extensions
 
 			if (current.Year != other.Year)
 			{
-				return other.MonthsToEndOfYear() + ((current.YearsSince(other) - 1) * 12) + current.Month;
+				return other.MonthsToEndOfYear() + (current.YearsSince(other) - 1) * 12 + current.Month;
 			}
 
 			var currentMonth = current.Month;
@@ -39,7 +39,7 @@ namespace MvbaCore.Extensions
 
 		public static int MonthsToEndOfYear(this DateTime current)
 		{
-			return (13 - current.Month);
+			return 13 - current.Month;
 		}
 
 		public static int YearsSince(this DateTime current, DateTime other)

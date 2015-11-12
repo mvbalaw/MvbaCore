@@ -107,7 +107,7 @@ namespace MvbaCore
 
 		public static string GetCamelCasePropertyNameWithPrefix<T>(Expression<Func<T>> expression, string prefix)
 		{
-			return (String.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase())).ToCamelCase();
+			return String.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase()).ToCamelCase();
 		}
 
 		public static string GetClassName<T>()
@@ -143,7 +143,7 @@ namespace MvbaCore
 					             {
 						             Name = x.Name,
 						             StorageType = x.FieldType,
-						             SetValue = (Action<object, object>)(x.SetValue),
+						             SetValue = (Action<object, object>)x.SetValue,
 						             AccessorType = AccessorType.Field
 					             });
 

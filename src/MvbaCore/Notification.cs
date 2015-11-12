@@ -123,7 +123,7 @@ namespace MvbaCore
 
 		private void AddMessage(NotificationMessage message)
 		{
-			if (!(Messages.Any(x => x.Severity == message.Severity && x.Message == message.Message)))
+			if (!Messages.Any(x => x.Severity == message.Severity && x.Message == message.Message))
 			{
 				switch (message.Severity)
 				{

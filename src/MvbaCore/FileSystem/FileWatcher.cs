@@ -123,7 +123,7 @@ namespace MvbaCore.FileSystem
 				var fileWrapper = new FileWrapper
 				                  {
 					                  FileName = file.FullName,
-					                  FileDate = file.LastWriteTime,
+					                  FileDate = file.LastWriteTime
 				                  };
 				files.Add(fileWrapper);
 			}

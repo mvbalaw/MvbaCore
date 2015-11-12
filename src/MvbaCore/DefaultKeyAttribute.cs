@@ -7,11 +7,12 @@
 //  * the terms of the MIT License.
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
+
 using System;
 
 namespace MvbaCore
 {
-	[AttributeUsage(AttributeTargets.Field, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Field)]
 	public class DefaultKeyAttribute : Attribute
 	{
 	}

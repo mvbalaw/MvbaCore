@@ -1,4 +1,0 @@
-StructureMap 
-http://structuremap.net/structuremap/index.html
-Downloaded from the StructureMap github site on 8/16/2011:
-https://github.com/structuremap/structuremap/downloads

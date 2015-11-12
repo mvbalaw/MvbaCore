@@ -53,9 +53,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentAssert, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentAssert, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\FluentAssert\FluentAssert.dll</HintPath>
+      <HintPath>..\packages\FluentAssert.1.0.0.11\lib\FluentAssert.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

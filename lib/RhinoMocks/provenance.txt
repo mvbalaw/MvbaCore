@@ -1,4 +1,0 @@
-RhinoMocks 3.6
-http://www.ayende.com/projects/rhino-mocks.aspx
-Downloaded from the NUnit SourceForge site on 10/8/2009:
-http://www.ayende.com/projects/rhino-mocks/downloads.aspx

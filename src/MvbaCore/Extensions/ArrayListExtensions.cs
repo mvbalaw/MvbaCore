@@ -9,12 +9,16 @@
 //   * **************************************************************************
 
 // ReSharper disable CheckNamespace
+
+using JetBrains.Annotations;
+
 namespace System.Collections
 // ReSharper restore CheckNamespace
 {
 	public static class ArrayListExtensions
 	{
-		public static bool Any(this ArrayList collection)
+		[Pure]
+		public static bool Any([NotNull] this ArrayList collection)
 		{
 			return collection.Count > 0;
 		}

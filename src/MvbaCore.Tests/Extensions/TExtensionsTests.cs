@@ -33,6 +33,7 @@ namespace MvbaCore.Tests.Extensions
 		{
 			const int expected = 6;
 			object input = expected;
+			// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
 			Assert.Throws<InvalidOperationException>(() => input.TryCastTo<string>());
 		}
 	}

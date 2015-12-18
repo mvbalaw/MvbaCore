@@ -10,11 +10,13 @@
 
 using System;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Extensions
 {
 	public static class Int32Extensions
 	{
-		public static void Times(this int count, Action action)
+		public static void Times(this int count, [NotNull] Action action)
 		{
 			for (var i = 0; i < count; i++)
 			{
@@ -22,7 +24,7 @@ namespace MvbaCore.Extensions
 			}
 		}
 
-		public static void Times(this int count, Action<int> action)
+		public static void Times(this int count, [NotNull] Action<int> action)
 		{
 			for (var i = 0; i < count; i++)
 			{

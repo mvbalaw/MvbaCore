@@ -10,6 +10,8 @@
 
 using System.IO;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.FileSystem
 {
 	public class InfiniteLifetimeFileStream : FileStream
@@ -19,6 +21,7 @@ namespace MvbaCore.FileSystem
 		{
 		}
 
+		[Pure]
 		public override object InitializeLifetimeService()
 		{
 			return null;

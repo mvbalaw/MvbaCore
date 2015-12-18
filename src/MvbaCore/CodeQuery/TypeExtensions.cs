@@ -17,7 +17,7 @@ namespace MvbaCore.CodeQuery
 	public static class TypeExtensions
 	{
 		[Pure]
-		public static bool IsGenericAssignableFrom(this Type target, Type source)
+		public static bool IsGenericAssignableFrom([NotNull] this Type target, [NotNull] Type source)
 		{
 			if (!target.IsGenericType)
 			{

@@ -16,13 +16,17 @@ namespace System
 {
 	public static class TExtensions
 	{
+		[Pure]
 		[NotNull]
 		public static T ToNonNull<T>([CanBeNull] this T input) where T : class, new()
 		{
 			return ReferenceEquals(input, null) ? new T() : input;
 		}
 
-		public static TDesiredType TryCastTo<TDesiredType>(this object item) where TDesiredType : class
+		[NotNull]
+		[Pure]
+		[ContractAnnotation("item:null => halt")]
+		public static TDesiredType TryCastTo<TDesiredType>([NotNull] this object item) where TDesiredType : class
 		{
 			var desiredType = item as TDesiredType;
 			if (ReferenceEquals(desiredType, null))

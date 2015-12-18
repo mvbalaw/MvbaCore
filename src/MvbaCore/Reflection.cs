@@ -18,6 +18,8 @@ using System.Reflection;
 
 using FastReflection;
 
+using JetBrains.Annotations;
+
 using MvbaCore.CodeQuery;
 using MvbaCore.Collections;
 
@@ -40,7 +42,8 @@ namespace MvbaCore
 		/// <summary>
 		///     http://stackoverflow.com/questions/232535/how-to-use-reflection-to-call-generic-method
 		/// </summary>
-		public static object CallGenericMethod<TContainer>(TContainer container, Type genericType, string methodName, params object[] parameters)
+		[CanBeNull]
+		public static object CallGenericMethod<TContainer>([NotNull] TContainer container, [NotNull] Type genericType, [NotNull] string methodName, params object[] parameters)
 		{
 			MethodInfo method;
 			if (parameters == null || !parameters.Any())
@@ -53,12 +56,15 @@ namespace MvbaCore
 				method = typeof(TContainer).GetMethod(methodName, parameterTypes) ??
 					GetMethodExt(typeof(TContainer), methodName, BindingFlags.Public | BindingFlags.Instance, parameterTypes);
 			}
+			if (method == null)
+				return null;
 			var generic = method.MakeGenericMethod(genericType);
 			var result = generic.Invoke(container, parameters);
 			return result;
 		}
 
-		public static bool CouldBeNull(Type type)
+		[Pure]
+		public static bool CouldBeNull([NotNull] Type type)
 		{
 			if (!type.IsValueType)
 			{
@@ -74,7 +80,8 @@ namespace MvbaCore
 			return false;
 		}
 
-		public static List<string> GetArguments<T, TReturn>(Expression<Func<T, TReturn>> expression)
+		[Pure]
+		public static List<string> GetArguments<T, TReturn>([NotNull] Expression<Func<T, TReturn>> expression)
 		{
 			var methodCallExpression = expression.Body as MethodCallExpression;
 			if (methodCallExpression == null)
@@ -85,42 +92,52 @@ namespace MvbaCore
 			return arguments.Select(p => Expression.Lambda(p).Compile().DynamicInvoke().ToString()).ToList();
 		}
 
-		public static T GetAttribute<T>(Assembly assembly)
+		[Pure]
+		public static T GetAttribute<T>([NotNull] Assembly assembly)
 		{
 			return (T)assembly.GetCustomAttributes(typeof(T), false)[0];
 		}
 
+		[Pure]
 		public static string GetCamelCaseMultiLevelPropertyName(params string[] propertyNames)
 		{
 			return GetMultiLevelPropertyName(propertyNames).ToCamelCase();
 		}
 
-		public static string GetCamelCasePropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
+		[Pure]
+		public static string GetCamelCasePropertyName<T, TReturn>([NotNull] Expression<Func<T, TReturn>> expression)
 		{
 			return GetPropertyName(expression).ToCamelCase();
 		}
 
-		public static string GetCamelCasePropertyNameWithPrefix<T, TReturn>(Expression<Func<T, TReturn>> expression, string prefix)
+		[Pure]
+		[NotNull]
+		public static string GetCamelCasePropertyNameWithPrefix<T, TReturn>([NotNull] Expression<Func<T, TReturn>> expression, [NotNull] string prefix)
 		{
 			return (prefix + GetPropertyName(expression)).ToCamelCase();
 		}
 
-		public static string GetCamelCasePropertyNameWithPrefix<T>(Expression<Func<T>> expression, string prefix)
+		[Pure]
+		[NotNull]
+		public static string GetCamelCasePropertyNameWithPrefix<T>([NotNull] Expression<Func<T>> expression, [NotNull] string prefix)
 		{
 			return String.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase()).ToCamelCase();
 		}
 
+		[Pure]
 		public static string GetClassName<T>()
 		{
 			return typeof(T).Name;
 		}
 
+		[Pure]
 		public static string GetControllerName<TControllerType>()
 		{
 			var name = typeof(TControllerType).Name;
 			return GetControllerName(name);
 		}
 
+		[Pure]
 		public static string GetControllerName(string name)
 		{
 			const string controller = "Controller";
@@ -131,6 +148,7 @@ namespace MvbaCore
 			return name;
 		}
 
+		[Pure]
 		private static Dictionary<string, GenericSetter> GetDestinationAccessors(Type destinationType)
 		{
 			var destinationAccessors = _setters[destinationType];
@@ -173,6 +191,7 @@ namespace MvbaCore
 			return destinationAccessors;
 		}
 
+		[Pure]
 		[DebuggerStepThrough]
 		public static string GetFinalPropertyName<T>(Expression<Func<T>> expression)
 		{
@@ -185,6 +204,7 @@ namespace MvbaCore
 			return names.Last();
 		}
 
+		[Pure]
 		[DebuggerStepThrough]
 		public static string GetFinalPropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
@@ -197,12 +217,18 @@ namespace MvbaCore
 			return names.Last();
 		}
 
-		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType)
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties([NotNull] Type sourceType, [NotNull] Type destinationType)
 		{
 			return GetMatchingFieldsAndProperties(sourceType, destinationType, _emptyCustomDestinationPropertyNameToSourcePropertyNameMap);
 		}
 
-		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<PropertyMappingInfo> GetMatchingFieldsAndProperties([NotNull] Type sourceType, [NotNull] Type destinationType, [NotNull] StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
 		{
 			var lowerCustomDictionary = new StringDictionary();
 			foreach (var item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
@@ -228,12 +254,18 @@ namespace MvbaCore
 				       }).ToList();
 		}
 
-		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType)
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties([NotNull] Type sourceType, [NotNull] Type destinationType)
 		{
 			return GetMatchingProperties(sourceType, destinationType, _emptyCustomDestinationPropertyNameToSourcePropertyNameMap);
 		}
 
-		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties(Type sourceType, Type destinationType, StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<PropertyMappingInfo> GetMatchingProperties([NotNull] Type sourceType, [NotNull] Type destinationType, [NotNull] StringDictionary customDestinationPropertyNameToSourcePropertyNameMap)
 		{
 			var lowerCustomDictionary = new StringDictionary();
 			foreach (var item in customDestinationPropertyNameToSourcePropertyNameMap.Keys.Cast<string>())
@@ -260,7 +292,9 @@ namespace MvbaCore
 				       }).ToList();
 		}
 
-		public static MethodCallData GetMethodCallData<TClass>(Expression<Func<TClass, object>> methodCall) where TClass : class
+		[Pure]
+		[NotNull]
+		public static MethodCallData GetMethodCallData<TClass>([NotNull] Expression<Func<TClass, object>> methodCall) where TClass : class
 		{
 			var className = typeof(TClass).Name;
 			var methodName = GetMethodName(methodCall);
@@ -282,7 +316,9 @@ namespace MvbaCore
 			       };
 		}
 
-		public static MethodCallExpression GetMethodCallExpression<T, TReturn>(Expression<Func<T, TReturn>> expression)
+		[Pure]
+		[NotNull]
+		public static MethodCallExpression GetMethodCallExpression<T, TReturn>([NotNull] Expression<Func<T, TReturn>> expression)
 		{
 			var methodCallExpression = expression.Body as MethodCallExpression;
 			if (methodCallExpression == null)
@@ -309,7 +345,9 @@ namespace MvbaCore
 		///     parameter types, and searches base interfaces.
 		/// </summary>
 		/// <exception cref="AmbiguousMatchException" />
-		private static MethodInfo GetMethodExt(this Type thisType, string name, BindingFlags bindingFlags, params Type[] parameterTypes)
+		[Pure]
+		[CanBeNull]
+		private static MethodInfo GetMethodExt([NotNull] this Type thisType, [NotNull] string name, BindingFlags bindingFlags, params Type[] parameterTypes)
 		{
 			// http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
 			MethodInfo matchingMethod = null;
@@ -329,12 +367,12 @@ namespace MvbaCore
 			return matchingMethod;
 		}
 
-		private static void GetMethodExt(ref MethodInfo matchingMethod, Type type, string name, BindingFlags bindingFlags, params Type[] parameterTypes)
+		private static void GetMethodExt([CanBeNull] ref MethodInfo matchingMethod, [NotNull] Type type, [NotNull] string name, BindingFlags bindingFlags, params Type[] parameterTypes)
 		{
 			// http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
 
 			// Check all methods with the specified name, including in base classes
-			foreach (MethodInfo methodInfo in type.GetMember(name, MemberTypes.Method, bindingFlags))
+			foreach (var methodInfo in type.GetMember(name, MemberTypes.Method, bindingFlags).Cast<MethodInfo>())
 			{
 				// Check that the parameter counts and types match, with 'loose' matching on generic parameters
 				var parameterInfos = methodInfo.GetParameters();
@@ -363,6 +401,7 @@ namespace MvbaCore
 			}
 		}
 
+		[Pure]
 		[DebuggerStepThrough]
 		public static string GetMethodName<T, TReturn>(Expression<Func<T, TReturn>> expression)
 		{
@@ -370,18 +409,20 @@ namespace MvbaCore
 			return methodCallExpression.Method.Name;
 		}
 
+		[Pure]
 		public static string GetMultiLevelPropertyName(params string[] propertyNames)
 		{
 			return propertyNames.Join(".");
 		}
 
+		[Pure]
 		private static List<string> GetNames(MemberExpression memberExpression)
 		{
 			var names = new List<string>
 			            {
 				            memberExpression.Member.Name
 			            };
-			while (memberExpression.Expression as MemberExpression != null)
+			while (memberExpression.Expression is MemberExpression)
 			{
 				memberExpression = (MemberExpression)memberExpression.Expression;
 				names.Insert(0, memberExpression.Member.Name);
@@ -389,8 +430,10 @@ namespace MvbaCore
 			return names;
 		}
 
+		[Pure]
 		[DebuggerStepThrough]
-		public static string GetPropertyName<T, TReturn>(Expression<Func<T, TReturn>> expression)
+		[NotNull]
+		public static string GetPropertyName<T, TReturn>([NotNull] Expression<Func<T, TReturn>> expression)
 		{
 			var names = GetPropertyName(expression.Body as MemberExpression);
 			if (names != null)
@@ -405,7 +448,10 @@ namespace MvbaCore
 			throw new ArgumentException("expression must be in the form: (Thing instance) => instance.Property[.Optional.Other.Properties.In.Chain]");
 		}
 
-		public static string GetPropertyName(MemberExpression memberExpression)
+		[Pure]
+		[ContractAnnotation("memberExpression:null => null; memberExpression: notnull => notnull")]
+		[CanBeNull]
+		public static string GetPropertyName([CanBeNull] MemberExpression memberExpression)
 		{
 			if (memberExpression == null)
 			{
@@ -416,7 +462,10 @@ namespace MvbaCore
 			return name;
 		}
 
-		public static string GetPropertyName(UnaryExpression unaryExpression)
+		[Pure]
+		[ContractAnnotation("unaryExpression:null => null; unaryExpression: notnull => notnull")]
+		[CanBeNull]
+		public static string GetPropertyName([CanBeNull] UnaryExpression unaryExpression)
 		{
 			if (unaryExpression == null)
 			{
@@ -426,8 +475,10 @@ namespace MvbaCore
 			return GetPropertyName(memberExpression);
 		}
 
+		[Pure]
 		[DebuggerStepThrough]
-		public static string GetPropertyName<T>(Expression<Func<T>> expression)
+		[NotNull]
+		public static string GetPropertyName<T>([NotNull] Expression<Func<T>> expression)
 		{
 			var memberExpression = expression.Body as MemberExpression;
 			if (memberExpression == null)
@@ -439,7 +490,9 @@ namespace MvbaCore
 			return name;
 		}
 
-		private static Dictionary<string, GenericGetter> GetSourceAccessors(Type sourceType)
+		[Pure]
+		[NotNull]
+		private static Dictionary<string, GenericGetter> GetSourceAccessors([NotNull] Type sourceType)
 		{
 			var sourceAccessors = _getters[sourceType];
 			if (sourceAccessors == null)
@@ -480,14 +533,16 @@ namespace MvbaCore
 		/// <summary>
 		///     http://stackoverflow.com/questions/340525/accessing-calling-object-from-methodcallexpression
 		/// </summary>
-		private static object GetValue(Expression expression)
+		[CanBeNull]
+		private static object GetValue([NotNull] Expression expression)
 		{
 			var lambda = Expression.Lambda<Func<object>>(Expression.Convert(expression, typeof(object)));
 			var func = lambda.Compile();
 			return func.Invoke();
 		}
 
-		public static string GetValueAsString(Expression expression)
+		[CanBeNull]
+		public static string GetValueAsString([NotNull] Expression expression)
 		{
 			switch (expression.NodeType)
 			{
@@ -502,25 +557,37 @@ namespace MvbaCore
 			}
 		}
 
-		private static string GetValueAsString(ConstantExpression expression)
+		[CanBeNull]
+		private static string GetValueAsString([NotNull] ConstantExpression expression)
 		{
 			var value = expression.Value;
 			return value == null ? null : value.ToString();
 		}
 
-		private static string GetValueAsString(MemberExpression expression)
+		[CanBeNull]
+		private static string GetValueAsString([NotNull] MemberExpression expression)
 		{
 			var result = GetValue(expression);
+			if (result == null)
+			{
+				return null;
+			}
 			return result.ToString();
 		}
 
-		private static string GetValueAsString(MethodCallExpression expression)
+		[CanBeNull]
+		private static string GetValueAsString([NotNull] MethodCallExpression expression)
 		{
 			var result = GetValue(expression);
+			if (result == null)
+			{
+				return null;
+			}
 			return result.ToString();
 		}
 
-		public static bool IsNullableValueType(Type type)
+		[Pure]
+		public static bool IsNullableValueType([NotNull] Type type)
 		{
 			if (type.IsValueType)
 			{
@@ -539,7 +606,8 @@ namespace MvbaCore
 		///     with generic parameters in the same locations (generic parameters match any other generic paramter,
 		///     but NOT concrete types).
 		/// </summary>
-		private static bool IsSimilarType(this Type thisType, Type type)
+		[Pure]
+		private static bool IsSimilarType([NotNull] this Type thisType, [NotNull] Type type)
 		{
 			// from http://stackoverflow.com/questions/4035719/getmethod-for-generic-method
 
@@ -579,7 +647,8 @@ namespace MvbaCore
 			return false;
 		}
 
-		public static bool IsUserType(Type type)
+		[Pure]
+		public static bool IsUserType([NotNull] Type type)
 		{
 			var assembly = type.Assembly;
 			var company = GetAttribute<AssemblyCompanyAttribute>(assembly).Company;

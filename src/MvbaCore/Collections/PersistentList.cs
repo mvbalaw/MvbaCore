@@ -13,6 +13,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Collections
 {
 // ReSharper disable PossibleInterfaceMemberAmbiguity
@@ -116,11 +118,13 @@ namespace MvbaCore.Collections
 			return this;
 		}
 
+		[Pure]
 		public IEnumerator<T> GetEnumerator()
 		{
 			return _actual.GetEnumerator();
 		}
 
+		[Pure]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return GetEnumerator();
@@ -143,6 +147,7 @@ namespace MvbaCore.Collections
 			}
 		}
 
+		[Pure]
 		public bool Contains(T item)
 		{
 			return _actual.Contains(item);
@@ -191,6 +196,7 @@ namespace MvbaCore.Collections
 			get { return _actual.IsReadOnly; }
 		}
 
+		[Pure]
 		public int IndexOf(T item)
 		{
 			return _actual.IndexOf(item);

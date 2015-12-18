@@ -12,11 +12,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.FileSystem
 {
 	public abstract class DelimitedDataConverter
 	{
-		protected IEnumerable<Dictionary<string, string>> Convert(IEnumerable<string> lines, string delimiter, bool joinQuoted = false)
+		[ItemNotNull]
+		[NotNull]
+		protected IEnumerable<Dictionary<string, string>> Convert([NotNull][ItemNotNull] IEnumerable<string> lines, [NotNull] string delimiter, bool joinQuoted = false)
 		{
 			Dictionary<int, string> headerRow = null;
 
@@ -46,7 +50,9 @@ namespace MvbaCore.FileSystem
 			}
 		}
 
-		private static Dictionary<int, string> GetHeaderRow(string line, string delimiter)
+		[Pure]
+		[NotNull]
+		private static Dictionary<int, string> GetHeaderRow([NotNull] string line, [NotNull] string delimiter)
 		{
 			var headerRow = line
 				.Split(new[] { delimiter }, StringSplitOptions.None)
@@ -59,8 +65,10 @@ namespace MvbaCore.FileSystem
 			return headerRow;
 		}
 
-// ReSharper disable once ParameterTypeCanBeEnumerable.Global
-		public static IEnumerable<string> JoinQuoted(string[] strings, string delimiter)
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<string> JoinQuoted([NotNull][ItemNotNull] string[] strings, [NotNull] string delimiter)
 		{
 			var output = new List<string>();
 			var combining = false;

@@ -22,6 +22,7 @@ namespace System
 	public static class ReflectionExtensions
 	{
 		[NotNull]
+		[Pure]
 		public static IEnumerable<T> GetCustomAttribute<T>([NotNull] this Type typeThatHasTheProperty,
 														   [NotNull] string propertyName) where T : Attribute
 		{
@@ -29,6 +30,7 @@ namespace System
 			return attributes;
 		}
 
+		[Pure]
 		[CanBeNull]
 		public static T GetFirstPropertyCustomAttribute<T>([NotNull] this Type typeThatHasTheProperty,
 														   [NotNull] string propertyName) where T : Attribute

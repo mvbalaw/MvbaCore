@@ -8,12 +8,17 @@
 //   * You must not remove this notice from this software.
 //   * **************************************************************************
 // ReSharper disable CheckNamespace
+
+using JetBrains.Annotations;
+
 namespace System.Collections.Generic
 // ReSharper restore CheckNamespace
 {
 	public static class IEnumerableCharExtensions
 	{
-		public static string AsString(this IEnumerable<char> items, string separator = "")
+		[NotNull]
+		[ContractAnnotation("items:null => notnull")]
+		public static string AsString([CanBeNull][ItemNotNull] this IEnumerable<char> items, string separator = "")
 		{
 			if (items == null)
 			{

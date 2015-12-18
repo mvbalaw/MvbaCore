@@ -74,6 +74,8 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_throw_an_exception_if_the_input_is_null()
 			{
 				const ArrayList input = null;
+				// ReSharper disable once AssignNullToNotNullAttribute
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
 				Assert.Throws<NullReferenceException>(() => input.Any());
 			}
 		}

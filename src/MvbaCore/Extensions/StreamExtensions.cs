@@ -10,12 +10,14 @@
 
 using System.IO;
 
+using JetBrains.Annotations;
+
 // ReSharper disable once CheckNamespace
 namespace System
 {
 	public static class StreamExtensions
 	{
-		public static byte[] ReadAllBytes(this Stream source)
+		public static byte[] ReadAllBytes([NotNull] this Stream source)
 		{
 			// original from: http://geekswithblogs.net/sdorman/archive/2009/01/10/reading-all-bytes-from-a-stream.aspx
 			var originalPosition = source.Position;

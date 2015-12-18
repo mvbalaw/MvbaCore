@@ -10,6 +10,8 @@
 
 using System.Linq;
 
+using JetBrains.Annotations;
+
 // ReSharper disable CheckNamespace
 
 namespace System
@@ -19,6 +21,7 @@ namespace System
 	{
 		private static readonly char[] Vowels = { 'a', 'e', 'i', 'o', 'u' };
 
+		[Pure]
 		public static bool IsVowel(this char ch)
 		{
 			return Vowels.Contains(Char.ToLower(ch));

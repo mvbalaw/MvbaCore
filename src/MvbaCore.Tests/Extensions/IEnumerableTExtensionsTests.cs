@@ -267,6 +267,7 @@ namespace MvbaCore.Tests.Extensions
 			{
 				const List<TestItem> itemA = null;
 				var itemB = new List<TestItem>();
+				// ReSharper disable once AssignNullToNotNullAttribute
 				Assert.Throws<ArgumentNullException>(() => itemA.Intersect(itemB, a => a.KeyId));
 			}
 		}

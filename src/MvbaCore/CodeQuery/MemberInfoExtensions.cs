@@ -21,6 +21,7 @@ namespace MvbaCore.CodeQuery
 	{
 		[NotNull]
 		[Pure]
+		[ItemNotNull]
 		internal static IEnumerable<T> CustomAttributesOfType<T>([NotNull] this MemberInfo input) where T : Attribute
 		{
 			return input.GetCustomAttributes(typeof(T), true).Cast<T>();

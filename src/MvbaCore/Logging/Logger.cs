@@ -10,11 +10,13 @@
 
 using System;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Logging
 {
 	public static class Logger
 	{
-		public static void Log(NotificationSeverity severity, string text, Exception exception = null)
+		public static void Log(NotificationSeverity severity, [NotNull] string text, Exception exception = null)
 		{
 			var textWriter = Console.Out;
 			if (severity == NotificationSeverity.Error)

@@ -36,27 +36,37 @@ namespace MvbaCore.Services
 
 		void DeleteDirectoryRecursive([NotNull] string dirPath);
 		bool DeleteFile([NotNull] string filePath);
+		[Pure]
 		bool DirectoryExists([NotNull] string directoryPath);
+		[Pure]
 		bool FileExists([NotNull] string filePath);
 
 		[NotNull]
+		[Pure]
 		string GetCurrentWebApplicationPath();
 
 		[NotNull]
+		[Pure]
 		DirectoryInfo GetDirectoryInfo([NotNull] string directoryPath);
 
-		string[] GetFiles(string filePath, string searchPattern);
-
+		[Pure]
 		[NotNull]
+		string[] GetFiles([NotNull] string filePath, [NotNull] string searchPattern);
+
+		[Pure]
+		[NotNull]
+		[ItemNotNull]
 		IEnumerable<string> GetNamesOfFilesInDirectory([NotNull] string directoryPath);
 
 		void MoveFile([NotNull] string oldFilePath, [NotNull] string newfilePath);
 		Stream OpenRead(String filePath);
 
 		[NotNull]
+		[Pure]
 		string[] ReadAllLines([NotNull] string filePath);
 
 		[NotNull]
+		[Pure]
 		string ReadAllText([NotNull] string filePath);
 
 		void Writefile(string filePath, Stream data);

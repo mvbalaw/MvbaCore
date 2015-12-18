@@ -21,6 +21,7 @@ namespace MvbaCore.CodeQuery
 	{
 		[NotNull]
 		[Pure]
+		[ItemNotNull]
 		public static IEnumerable<T> CustomAttributesOfType<T>([NotNull] this FieldInfo input) where T : Attribute
 		{
 			return ((MemberInfo)input).CustomAttributesOfType<T>();
@@ -34,14 +35,16 @@ namespace MvbaCore.CodeQuery
 
 		[NotNull]
 		[Pure]
-		public static IEnumerable<FieldInfo> ThatAreStatic([NotNull] this IEnumerable<FieldInfo> items)
+		[ItemNotNull]
+		public static IEnumerable<FieldInfo> ThatAreStatic([NotNull][ItemNotNull] this IEnumerable<FieldInfo> items)
 		{
 			return items.Where(x => x.IsStatic);
 		}
 
 		[NotNull]
 		[Pure]
-		public static IEnumerable<FieldInfo> WithAttributeOfType<TAttributeType>([NotNull] this IEnumerable<FieldInfo> input) where TAttributeType : Attribute
+		[ItemNotNull]
+		public static IEnumerable<FieldInfo> WithAttributeOfType<TAttributeType>([NotNull][ItemNotNull] this IEnumerable<FieldInfo> input) where TAttributeType : Attribute
 		{
 			return input.Where(x => x.HasAttributeOfType<TAttributeType>());
 		}

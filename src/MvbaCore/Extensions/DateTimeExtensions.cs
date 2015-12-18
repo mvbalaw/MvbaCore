@@ -10,10 +10,13 @@
 
 using System;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Extensions
 {
 	public static class DateTimeExtensions
 	{
+		[Pure]
 		public static int MonthsSince(this DateTime current, DateTime other)
 		{
 			if (other > current)
@@ -37,11 +40,13 @@ namespace MvbaCore.Extensions
 			return currentMonth - otherMonth + 1;
 		}
 
+		[Pure]
 		public static int MonthsToEndOfYear(this DateTime current)
 		{
 			return 13 - current.Month;
 		}
 
+		[Pure]
 		public static int YearsSince(this DateTime current, DateTime other)
 		{
 			return current.Year - other.Year;

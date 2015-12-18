@@ -55,7 +55,7 @@ namespace MvbaCore.Collections
 			}
 		}
 
-		public void Add(TKey key, TValue value)
+		public void Add([NotNull] TKey key, TValue value)
 		{
 			if (Contains(key))
 			{
@@ -77,7 +77,8 @@ namespace MvbaCore.Collections
 			}
 		}
 
-		public bool Contains(TKey key)
+		[Pure]
+		public bool Contains([NotNull] TKey key)
 		{
 			return _lookup.ContainsKey(key);
 		}

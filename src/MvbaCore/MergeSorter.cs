@@ -11,11 +11,15 @@
 using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore
 {
 	public class MergeSorter<T>
 	{
-		public IEnumerable<T> Merge(IEnumerable<T> list1, IEnumerable<T> list2, Func<T, T, int> compare)
+		[ItemNotNull]
+		[NotNull]
+		public IEnumerable<T> Merge([NotNull][ItemNotNull] IEnumerable<T> list1, [NotNull][ItemNotNull] IEnumerable<T> list2, [NotNull] Func<T, T, int> compare)
 		{
 			var list1Pointer = list1.GetEnumerator();
 			var list2Pointer = list2.GetEnumerator();

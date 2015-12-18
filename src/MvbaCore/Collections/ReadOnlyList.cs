@@ -11,6 +11,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Collections
 {
 	public interface IReadOnlyList<out T> : IEnumerable<T>
@@ -28,11 +30,13 @@ namespace MvbaCore.Collections
 			_items = items;
 		}
 
+		[Pure]
 		public IEnumerator<T> GetEnumerator()
 		{
 			return _items.GetEnumerator();
 		}
 
+		[Pure]
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return _items.GetEnumerator();

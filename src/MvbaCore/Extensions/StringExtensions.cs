@@ -18,17 +18,16 @@ using System.Xml;
 
 using JetBrains.Annotations;
 
-// ReSharper disable CheckNamespace
-
+// ReSharper disable once CheckNamespace
 namespace System
-// ReSharper restore CheckNamespace
 {
 	public static class StringExtensions
 	{
-		public static void AddIfNotNullOrEmpty(this List<string> list, string item)
+		public static void AddIfNotNullOrEmpty([CanBeNull] this List<string> list, string item)
 		{
 			if (!item.IsNullOrEmpty())
 			{
+				// ReSharper disable once PossibleNullReferenceException
 				list.Add(item);
 			}
 		}
@@ -269,13 +268,13 @@ namespace System
 		}
 
 		[Pure]
-		[CanBeNull]
+		[NotNull]
 		[ContractAnnotation("str:null => null; str:notnull => notnull")]
 		public static string ToCamelCase([CanBeNull] this string str)
 		{
 			if (String.IsNullOrEmpty(str))
 			{
-				return str;
+				return "";
 			}
 			str = Char.ToLower(str[0]) + str.Substring(1);
 			return str;

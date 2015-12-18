@@ -38,6 +38,7 @@ namespace MvbaCore.Collections
 		///     items in listA that are not in listB
 		/// </summary>
 		[NotNull]
+		[ItemNotNull]
 		public IEnumerable<T> Added
 		{
 			get { return _added; }
@@ -47,6 +48,7 @@ namespace MvbaCore.Collections
 		///     items in listB that are not in listA
 		/// </summary>
 		[NotNull]
+		[ItemNotNull]
 		public IEnumerable<T> Removed
 		{
 			get { return _removed; }
@@ -56,6 +58,7 @@ namespace MvbaCore.Collections
 		///     items in both listA and listB
 		/// </summary>
 		[NotNull]
+		[ItemNotNull]
 		public IEnumerable<T> Unchanged
 		{
 			get { return _unchanged; }

@@ -10,11 +10,15 @@
 
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.FileSystem
 {
 	public interface IPipeDelimitedDataConverter
 	{
-		IEnumerable<Dictionary<string, string>> Convert(IEnumerable<string> lines);
+		[NotNull]
+		[ItemNotNull]
+		IEnumerable<Dictionary<string, string>> Convert([NotNull][ItemNotNull] IEnumerable<string> lines);
 	}
 
 	public class PipeDelimitedDataConverter : DelimitedDataConverter, IPipeDelimitedDataConverter

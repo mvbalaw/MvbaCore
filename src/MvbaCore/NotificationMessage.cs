@@ -33,7 +33,9 @@ namespace MvbaCore
 		public string Message { get; private set; }
 		public NotificationSeverity Severity { get; private set; }
 
-		public virtual bool Equals(NotificationMessage other)
+		[Pure]
+		[ContractAnnotation("other:null => false")]
+		public virtual bool Equals([CanBeNull] NotificationMessage other)
 		{
 			if (ReferenceEquals(null, other))
 			{
@@ -46,7 +48,9 @@ namespace MvbaCore
 			return Equals(other.Severity, Severity) && Equals(other.Message, Message);
 		}
 
-		public override bool Equals(object obj)
+		[Pure]
+		[ContractAnnotation("obj:null => false")]
+		public override bool Equals([CanBeNull] object obj)
 		{
 			if (ReferenceEquals(null, obj))
 			{
@@ -63,6 +67,7 @@ namespace MvbaCore
 			return Equals((NotificationMessage)obj);
 		}
 
+		[Pure]
 		public override int GetHashCode()
 		{
 			unchecked
@@ -71,6 +76,7 @@ namespace MvbaCore
 			}
 		}
 
+		[Pure]
 		public override string ToString()
 		{
 			return Severity + ": " + Message;

@@ -12,23 +12,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Comparers
 {
 	public class FuncComparer<T> : IComparer<T>, IComparer
 	{
 		private readonly Func<T, T, int> _compare;
 
-		public FuncComparer(Func<T, T, int> compare)
+		public FuncComparer([NotNull] Func<T, T, int> compare)
 		{
 			_compare = compare;
 		}
 
-		public int Compare(object x, object y)
+		[Pure]
+		public int Compare([CanBeNull] object x, [CanBeNull] object y)
 		{
 			return _compare((T)x, (T)y);
 		}
 
-		public int Compare(T x, T y)
+		[Pure]
+		public int Compare([CanBeNull] T x, [CanBeNull] T y)
 		{
 			return _compare(x, y);
 		}

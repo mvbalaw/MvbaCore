@@ -16,6 +16,8 @@ namespace System.Collections
 {
 	public static class ICollectionExtensions
 	{
+		[Pure]
+		[ContractAnnotation("list:null => true")]
 		public static bool IsNullOrEmpty([CanBeNull] this ICollection list)
 		{
 			return list == null || list.Count == 0;

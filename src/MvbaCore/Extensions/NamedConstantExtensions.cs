@@ -28,44 +28,51 @@ namespace MvbaCore.Extensions
 		public static T DefaultValue<T>() where T : NamedConstant<T>
 		{
 			var type = typeof(T);
-			if (NoDefaults.Contains(type))
+			lock (NoDefaults)
 			{
-				return null;
+				if (NoDefaults.Contains(type))
+				{
+					return null;
+				}
 			}
 			object defaultValue;
-			if (!Defaults.TryGetValue(type, out defaultValue))
+			lock (Defaults)
 			{
-				var fields = type.GetFields().ThatAreStatic();
-				var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
-				if (defaultField == null)
+				if (Defaults.TryGetValue(type, out defaultValue))
 				{
-					lock (NoDefaults)
-					{
-						if (!NoDefaults.Contains(type))
-						{
-							NoDefaults.Add(type);
-						}
-					}
-					return null;
+					return (T)defaultValue;
 				}
-				defaultValue = defaultField.GetValue(null);
-				if (defaultValue == null)
+			}
+			var fields = type.GetFields().ThatAreStatic();
+			var defaultField = fields.WithAttributeOfType<DefaultKeyAttribute>().FirstOrDefault();
+			if (defaultField == null)
+			{
+				lock (NoDefaults)
 				{
-					lock (NoDefaults)
+					if (!NoDefaults.Contains(type))
 					{
-						if (!NoDefaults.Contains(type))
-						{
-							NoDefaults.Add(type);
-						}
+						NoDefaults.Add(type);
 					}
-					return null;
 				}
-				lock (Defaults)
+				return null;
+			}
+			defaultValue = defaultField.GetValue(null);
+			if (defaultValue == null)
+			{
+				lock (NoDefaults)
 				{
-					if (!Defaults.ContainsKey(type))
+					if (!NoDefaults.Contains(type))
 					{
-						Defaults.Add(type, defaultValue);
+						NoDefaults.Add(type);
 					}
+				}
+				return null;
+			}
+			lock (Defaults)
+			{
+				if (!Defaults.ContainsKey(type))
+				{
+					Defaults.Add(type, defaultValue);
 				}
 			}
 			return (T)defaultValue;

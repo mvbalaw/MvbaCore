@@ -252,11 +252,11 @@ namespace MvbaCore.Tests.Extensions
 			}
 
 			[Test]
-			public void Should_return_null_if_the_input_is_null()
+			public void Should_return_empty_string_if_the_input_is_null()
 			{
 				const string test = null;
 // ReSharper disable once ExpressionIsAlwaysNull
-				test.ToCamelCase().ShouldBeNull();
+				test.ToCamelCase().ShouldBeEqualTo("");
 			}
 		}
 

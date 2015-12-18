@@ -12,11 +12,14 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Comparers
 {
 	public class OrdinalNumberComparer : IComparer<string>
 	{
-		public int Compare(string x, string y)
+		[Pure]
+		public int Compare([NotNull] string x, [NotNull] string y)
 		{
 			var xNumber = Regex.Match(x, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
 			var yNumber = Regex.Match(y, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;

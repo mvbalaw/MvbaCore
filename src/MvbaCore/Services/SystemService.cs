@@ -11,12 +11,17 @@
 using System;
 using System.Security.Principal;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Services
 {
 	public interface ISystemService
 	{
 		DateTime CurrentDateTime { get; }
-		string GetLoginName(IPrincipal principal);
+
+		[NotNull]
+		[Pure]
+		string GetLoginName([NotNull] IPrincipal principal);
 	}
 
 	public class SystemService : ISystemService

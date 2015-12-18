@@ -10,11 +10,15 @@
 
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.FileSystem
 {
 	public interface ICommaDelimitedDataConverter
 	{
-		IEnumerable<Dictionary<string, string>> Convert(IEnumerable<string> lines, bool handleQuoted = false);
+		[NotNull]
+		[ItemNotNull]
+		IEnumerable<Dictionary<string, string>> Convert([NotNull][ItemNotNull] IEnumerable<string> lines, bool handleQuoted = false);
 	}
 
 	public class CommaDelimitedDataConverter : DelimitedDataConverter, ICommaDelimitedDataConverter

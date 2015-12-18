@@ -17,9 +17,11 @@ namespace MvbaCore.ApplicationConfiguration
 {
 	public interface IApplicationConfigurationSettingProvider
 	{
+		[Pure]
 		[CanBeNull]
 		string GetSetting([NotNull] string key);
 
+		[Pure]
 		bool GetSettingAsBool([NotNull] string key);
 	}
 

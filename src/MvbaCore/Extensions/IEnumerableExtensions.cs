@@ -21,13 +21,14 @@ namespace System.Collections
 	public static class IEnumerableExtensions
 	{
 		[NotNull]
-		public static IEnumerable<TOut> ConvertAll<TIn, TOut>(this IEnumerable<TIn> items, Func<TIn, TOut> convert)
+		[ItemCanBeNull]
+		public static IEnumerable<TOut> ConvertAll<TIn, TOut>([NotNull][ItemCanBeNull] this IEnumerable<TIn> items, [NotNull] Func<TIn, TOut> convert)
 		{
 			return items.Select(convert);
 		}
 
 		[CanBeNull]
-		public static T FirstOrDefault<T>([NotNull] this IEnumerable items, [NotNull] Func<T, bool> @delegate)
+		public static T FirstOrDefault<T>([NotNull][ItemCanBeNull] this IEnumerable items, [NotNull] Func<T, bool> @delegate)
 		{
 			if (items == null)
 			{
@@ -41,7 +42,7 @@ namespace System.Collections
 			return default(T);
 		}
 
-		public static IEnumerable<TOut> Select<TIn, TOut>([NotNull] this IEnumerable items,
+		public static IEnumerable<TOut> Select<TIn, TOut>([NotNull][ItemCanBeNull] this IEnumerable items,
 		                                                  [NotNull] Func<TIn, TOut> @delegate)
 		{
 			if (items == null)
@@ -52,7 +53,7 @@ namespace System.Collections
 			       select @delegate(item);
 		}
 
-		public static IEnumerable<TOut> Select<TIn, TOut>([NotNull] this IEnumerable items,
+		public static IEnumerable<TOut> Select<TIn, TOut>([NotNull][ItemCanBeNull] this IEnumerable items,
 		                                                  [NotNull] Func<TIn, int, TOut> @delegate)
 		{
 			if (items == null)
@@ -68,7 +69,7 @@ namespace System.Collections
 		}
 
 		[NotNull]
-		public static IEnumerable<T> Where<T>([NotNull] this IEnumerable items, [NotNull] Func<T, bool> @delegate)
+		public static IEnumerable<T> Where<T>([NotNull][ItemCanBeNull] this IEnumerable items, [NotNull] Func<T, bool> @delegate)
 		{
 			if (items == null)
 			{

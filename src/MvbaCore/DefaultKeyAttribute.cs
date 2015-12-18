@@ -13,7 +13,7 @@ using System;
 namespace MvbaCore
 {
 	[AttributeUsage(AttributeTargets.Field)]
-	public class DefaultKeyAttribute : Attribute
+	public sealed class DefaultKeyAttribute : Attribute
 	{
 	}
 }

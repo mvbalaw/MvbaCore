@@ -12,6 +12,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
+using JetBrains.Annotations;
+
 namespace MvbaCore.Collections
 {
 	public class CachedEnumerable<T> : IEnumerable<T>
@@ -23,13 +25,14 @@ namespace MvbaCore.Collections
 		private IEnumerator<T> _originalEnumerator;
 		private bool _readBeyondCache;
 
-		public CachedEnumerable(IEnumerable<T> enumerable, int? max)
+		public CachedEnumerable([NotNull] IEnumerable<T> enumerable, int? max)
 		{
 			_originalEnumerable = enumerable;
 			_max = max;
 			_cache = max != null ? new List<T>(max.Value) : new List<T>();
 		}
 
+		[ItemCanBeNull]
 		public IEnumerator<T> GetEnumerator()
 		{
 // ReSharper disable ForCanBeConvertedToForeach

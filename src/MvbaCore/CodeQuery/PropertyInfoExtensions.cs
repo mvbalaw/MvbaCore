@@ -21,6 +21,7 @@ namespace MvbaCore.CodeQuery
 	{
 		[NotNull]
 		[Pure]
+		[ItemNotNull]
 		public static IEnumerable<Attribute> CustomAttributes([NotNull] this PropertyInfo input)
 		{
 			return input.GetCustomAttributes(true).Cast<Attribute>();
@@ -28,6 +29,7 @@ namespace MvbaCore.CodeQuery
 
 		[NotNull]
 		[Pure]
+		[ItemNotNull]
 		public static IEnumerable<T> CustomAttributesOfType<T>([NotNull] this PropertyInfo input) where T : Attribute
 		{
 			return ((MemberInfo)input).CustomAttributesOfType<T>();
@@ -41,21 +43,24 @@ namespace MvbaCore.CodeQuery
 
 		[NotNull]
 		[Pure]
-		public static IEnumerable<PropertyInfo> ThatHaveAGetter([NotNull] this IEnumerable<PropertyInfo> input)
+		[ItemNotNull]
+		public static IEnumerable<PropertyInfo> ThatHaveAGetter([NotNull][ItemNotNull] this IEnumerable<PropertyInfo> input)
 		{
 			return input.Where(x => x.CanRead);
 		}
 
 		[NotNull]
 		[Pure]
-		public static IEnumerable<PropertyInfo> ThatHaveASetter([NotNull] this IEnumerable<PropertyInfo> input)
+		[ItemNotNull]
+		public static IEnumerable<PropertyInfo> ThatHaveASetter([NotNull][ItemNotNull] this IEnumerable<PropertyInfo> input)
 		{
 			return input.Where(x => x.CanWrite);
 		}
 
 		[NotNull]
 		[Pure]
-		public static IEnumerable<PropertyInfo> WithAttributeOfType<TAttributeType>([NotNull] this IEnumerable<PropertyInfo> input) where TAttributeType : Attribute
+		[ItemNotNull]
+		public static IEnumerable<PropertyInfo> WithAttributeOfType<TAttributeType>([NotNull][ItemNotNull] this IEnumerable<PropertyInfo> input) where TAttributeType : Attribute
 		{
 			return input.Where(x => x.HasAttributeOfType<TAttributeType>());
 		}

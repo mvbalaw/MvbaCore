@@ -15,6 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 using MvbaCore.Logging;
 using MvbaCore.Services;
 
@@ -76,7 +78,7 @@ namespace MvbaCore.FileSystem
 			EnsureDirectoryExists("Results", _resultsDirectory);
 		}
 
-		private void EnsureDirectoryExists(string name, string path)
+		private void EnsureDirectoryExists([NotNull] string name, [NotNull] string path)
 		{
 			if (!_fileSystemService.DirectoryExists(path))
 			{

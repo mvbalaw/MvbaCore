@@ -1,14 +1,4 @@
-﻿//   * **************************************************************************
-//   * Copyright (c) McCreary, Veselka, Bragg & Allen, P.C.
-//   * This source code is subject to terms and conditions of the MIT License.
-//   * A copy of the license can be found in the License.txt file
-//   * at the root of this distribution.
-//   * By using this source code in any fashion, you are agreeing to be bound by
-//   * the terms of the MIT License.
-//   * You must not remove this notice from this software.
-//   * **************************************************************************
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,12 +10,14 @@ namespace MvbaCore.FileSystem
 	{
 		[ItemNotNull]
 		[NotNull]
-		protected IEnumerable<Dictionary<string, string>> Convert([NotNull][ItemNotNull] IEnumerable<string> lines, [NotNull] string delimiter, bool joinQuoted = false)
+		protected IEnumerable<Dictionary<string, string>> Convert([NotNull] [ItemNotNull] IEnumerable<string> lines, [NotNull] string delimiter, bool joinQuoted = false)
 		{
 			Dictionary<int, string> headerRow = null;
 
+			var count = 0;
 			foreach (var line in lines)
 			{
+				count++;
 				if (headerRow == null)
 				{
 					headerRow = GetHeaderRow(line, delimiter);
@@ -33,6 +25,10 @@ namespace MvbaCore.FileSystem
 				else
 				{
 					var strings = line.Split(new[] { delimiter }, StringSplitOptions.None);
+					if (strings.Length != headerRow.Count)
+					{
+						throw new Exception("the file has a problem on line " + count + ": found " + strings.Length + " fields, expected " + headerRow.Count + " -- " + line.Substring(0, Math.Min(30, line.Length)) + (line.Length > 30 ? "..." :""));
+					}
 					if (joinQuoted)
 					{
 						strings = JoinQuoted(strings, delimiter).ToArray();
@@ -40,11 +36,12 @@ namespace MvbaCore.FileSystem
 					var header = headerRow;
 					var values = strings
 						.Select((x, i) => new
-						{
-							Key = header[i],
-							Value = x
-						})
+						                  {
+							                  Key = header[i],
+							                  Value = x
+						                  })
 						.ToDictionary(x => x.Key, x => x.Value);
+
 					yield return values;
 				}
 			}
@@ -57,10 +54,10 @@ namespace MvbaCore.FileSystem
 			var headerRow = line
 				.Split(new[] { delimiter }, StringSplitOptions.None)
 				.Select((x, i) => new
-				{
-					Index = i,
-					Key = x
-				})
+				                  {
+					                  Index = i,
+					                  Key = x
+				                  })
 				.ToDictionary(x => x.Index, x => x.Key);
 			return headerRow;
 		}
@@ -68,7 +65,7 @@ namespace MvbaCore.FileSystem
 		[Pure]
 		[NotNull]
 		[ItemNotNull]
-		public static IEnumerable<string> JoinQuoted([NotNull][ItemNotNull] string[] strings, [NotNull] string delimiter)
+		public static IEnumerable<string> JoinQuoted([NotNull] [ItemNotNull] string[] strings, [NotNull] string delimiter)
 		{
 			var output = new List<string>();
 			var combining = false;

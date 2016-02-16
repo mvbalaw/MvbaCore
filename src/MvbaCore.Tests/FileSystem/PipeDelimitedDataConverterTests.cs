@@ -8,6 +8,7 @@
 //   * You must not remove this notice from this software.
 //   * **************************************************************************
 
+using System;
 using System.Linq;
 
 using FluentAssert;
@@ -42,6 +43,32 @@ namespace MvbaCore.Tests.FileSystem
 					         };
 
 				_pipeDelimitedDataConverter = new PipeDelimitedDataConverter();
+			}
+
+			[Test]
+			[ExpectedException(typeof(Exception), ExpectedMessage = "the file has a problem on line 2: found 5 fields, expected 4 -- LLLL|2/16/2016|2/11/2016|3/31/...")]
+			public void Should_throw_exception_with_actionable_message_if_a_data_row_has_the_wrong_number_of_fields()
+			{
+				var input = new[]
+				         {
+					         "H1|H2|H3|H4",
+					         "LLLL|2/16/2016|2/11/2016|3/31/2016|extra"
+				         };
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+				_pipeDelimitedDataConverter.Convert(input).Count();
+			}
+
+			[Test]
+			[ExpectedException(typeof(Exception), ExpectedMessage = "the file has a problem on line 2: found 5 fields, expected 4 -- LLLL|2|16|2016|extra")]
+			public void Should_throw_exception_with_actionable_message_if_a_data_row_has_the_wrong_number_of_fields_and_the_line_is_shorter_than_30_characters()
+			{
+				var input = new[]
+				         {
+					         "H1|H2|H3|H4",
+					         "LLLL|2|16|2016|extra"
+				         };
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+				_pipeDelimitedDataConverter.Convert(input).Count();
 			}
 
 			[Test]

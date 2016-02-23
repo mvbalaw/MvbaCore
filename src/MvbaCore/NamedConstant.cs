@@ -26,6 +26,11 @@ namespace MvbaCore
 		///   Use Add to set
 		/// </summary>
 		public string Key { get; internal set; }
+
+		public override string ToString()
+		{
+			return Key;
+		}
 	}
 
 #pragma warning disable 661,660

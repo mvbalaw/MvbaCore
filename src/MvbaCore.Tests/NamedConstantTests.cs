@@ -41,5 +41,15 @@ namespace MvbaCore.Tests
 				DuplicateValue.GetAll().Count().ShouldBeEqualTo(1);
 			}
 		}
+
+		[TestFixture]
+		public class When_asked_to_ToString
+		{
+			[Test]
+			public void Should_return_the_Key()
+			{
+				DuplicateValue.Item.ToString().ShouldBeEqualTo(DuplicateValue.Item.Key);
+			}
+		}
 	}
 }

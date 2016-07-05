@@ -122,9 +122,9 @@ namespace System.Collections.Generic
 				bool hasMore;
 				do
 				{
-					var @group = new ContinuingEnumerator<T>(enumerator, keepGrouping, enumerator.Current);
-					yield return @group;
-					hasMore = @group.HasNext;
+					var group = new ContinuingEnumerator<T>(enumerator, keepGrouping, enumerator.Current);
+					yield return group;
+					hasMore = group.HasNext;
 				} while (hasMore);
 			}
 		}
@@ -240,7 +240,7 @@ namespace System.Collections.Generic
 			[NotNull] Func<T, T, bool> equals)
 			where TKey : IComparable
 		{
-			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems.OrderBy(getItemKeyValue), getItemKeyValue, equals);
 		}
 
 		/// <summary>
@@ -260,7 +260,7 @@ namespace System.Collections.Generic
 			[NotNull] Func<T, T, bool> equals)
 			where TKey : IComparable
 		{
-			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, equals);
 		}
 
 		/// <summary>
@@ -279,7 +279,7 @@ namespace System.Collections.Generic
 			[NotNull] Func<T, T, bool> equals)
 			where TKey : IComparable
 		{
-			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, @equals);
+			return SynchronizeInternal(previousItems, newItems.OrderBy(getItemKeyValue), getItemKeyValue, equals);
 		}
 
 		/// <summary>
@@ -298,7 +298,7 @@ namespace System.Collections.Generic
 			[NotNull] Func<T, T, bool> equals)
 			where TKey : IComparable
 		{
-			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems, getItemKeyValue, @equals);
+			return SynchronizeInternal(previousItems.OrderBy(getItemKeyValue), newItems, getItemKeyValue, equals);
 		}
 
 		private static IEnumerable<SynchronizationResult<T>> SynchronizeInternal<T, TKey>(
@@ -307,7 +307,7 @@ namespace System.Collections.Generic
 			[NotNull] IEnumerable<T> newSortedByKey,
 			// ReSharper restore ParameterTypeCanBeEnumerable.Local
 			[NotNull] Func<T, TKey> getItemKeyValue,
-			[NotNull] Func<T, T, bool> @equals) where TKey : IComparable
+			[NotNull] Func<T, T, bool> equals) where TKey : IComparable
 		{
 			var previousEnumerator = previousSortedByKey.GetEnumerator();
 			var newEnumerator = newSortedByKey.GetEnumerator();
@@ -336,7 +336,7 @@ namespace System.Collections.Generic
 					yield return new SynchronizationResult<T>(
 						previousItem,
 						newItem,
-						@equals(previousItem, newItem)
+						equals(previousItem, newItem)
 							? SynchronizationStatus.Unchanged
 							: SynchronizationStatus.Changed);
 
@@ -409,7 +409,7 @@ namespace System.Collections.Generic
 			[NotNull] Func<T, T, bool> equals)
 			where TKey : IComparable
 		{
-			return SynchronizeInternal(previousItems, newItems, getItemKeyValue, @equals);
+			return SynchronizeInternal(previousItems, newItems, getItemKeyValue, equals);
 		}
 
 		[NotNull]

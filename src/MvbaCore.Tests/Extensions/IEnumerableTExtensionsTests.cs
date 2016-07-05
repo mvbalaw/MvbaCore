@@ -572,9 +572,9 @@ namespace MvbaCore.Tests.Extensions
 				var input = new[] { "a", "b", "b", "a", "c", "c", "a" };
 				var grouped = input.Group((current, previous) => current == previous || current != "a");
 				var sb = new StringBuilder();
-				foreach (var @group in grouped)
+				foreach (var group in grouped)
 				{
-					sb.Append(String.Join(", ", @group));
+					sb.Append(String.Join(", ", group));
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a, b, b|a, c, c|a|");
@@ -586,9 +586,9 @@ namespace MvbaCore.Tests.Extensions
 				var input = new[] { "a", "b", "b", "b", "c", "c", "d" };
 				var grouped = input.Group((current, previous) => current == previous);
 				var sb = new StringBuilder();
-				foreach (var @group in grouped)
+				foreach (var group in grouped)
 				{
-					sb.Append(String.Join(", ", @group));
+					sb.Append(String.Join(", ", group));
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a|b, b, b|c, c|d|");

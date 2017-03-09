@@ -72,7 +72,7 @@ namespace MvbaCore
 		{
 			unchecked
 			{
-				return (Severity.GetHashCode() * 397) ^ (Message != null ? Message.GetHashCode() : 0);
+				return Severity.GetHashCode() * 397 ^ (Message != null ? Message.GetHashCode() : 0);
 			}
 		}
 

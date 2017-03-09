@@ -46,7 +46,9 @@ namespace MvbaCore.Tests.Extensions
 			public void Should_return_true_if_the_input_is_null()
 			{
 				const string input = null;
+				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 				var result = input.IsNullOrEmpty();
+				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 				result.ShouldBeTrue();
 			}
 		}

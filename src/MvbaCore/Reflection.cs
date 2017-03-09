@@ -628,7 +628,7 @@ namespace MvbaCore
 			}
 
 			// If the types are identical, or they're both generic parameters or the special 'T' type, treat as a match
-			if (thisType == type || ((thisType.IsGenericParameter || thisType == typeof(TMatch)) && (type.IsGenericParameter || type == typeof(TMatch))))
+			if (thisType == type || (thisType.IsGenericParameter || thisType == typeof(TMatch)) && (type.IsGenericParameter || type == typeof(TMatch)))
 			{
 				return true;
 			}

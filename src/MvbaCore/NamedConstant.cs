@@ -25,6 +25,7 @@ namespace MvbaCore
 		/// <summary>
 		///   Use Add to set
 		/// </summary>
+		// ReSharper disable once NotNullMemberIsNotInitialized
 		public string Key { get; internal set; }
 
 		public override string ToString()
@@ -84,7 +85,7 @@ namespace MvbaCore
 				return true;
 			}
 
-			if (((object)a == null) || ((object)b == null))
+			if ((object)a == null || (object)b == null)
 			{
 				return false;
 			}

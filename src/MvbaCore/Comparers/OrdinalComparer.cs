@@ -21,7 +21,9 @@ namespace MvbaCore.Comparers
 		[Pure]
 		public int Compare([NotNull] string x, [NotNull] string y)
 		{
+			// ReSharper disable once AssignNullToNotNullAttribute
 			var xNumber = Regex.Match(x, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
+			// ReSharper disable once AssignNullToNotNullAttribute
 			var yNumber = Regex.Match(y, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;
 			return xNumber.CompareTo(yNumber);
 		}

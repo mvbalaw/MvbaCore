@@ -31,6 +31,7 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_return_False_if_there_are_no_matching_attributes()
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<TestAttribute>();
 				hasAttributeOfType.ShouldBeFalse();
 			}
@@ -38,6 +39,7 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_return_True_if_there_are_matching_attributes()
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				var hasAttributeOfType = typeof(TestClass).GetProperty("Id").HasAttributeOfType<ReadOnlyAttribute>();
 				hasAttributeOfType.ShouldBeTrue();
 			}
@@ -163,6 +165,7 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_get_the_matching_Attributes()
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<ReadOnlyAttribute>();
 				attributes.Count().ShouldBeEqualTo(1);
 			}
@@ -170,6 +173,7 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_return_an_empty_container_if_there_are_no_matching_Attributes()
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributesOfType<TestAttribute>().ToList();
 				attributes.ShouldNotBeNull();
 				attributes.Count.ShouldBeEqualTo(0);
@@ -189,6 +193,7 @@ namespace MvbaCore.Tests.CodeQuery
 			[Test]
 			public void Should_get_the_Attributes()
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				var attributes = typeof(TestClass).GetProperty("Id").CustomAttributes().ToList();
 				attributes.Count.ShouldBeEqualTo(1);
 				attributes.First().ShouldBeOfType<ReadOnlyAttribute>();

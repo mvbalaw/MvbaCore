@@ -26,7 +26,12 @@ namespace System
 		public static IEnumerable<T> GetCustomAttribute<T>([NotNull] this Type typeThatHasTheProperty,
 														   [NotNull] string propertyName) where T : Attribute
 		{
-			var attributes = typeThatHasTheProperty.GetProperty(propertyName).CustomAttributesOfType<T>();
+			var propertyInfo = typeThatHasTheProperty.GetProperty(propertyName);
+			if (propertyInfo == null)
+			{
+				return new List<T>();
+			}
+			var attributes = propertyInfo.CustomAttributesOfType<T>();
 			return attributes;
 		}
 

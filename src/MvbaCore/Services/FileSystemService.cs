@@ -72,6 +72,10 @@ namespace MvbaCore.Services
 		void Writefile(string filePath, Stream data);
 
 		void Writefile(string filePath, string data);
+
+		[NotNull]
+		IList<string> GetDirectories([NotNull] string dirPath, [CanBeNull] string match = null,
+			SearchOption option = SearchOption.TopDirectoryOnly);
 	}
 
 	public class FileSystemService : IFileSystemService
@@ -124,6 +128,11 @@ namespace MvbaCore.Services
 		public void Writefile(string filePath, string data)
 		{
 			File.WriteAllText(filePath, data);
+		}
+
+		public IList<string> GetDirectories(string dirPath, string match = null, SearchOption option = SearchOption.TopDirectoryOnly)
+		{
+			return match == null ? Directory.GetDirectories(dirPath) : Directory.GetDirectories(dirPath, match, option);
 		}
 
 		public StreamWriter CreateFile(string filePath)

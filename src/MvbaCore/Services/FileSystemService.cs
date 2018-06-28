@@ -122,7 +122,10 @@ namespace MvbaCore.Services
 
 		public void Writefile(string filePath, Stream data)
 		{
-			File.WriteAllBytes(filePath, data.ReadAllBytes());
+			using(var dest = File.OpenWrite(filePath))
+			{
+				data.CopyTo(dest);
+			}
 		}
 
 		public void Writefile(string filePath, string data)

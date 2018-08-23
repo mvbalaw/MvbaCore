@@ -35,7 +35,7 @@ namespace MvbaCore
 
 		[Pure]
 		[ContractAnnotation("other:null => false")]
-		public virtual bool Equals([CanBeNull] NotificationMessage other)
+		public virtual bool Equals(NotificationMessage other)
 		{
 			if (ReferenceEquals(null, other))
 			{
@@ -50,7 +50,7 @@ namespace MvbaCore
 
 		[Pure]
 		[ContractAnnotation("obj:null => false")]
-		public override bool Equals([CanBeNull] object obj)
+		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj))
 			{

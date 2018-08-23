@@ -60,8 +60,8 @@ namespace MvbaCore.Services
 		[ItemNotNull]
 		IEnumerable<string> GetNamesOfFilesInDirectory([NotNull] string directoryPath);
 
-		void MoveFile([NotNull] string oldFilePath, [NotNull] string newfilePath);
-		Stream OpenRead(String filePath);
+		void MoveFile([NotNull] string oldFilePath, [NotNull] string newFilePath);
+		Stream OpenRead(string filePath);
 
 		[NotNull]
 		[Pure]
@@ -246,7 +246,7 @@ namespace MvbaCore.Services
 			return Directory.GetFiles(filePath, searchPattern);
 		}
 
-		public Stream OpenRead(String filePath)
+		public Stream OpenRead(string filePath)
 		{
 			return File.OpenRead(filePath);
 		}

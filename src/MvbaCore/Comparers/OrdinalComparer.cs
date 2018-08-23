@@ -19,7 +19,7 @@ namespace MvbaCore.Comparers
 	public class OrdinalNumberComparer : IComparer<string>
 	{
 		[Pure]
-		public int Compare([NotNull] string x, [NotNull] string y)
+		public int Compare(string x, string y)
 		{
 			// ReSharper disable once AssignNullToNotNullAttribute
 			var xNumber = Regex.Match(x, @"[^\d]*(\d+)", RegexOptions.Compiled).Groups[1].Value.SafeParseInt32() ?? 0;

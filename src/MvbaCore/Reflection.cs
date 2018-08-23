@@ -622,18 +622,24 @@ namespace MvbaCore
 			}
 
 			// Handle array types
+			// ReSharper disable PossibleNullReferenceException
 			if (thisType.IsArray && type.IsArray)
 			{
+				// ReSharper disable AssignNullToNotNullAttribute
 				return thisType.GetElementType().IsSimilarType(type.GetElementType());
+				// ReSharper restore AssignNullToNotNullAttribute
 			}
+			// ReSharper restore PossibleNullReferenceException
 
 			// If the types are identical, or they're both generic parameters or the special 'T' type, treat as a match
+			// ReSharper disable once PossibleNullReferenceException
 			if (thisType == type || (thisType.IsGenericParameter || thisType == typeof(TMatch)) && (type.IsGenericParameter || type == typeof(TMatch)))
 			{
 				return true;
 			}
 
 			// Handle any generic arguments
+			// ReSharper disable once PossibleNullReferenceException
 			if (thisType.IsGenericType && type.IsGenericType)
 			{
 				var thisArguments = thisType.GetGenericArguments();

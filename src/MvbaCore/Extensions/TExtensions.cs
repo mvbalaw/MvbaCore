@@ -20,7 +20,7 @@ namespace System
 		[NotNull]
 		public static T ToNonNull<T>([CanBeNull] this T input) where T : class, new()
 		{
-			return ReferenceEquals(input, null) ? new T() : input;
+			return input ?? new T();
 		}
 
 		[NotNull]

@@ -26,13 +26,13 @@ namespace MvbaCore.Comparers
 		}
 
 		[Pure]
-		public int Compare([CanBeNull] object x, [CanBeNull] object y)
+		public int Compare(object x, object y)
 		{
 			return _compare((T)x, (T)y);
 		}
 
 		[Pure]
-		public int Compare([CanBeNull] T x, [CanBeNull] T y)
+		public int Compare(T x, T y)
 		{
 			return _compare(x, y);
 		}

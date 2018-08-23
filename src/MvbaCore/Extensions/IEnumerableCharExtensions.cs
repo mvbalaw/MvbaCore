@@ -18,7 +18,7 @@ namespace System.Collections.Generic
 	{
 		[NotNull]
 		[ContractAnnotation("items:null => notnull")]
-		public static string AsString([CanBeNull][ItemNotNull] this IEnumerable<char> items, string separator = "")
+		public static string AsString([CanBeNull] this IEnumerable<char> items, string separator = "")
 		{
 			if (items == null)
 			{

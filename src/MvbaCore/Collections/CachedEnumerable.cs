@@ -32,7 +32,6 @@ namespace MvbaCore.Collections
 			_cache = max != null ? new List<T>(max.Value) : new List<T>();
 		}
 
-		[ItemCanBeNull]
 		public IEnumerator<T> GetEnumerator()
 		{
 // ReSharper disable ForCanBeConvertedToForeach

@@ -21,47 +21,58 @@ namespace MvbaCore
 		[NotNull]
 		public IEnumerable<T> Merge([NotNull][ItemNotNull] IEnumerable<T> list1, [NotNull][ItemNotNull] IEnumerable<T> list2, [NotNull] Func<T, T, int> compare)
 		{
-			var list1Pointer = list1.GetEnumerator();
-			var list2Pointer = list2.GetEnumerator();
-			var list1HasItems = list1Pointer.MoveNext();
-			var list2HasItems = list2Pointer.MoveNext();
-
-			while (list1HasItems || list2HasItems)
+			using (var list1Pointer = list1.GetEnumerator())
 			{
-				T list2Item;
-				if (!list1HasItems)
+				using (var list2Pointer = list2.GetEnumerator())
 				{
-					do
+					var list1HasItems = list1Pointer.MoveNext();
+					var list2HasItems = list2Pointer.MoveNext();
+
+					while (list1HasItems || list2HasItems)
 					{
+						T list2Item;
+						if (!list1HasItems)
+						{
+							do
+							{
+								list2Item = list2Pointer.Current;
+								// ReSharper disable once AssignNullToNotNullAttribute
+								yield return list2Item;
+							} while (list2Pointer.MoveNext());
+
+							yield break;
+						}
+
+						T list1Item;
+						if (!list2HasItems)
+						{
+							do
+							{
+								list1Item = list1Pointer.Current;
+								// ReSharper disable once AssignNullToNotNullAttribute
+								yield return list1Item;
+							} while (list1Pointer.MoveNext());
+
+							yield break;
+						}
+
 						list2Item = list2Pointer.Current;
-						yield return list2Item;
-					} while (list2Pointer.MoveNext());
-					yield break;
-				}
-				T list1Item;
-				if (!list2HasItems)
-				{
-					do
-					{
 						list1Item = list1Pointer.Current;
-						yield return list1Item;
-					} while (list1Pointer.MoveNext());
-					yield break;
+
+						var comparisonResult = compare(list1Item, list2Item);
+						if (comparisonResult <= 0)
+						{
+							// ReSharper disable once AssignNullToNotNullAttribute
+							yield return list1Item;
+							list1HasItems = list1Pointer.MoveNext();
+							continue;
+						}
+
+						// ReSharper disable once AssignNullToNotNullAttribute
+						yield return list2Item;
+						list2HasItems = list2Pointer.MoveNext();
+					}
 				}
-
-				list2Item = list2Pointer.Current;
-				list1Item = list1Pointer.Current;
-
-				var comparisonResult = compare(list1Item, list2Item);
-				if (comparisonResult <= 0)
-				{
-					yield return list1Item;
-					list1HasItems = list1Pointer.MoveNext();
-					continue;
-				}
-
-				yield return list2Item;
-				list2HasItems = list2Pointer.MoveNext();
 			}
 		}
 	}

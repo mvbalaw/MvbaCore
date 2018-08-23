@@ -52,7 +52,7 @@ namespace MvbaCore.FileSystem
 		private FileSystemWatcher _fileSystemWatcher;
 		private List<FileWrapper> _files;
 		private volatile bool _running;
-		private TimeSpan _sleepTimeout;
+		private readonly TimeSpan _sleepTimeout;
 		private Thread _thread;
 
 		public FileWatcher(string sourceDir,
@@ -180,7 +180,7 @@ namespace MvbaCore.FileSystem
 			{
 				var handled = false;
 // ReSharper disable RedundantComparisonWithNull
-				if (aException.InnerException != null && aException.InnerException is IOException)
+				if (aException.InnerException is IOException)
 // ReSharper restore RedundantComparisonWithNull
 				{
 					var ioException = aException.InnerException as IOException;

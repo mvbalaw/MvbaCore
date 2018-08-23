@@ -21,6 +21,8 @@ namespace MvbaCore.Services
 {
 	public interface IFileSystemService
 	{
+		void Copy(string fromPath, string toPath, bool overwrite = true);
+
 		void AppendAllText([NotNull] string filePath, [NotNull] string textToAppend);
 
 		[NotNull]
@@ -126,6 +128,11 @@ namespace MvbaCore.Services
 			{
 				data.CopyTo(dest);
 			}
+		}
+
+		public void Copy(string fromPath, string toPath, bool overwrite=true)
+		{
+			File.Copy(fromPath, toPath, overwrite);
 		}
 
 		public void Writefile(string filePath, string data)

@@ -18,3 +18,5 @@ dist/
 !tools/NUnit/bin
 dist.bat
 src/packages
+.vs/
+*.DotSettings

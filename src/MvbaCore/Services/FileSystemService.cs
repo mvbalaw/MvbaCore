@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
+using System.Text;
 using System.Web.Hosting;
 
 using JetBrains.Annotations;
@@ -63,13 +64,18 @@ namespace MvbaCore.Services
 		void MoveFile([NotNull] string oldFilePath, [NotNull] string newFilePath);
 		Stream OpenRead(string filePath);
 
-		[NotNull]
 		[Pure]
-		string[] ReadAllLines([NotNull] string filePath);
+		[ItemNotNull]
+		[NotNull]
+		IEnumerable<string> ReadLines([NotNull] string filePath, Encoding encoding = null);
 
 		[NotNull]
 		[Pure]
-		string ReadAllText([NotNull] string filePath);
+		string[] ReadAllLines([NotNull] string filePath, Encoding encoding=null);
+
+		[NotNull]
+		[Pure]
+		string ReadAllText([NotNull] string filePath, Encoding encoding=null);
 
 		void Writefile(string filePath, Stream data);
 
@@ -186,14 +192,19 @@ namespace MvbaCore.Services
 			File.AppendAllText(filePath, textToAppend);
 		}
 
-		public string[] ReadAllLines(string filePath)
+		public IEnumerable<string> ReadLines(string filePath, Encoding encoding = null)
 		{
-			return File.ReadAllLines(filePath);
+			return File.ReadLines(filePath, encoding ?? Encoding.Default);
 		}
 
-		public string ReadAllText(string filePath)
+		public string[] ReadAllLines(string filePath, Encoding encoding=null)
 		{
-			return File.ReadAllText(filePath);
+			return File.ReadAllLines(filePath, encoding ?? Encoding.Default);
+		}
+
+		public string ReadAllText(string filePath, Encoding encoding=null)
+		{
+			return File.ReadAllText(filePath, encoding??Encoding.Default);
 		}
 
 		public bool DeleteFile(string filePath)

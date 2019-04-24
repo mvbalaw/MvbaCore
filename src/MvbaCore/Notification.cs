@@ -62,11 +62,11 @@ namespace MvbaCore
 
 	public abstract class NotificationBase
 	{
-		private readonly List<NotificationMessage> _messages;
+		private readonly HashSet<NotificationMessage> _messages;
 
 		protected NotificationBase()
 		{
-			_messages = new List<NotificationMessage>();
+			_messages = new HashSet<NotificationMessage>();
 		}
 
 		protected NotificationBase([NotNull] NotificationMessage notificationMessage)
@@ -131,26 +131,23 @@ namespace MvbaCore
 
 		private void AddMessage(NotificationMessage message)
 		{
-			if (!Messages.Any(x => x.Severity == message.Severity && x.Message == message.Message))
+			switch (message.Severity)
 			{
-				switch (message.Severity)
-				{
-					case NotificationSeverity.Error:
-						HasErrors = true;
-						break;
-					case NotificationSeverity.Warning:
-						HasWarnings = true;
-						break;
-				}
-				_messages.Add(message);
+				case NotificationSeverity.Error:
+					HasErrors = true;
+					break;
+				case NotificationSeverity.Warning:
+					HasWarnings = true;
+					break;
 			}
+			_messages.Add(message);
 		}
 
 		[NotNull]
 		[Pure]
 		private string GetMessages([NotNull] Func<NotificationMessage, bool> predicate)
 		{
-			return Messages.Where(predicate).Select(x => x.Message).Join(Environment.NewLine);
+			return _messages.Where(predicate).Select(x => x.Message).Join(Environment.NewLine);
 		}
 
 		[Pure]

@@ -37,7 +37,7 @@ namespace MvbaCore.Tests.Extensions
 			[Test]
 			public void Should_return_true_if_the_input_is_empty()
 			{
-				var input = String.Empty;
+				var input = string.Empty;
 				var result = input.IsNullOrEmpty();
 				result.ShouldBeTrue();
 			}

@@ -32,7 +32,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "a", "b" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 			}
@@ -42,7 +42,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "a", "b", "c" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -53,7 +53,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "a", "c", "b" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -64,7 +64,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "b", "a" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 			}
@@ -74,7 +74,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "b", "a", "c" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -85,7 +85,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "b", "c", "a" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -96,7 +96,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "c", "a", "b" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -107,7 +107,7 @@ namespace MvbaCore.Tests.Collections
 			{
 				var input = new[] { "c", "b", "a" };
 				var persistentList = new PersistentList<string>(input);
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 				persistentList[0].ShouldBeEqualTo("a");
 				persistentList[1].ShouldBeEqualTo("b");
 				persistentList[2].ShouldBeEqualTo("c");
@@ -119,7 +119,7 @@ namespace MvbaCore.Tests.Collections
 				var input = new[] { "a" };
 				var persistentList = new PersistentList<string>(input);
 				// should not throw if only one item
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 			}
 
 			[Test]
@@ -128,7 +128,7 @@ namespace MvbaCore.Tests.Collections
 				var input = new List<string>();
 				var persistentList = new PersistentList<string>(input);
 				// should not throw if no items
-				persistentList.Sort((x, y) => String.Compare(x, y, StringComparison.Ordinal));
+				persistentList.Sort((x, y) => string.Compare(x, y, StringComparison.Ordinal));
 			}
 		}
 	}

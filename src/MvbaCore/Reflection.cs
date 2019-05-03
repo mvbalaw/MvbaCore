@@ -121,7 +121,7 @@ namespace MvbaCore
 		[NotNull]
 		public static string GetCamelCasePropertyNameWithPrefix<T>([NotNull] Expression<Func<T>> expression, [NotNull] string prefix)
 		{
-			return String.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase()).ToCamelCase();
+			return string.Format("{0}.{1}", prefix, GetPropertyName(expression).ToCamelCase()).ToCamelCase();
 		}
 
 		[Pure]

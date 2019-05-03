@@ -8,8 +8,6 @@
 //  * You must not remove this notice from this software.
 //  * **************************************************************************
 
-using System;
-
 using JetBrains.Annotations;
 
 using NUnit.Framework;
@@ -29,7 +27,7 @@ namespace MvbaCore.Tests
 				const int arg0 = 1;
 				const string arg1 = "help";
 				var message = new NotificationMessage(NotificationSeverity.Warning, format, arg0, arg1);
-				Assert.AreEqual(String.Format(format, arg0, arg1), message.Message);
+				Assert.AreEqual(string.Format(format, arg0, arg1), message.Message);
 			}
 
 			[Test]

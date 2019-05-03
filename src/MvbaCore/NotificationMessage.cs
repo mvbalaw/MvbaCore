@@ -21,7 +21,7 @@ namespace MvbaCore
 		                           params object[] messageParameters)
 		{
 			Severity = severity;
-			Message = String.Format(messageFormatString, messageParameters);
+			Message = string.Format(messageFormatString, messageParameters);
 		}
 
 		public NotificationMessage(NotificationSeverity severity, [NotNull] string message)

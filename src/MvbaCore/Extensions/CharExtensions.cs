@@ -24,7 +24,7 @@ namespace System
 		[Pure]
 		public static bool IsVowel(this char ch)
 		{
-			return Vowels.Contains(Char.ToLower(ch));
+			return Vowels.Contains(char.ToLower(ch));
 		}
 	}
 }

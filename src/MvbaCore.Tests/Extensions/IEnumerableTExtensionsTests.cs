@@ -575,7 +575,7 @@ namespace MvbaCore.Tests.Extensions
 				var sb = new StringBuilder();
 				foreach (var group in grouped)
 				{
-					sb.Append(String.Join(", ", group));
+					sb.Append(string.Join(", ", group));
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a, b, b|a, c, c|a|");
@@ -589,7 +589,7 @@ namespace MvbaCore.Tests.Extensions
 				var sb = new StringBuilder();
 				foreach (var group in grouped)
 				{
-					sb.Append(String.Join(", ", group));
+					sb.Append(string.Join(", ", group));
 					sb.Append('|');
 				}
 				sb.ToString().ShouldBeEqualTo(@"a|b, b, b|c, c|d|");
@@ -814,7 +814,7 @@ namespace MvbaCore.Tests.Extensions
 				}
 
 				[Test]
-				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_different_contents_as_Changed()
 				{
 					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
 						.Where(x => x.Status == SynchronizationStatus.Changed)
@@ -928,7 +928,7 @@ namespace MvbaCore.Tests.Extensions
 				}
 
 				[Test]
-				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_different_contents_as_Changed()
 				{
 					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
 						.Where(x => x.Status == SynchronizationStatus.Changed)
@@ -1042,7 +1042,7 @@ namespace MvbaCore.Tests.Extensions
 				}
 
 				[Test]
-				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_different_contents_as_Changed()
 				{
 					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
 						.Where(x => x.Status == SynchronizationStatus.Changed)
@@ -1156,7 +1156,7 @@ namespace MvbaCore.Tests.Extensions
 				}
 
 				[Test]
-				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_differnt_contents_as_Changed()
+				public void Should_mark_items_that_are_in_both_listA_and_listB_and_have_different_contents_as_Changed()
 				{
 					var changed = _listA.Synchronize(_listB, item => item.KeyId, (item1, item2) => item1.Data == item2.Data)
 						.Where(x => x.Status == SynchronizationStatus.Changed)

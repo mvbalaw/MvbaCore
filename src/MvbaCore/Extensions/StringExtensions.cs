@@ -139,7 +139,7 @@ namespace System
 		{
 			var length = end - start;
 			const string tagName = "hex";
-			var fakeXmlDocument = String.Format("<{1}>{0}</{1}>",
+			var fakeXmlDocument = string.Format("<{1}>{0}</{1}>",
 			                                    hexEncodedBytes.Substring(start, length),
 			                                    tagName);
 			var hexLength = length / 2;
@@ -164,11 +164,11 @@ namespace System
 		[ContractAnnotation("input:null => true")]
 		public static bool IsNullOrEmpty([CanBeNull] this string input, bool trim)
 		{
-			if (String.IsNullOrEmpty(input))
+			if (string.IsNullOrEmpty(input))
 			{
 				return true;
 			}
-			return trim && String.IsNullOrEmpty(input.Trim());
+			return trim && string.IsNullOrEmpty(input.Trim());
 		}
 
 		[CanBeNull, Pure]
@@ -252,7 +252,7 @@ namespace System
 		public static int? SafeParseInt32([CanBeNull] this string input)
 		{
 			int value;
-			return !Int32.TryParse(input, out value) ? (int?)null : value;
+			return !int.TryParse(input, out value) ? (int?)null : value;
 		}
 
 		[CanBeNull]
@@ -272,11 +272,11 @@ namespace System
 		[ContractAnnotation("str:null => null; str:notnull => notnull")]
 		public static string ToCamelCase([CanBeNull] this string str)
 		{
-			if (String.IsNullOrEmpty(str))
+			if (string.IsNullOrEmpty(str))
 			{
 				return "";
 			}
-			str = Char.ToLower(str[0]) + str.Substring(1);
+			str = char.ToLower(str[0]) + str.Substring(1);
 			return str;
 		}
 
@@ -331,7 +331,7 @@ namespace System
 			}
 			return value.Length == 1
 				       ? value.ToUpper()
-				       : String.Concat(value.Substring(0, 1).ToUpper(),
+				       : string.Concat(value.Substring(0, 1).ToUpper(),
 				                       lowerCaseTheRemainder
 					                       ? value.Substring(1).ToLower()
 					                       : value.Substring(1));

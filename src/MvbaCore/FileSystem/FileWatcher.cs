@@ -180,10 +180,10 @@ namespace MvbaCore.FileSystem
 			{
 				var handled = false;
 // ReSharper disable RedundantComparisonWithNull
-				if (aException.InnerException is IOException)
+				var ioException = aException.InnerException as IOException;
+				if (ioException != null)
 // ReSharper restore RedundantComparisonWithNull
 				{
-					var ioException = aException.InnerException as IOException;
 					if (ioException.Message.StartsWith("Cannot create a file when that file already exists"))
 					{
 						try

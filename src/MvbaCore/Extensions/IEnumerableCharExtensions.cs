@@ -22,13 +22,13 @@ namespace System.Collections.Generic
 		{
 			if (items == null)
 			{
-				return String.Empty;
+				return string.Empty;
 			}
 			if (separator == null)
 			{
 				throw new ArgumentNullException("separator", "The character separator cannot be null.");
 			}
-			return String.Join(separator, items);
+			return string.Join(separator, items);
 		}
 	}
 }

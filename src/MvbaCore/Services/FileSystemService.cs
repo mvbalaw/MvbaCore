@@ -30,7 +30,7 @@ namespace MvbaCore.Services
 		DirectoryInfo CreateDirectory([NotNull] string directoryPath);
 
 		[NotNull]
-		StreamWriter CreateFile([NotNull] string filePath);
+		StreamWriter CreateFile([NotNull] string filePath, Encoding encoding = null);
 
 		[NotNull]
 		TextWriter CreateTextFile([NotNull] string filePath);
@@ -151,11 +151,14 @@ namespace MvbaCore.Services
 			return match == null ? Directory.GetDirectories(dirPath) : Directory.GetDirectories(dirPath, match, option);
 		}
 
-		public StreamWriter CreateFile(string filePath)
+		public StreamWriter CreateFile(string filePath, Encoding encoding = null)
 		{
 			try
 			{
-				return new StreamWriter(new FileStream(filePath, FileMode.Create, FileAccess.Write));
+				return encoding == null 
+					? new StreamWriter(new FileStream(filePath, FileMode.Create, FileAccess.Write))
+					: new StreamWriter(new FileStream(filePath, FileMode.Create, FileAccess.Write), encoding)
+					;
 			}
 			catch (DirectoryNotFoundException exception)
 			{

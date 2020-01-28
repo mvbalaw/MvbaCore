@@ -47,7 +47,16 @@ namespace MvbaCore
 		protected void Add([NotNull] string key, [NotNull] T item)
 		{
 			Key = key;
-			NamedConstants.Add(key.ToLower(), item);
+			var storageKey = key.ToLower();
+			if (NamedConstants.ContainsKey(storageKey))
+			{
+				if (ReferenceEquals(NamedConstants[key], item))
+				{
+					return;
+				}
+				throw new ArgumentException("NamedConstant storage key '"+storageKey+"' is assigned to "+NamedConstants[storageKey].Key+" - cannot assign it to "+key);
+			}
+			NamedConstants.Add(storageKey, item);
 		}
 
 // ReSharper disable MemberCanBePrivate.Global

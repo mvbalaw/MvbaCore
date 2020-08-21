@@ -413,12 +413,6 @@ namespace System.Collections.Generic
 		}
 
 		[NotNull]
-		public static HashSet<T> ToHashSet<T>([NotNull][ItemNotNull] this IEnumerable<T> items)
-		{
-			return new HashSet<T>(items);
-		}
-
-		[NotNull]
 		public static IEnumerable<List<T>> ToPageSets<T>([CanBeNull] this IEnumerable<T> items, int firstPageSize, int nthPageSize)
 		{
 			if (items != null)

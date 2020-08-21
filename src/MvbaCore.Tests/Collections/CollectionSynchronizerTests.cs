@@ -63,7 +63,7 @@ namespace MvbaCore.Tests.Collections
 			private List<TestItem> _listB;
 			private CollectionSynchronizer<TestItem> _synchronizer;
 
-			[TestFixtureSetUp]
+			[OneTimeSetUpAttribute]
 			public void BeforeFirstTest()
 			{
 				var itemA1 = new TestItem
@@ -156,7 +156,7 @@ namespace MvbaCore.Tests.Collections
 			private List<TestItem> _listB;
 			private CollectionSynchronizer<TestItem> _synchronizer;
 
-			[TestFixtureSetUp]
+			[OneTimeSetUp]
 			public void BeforeFirstTest()
 			{
 				var itemA1 = new TestItem

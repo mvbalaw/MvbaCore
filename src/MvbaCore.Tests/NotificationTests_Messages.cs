@@ -24,12 +24,11 @@ namespace MvbaCore.Tests
 		public class When_asked_for_its_messages
 		{
 			[Test]
-			[ExpectedException(typeof(NotSupportedException))]
 			public void Should_not_be_able_to_change_the_Notification_by_adding_to_the_Messages_object()
 			{
 				var notification = Notification.Empty;
 				var messages = (ICollection<NotificationMessage>)notification.Messages;
-				messages.Add(new NotificationMessage(NotificationSeverity.Error, "foo"));
+				Assert.Throws<NotSupportedException>(() => messages.Add(new NotificationMessage(NotificationSeverity.Error, "foo")));
 			}
 
 			[Test]

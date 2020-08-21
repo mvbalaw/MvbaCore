@@ -672,16 +672,13 @@ namespace MvbaCore.Tests.Extensions
 			}
 
 			[Test]
-			[ExpectedException(typeof(InternalBufferOverflowException))]
 			public void Given_maximum_1_and_more_than_1_are_read__should_throw_an_exception_if_another_set_with_more_than_maximum_is_read()
 			{
 				var count = new[] { 1 };
 				var memoized = Generate(count).Memoize(1);
 				var firstSet = memoized.Take(2).ToList();
 				firstSet.ShouldBeEqualTo(Enumerable.Range(1, 2));
-// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-				memoized.Take(2).ToList();
-// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+				Assert.Throws<InternalBufferOverflowException>(() => memoized.Take(2).ToList());
 			}
 
 			[Test]
@@ -758,7 +755,7 @@ namespace MvbaCore.Tests.Extensions
 				private List<SyncTestItem> _listA;
 				private List<SyncTestItem> _listB;
 
-				[TestFixtureSetUp]
+				[OneTimeSetUp]
 				public void BeforeFirstTest()
 				{
 					var itemA1 = new SyncTestItem
@@ -872,7 +869,7 @@ namespace MvbaCore.Tests.Extensions
 				private IOrderedEnumerable<SyncTestItem> _listA;
 				private IOrderedEnumerable<SyncTestItem> _listB;
 
-				[TestFixtureSetUp]
+				[OneTimeSetUp]
 				public void BeforeFirstTest()
 				{
 					var itemA1 = new SyncTestItem
@@ -986,7 +983,7 @@ namespace MvbaCore.Tests.Extensions
 				private IOrderedEnumerable<SyncTestItem> _listA;
 				private List<SyncTestItem> _listB;
 
-				[TestFixtureSetUp]
+				[OneTimeSetUp]
 				public void BeforeFirstTest()
 				{
 					var itemA1 = new SyncTestItem
@@ -1100,7 +1097,7 @@ namespace MvbaCore.Tests.Extensions
 				private List<SyncTestItem> _listA;
 				private IOrderedEnumerable<SyncTestItem> _listB;
 
-				[TestFixtureSetUp]
+				[OneTimeSetUp]
 				public void BeforeFirstTest()
 				{
 					var itemA1 = new SyncTestItem

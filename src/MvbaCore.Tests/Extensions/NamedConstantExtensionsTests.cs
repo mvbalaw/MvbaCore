@@ -151,12 +151,12 @@ namespace MvbaCore.Tests.Extensions
 		[TestFixture]
 		public class When_asked_to_get_the_value_for_a_NamedConstant_or_its_default
 		{
-			[Test,ExpectedException(typeof(ArgumentException))]
+			[Test]
 			public void Should_throw_exception_if_the_input_type_does_not_have_a_defined_default()
 			{
 				const TestNamedConstantWithoutDefault namedConstantWithoutDefault = null;
-
-				namedConstantWithoutDefault.OrDefault().ShouldBeNull();
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+				Assert.Throws<ArgumentException>(() => namedConstantWithoutDefault.OrDefault());
 			}
 
 			[Test]

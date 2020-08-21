@@ -375,13 +375,11 @@ namespace MvbaCore.Tests.Extensions
 			public class Given_a_null_separator
 			{
 				[Test]
-				[ExpectedException(typeof(ArgumentException))]
 				public void Should_throw_an_exception()
 				{
 					var lines = new string[0];
-// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-					lines.GroupBy(null);
-// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+					// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+					Assert.Throws<ArgumentException>(() => lines.GroupBy(null));
 				}
 			}
 

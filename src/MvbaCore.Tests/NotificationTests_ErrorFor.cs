@@ -30,7 +30,7 @@ namespace MvbaCore.Tests
 				private const string MessageText = "text";
 				private Notification _notification;
 
-				[TestFixtureSetUp]
+				[OneTimeSetUp]
 				public void Before_first_test()
 				{
 					_notification = Notification.ErrorFor(MessageText);

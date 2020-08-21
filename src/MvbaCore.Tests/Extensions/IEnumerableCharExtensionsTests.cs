@@ -43,12 +43,10 @@ namespace MvbaCore.Tests.Extensions
 			}
 
 			[Test]
-			[ExpectedException(typeof(ArgumentNullException))]
 			public void Given_an_empty_input_and_a_null_separator_should_throw_a_ArgumentNullException()
 			{
 				var input = new char[] { };
-				var result = input.AsString(null);
-				result.ShouldBeEqualTo("");
+				Assert.Throws<ArgumentNullException>(() => input.AsString(null));
 			}
 
 			[Test]

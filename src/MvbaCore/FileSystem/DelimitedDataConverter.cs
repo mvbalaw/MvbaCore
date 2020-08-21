@@ -27,7 +27,7 @@ namespace MvbaCore.FileSystem
 					var strings = line.Split(new[] { delimiter }, StringSplitOptions.None);
 					if (strings.Length != headerRow.Count)
 					{
-						throw new Exception("the file has a problem on line " + count + ": found " + strings.Length + " fields, expected " + headerRow.Count + " -- " + line.Substring(0, Math.Min(30, line.Length)) + (line.Length > 30 ? "..." :""));
+						throw new ApplicationException("the file has a problem on line " + count + ": found " + strings.Length + " fields, expected " + headerRow.Count + " -- " + line.Substring(0, Math.Min(30, line.Length)) + (line.Length > 30 ? "..." :""));
 					}
 					if (joinQuoted)
 					{

@@ -1,2 +1,0 @@
-source: https://github.com/mvba/FastReflection
-license: License: Microsoft Public License (Ms-PL)

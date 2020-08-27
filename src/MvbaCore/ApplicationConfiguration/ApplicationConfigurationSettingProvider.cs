@@ -10,7 +10,6 @@
 
 using System;
 using System.Configuration;
-
 using JetBrains.Annotations;
 
 namespace MvbaCore.ApplicationConfiguration

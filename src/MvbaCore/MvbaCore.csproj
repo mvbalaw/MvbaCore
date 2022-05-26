@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastReflection" Version="1.1.0" />
+    <PackageReference Include="FastReflection" Version="1.1.0.4" />
+    <PackageReference Include="FluentAssert" Version="1.1.0.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
   </ItemGroup>
 

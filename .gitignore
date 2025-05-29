@@ -5,4 +5,9 @@ src/.vs
 src/Directory.Build.props
 [Bb]in/
 [Oo]bj/
-
+packages/
+*.suo
+CommonAssemblyInfo.cs
+*.user
+*.DotSettings
+_ReSharper.MvbaCore

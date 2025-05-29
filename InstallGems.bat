@@ -1,5 +1,5 @@
 @ECHO *** Installing Rake
-@call gem install rake --no-rdoc --no-ri
+@call gem install rake 
 
 @ECHO *** Installing RubyZip
-@call gem install rubyzip --no-rdoc --no-ri
+@call gem install rubyzip 

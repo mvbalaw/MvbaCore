@@ -9,7 +9,7 @@
 //  * **************************************************************************
 namespace MvbaCore
 {
-	public enum NotificationSeverity
+	public enum NotificationSeverity : int
 	{
 		Error,
 		Warning,

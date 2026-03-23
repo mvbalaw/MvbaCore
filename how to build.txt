@@ -1,0 +1,4 @@
+Build.bat                      ← full pipeline (same as rake default)
+Build.bat -Configuration Release
+Build.bat -Task test           ← run only up through tests
+Build.bat -Task assemblyinfo   ← just regenerate CommonAssemblyInfo.cs

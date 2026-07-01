@@ -13,8 +13,12 @@
     Destination folder for the NuGet package. Defaults to .\dist.
 
 .PARAMETER Task
-    Which task to run: default, clean, assemblyinfo, build, copy_artifacts, test, pack.
+    Which task to run: default, clean, assemblyinfo, build, copy_artifacts, test, pack, publish.
     Defaults to 'default' (full pipeline: clean → assemblyinfo → build → copy_artifacts → test → pack).
+    'publish' additionally pushes the packed .nupkg to the MVBA GitHub Packages feed
+    (https://nuget.pkg.github.com/mvbalaw/index.json) via 'dotnet nuget push'; requires the
+    MVBA_NUGET_WRITE_TOKEN environment variable (a GitHub PAT with 'write:packages'). It never
+    runs as part of 'default'.
 
 .EXAMPLE
     .\build.ps1
@@ -49,6 +53,9 @@ if ($Artifacts -eq "") {
 } else {
     $ARTIFACTS = $Artifacts
 }
+
+# MVBA GitHub Packages NuGet feed (ticket 1610 - Model A publishing).
+$FEED_URL = "https://nuget.pkg.github.com/mvbalaw/index.json"
 
 $nunit_cmd = Join-Path $ROOT "tools\NUnit\nunit-console.exe"
 
@@ -224,6 +231,26 @@ function Invoke-Pack {
     Write-Host "Artifacts available at: $ARTIFACTS"
 }
 
+function Invoke-Publish {
+    Write-Host ""
+    Write-Host "=== publish ==="
+    if ([string]::IsNullOrWhiteSpace($env:MVBA_NUGET_WRITE_TOKEN)) {
+        throw "MVBA_NUGET_WRITE_TOKEN is not set. It must hold a GitHub PAT with 'write:packages' to publish to $FEED_URL."
+    }
+
+    # Push the package we just packed - the newest matching .nupkg in the artifacts folder.
+    $pkg = Get-ChildItem -Path $ARTIFACTS -Filter "$PRODUCT_NAME.*.nupkg" -File -ErrorAction SilentlyContinue |
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if (-not $pkg) {
+        throw "No $PRODUCT_NAME .nupkg found in $ARTIFACTS. Run the 'pack' task first."
+    }
+
+    Write-Host "Pushing $($pkg.Name) to $FEED_URL"
+    & dotnet nuget push $pkg.FullName --source $FEED_URL --api-key $env:MVBA_NUGET_WRITE_TOKEN --skip-duplicate
+    if ($LASTEXITCODE -ne 0) { throw "dotnet nuget push failed for $($pkg.Name) (exit code $LASTEXITCODE)." }
+    Write-Host "Published $($pkg.Name)"
+}
+
 # ---------------------------------------------------------------------------
 # Task dispatcher
 # ---------------------------------------------------------------------------
@@ -257,6 +284,16 @@ switch ($Task.ToLower()) {
         Invoke-Test
         Invoke-Pack
     }
+    "publish" {
+        # Push ONLY after a clean build + passing tests + a successful pack.
+        Invoke-Clean
+        Invoke-AssemblyInfo
+        Invoke-Build
+        Invoke-CopyArtifacts
+        Invoke-Test
+        Invoke-Pack
+        Invoke-Publish
+    }
     "default" {
         Invoke-Clean
         Invoke-AssemblyInfo
@@ -266,7 +303,7 @@ switch ($Task.ToLower()) {
         Invoke-Pack
     }
     default {
-        Write-Error "Unknown task '$Task'. Valid tasks: default, clean, assemblyinfo, build, copy_artifacts, test, pack"
+        Write-Error "Unknown task '$Task'. Valid tasks: default, clean, assemblyinfo, build, copy_artifacts, test, pack, publish"
         exit 1
     }
 }

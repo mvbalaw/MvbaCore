@@ -26,16 +26,31 @@ namespace MvbaCore.Services
 
 	public class SystemService : ISystemService
 	{
-		private static readonly TimeSpan LocalUtcOffset;
+		private readonly Func<TimeZoneInfo> _getTimeZone;
+		private readonly Func<DateTime> _getUtcNow;
 
-		static SystemService()
+		public SystemService()
+			: this(() => DateTime.UtcNow, () => TimeZoneInfo.Local)
 		{
-			LocalUtcOffset = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now);
 		}
 
+		// internal so that IoC containers, which build through the public constructor with the most parameters, keep
+		// using the one above
+		internal SystemService(Func<DateTime> getUtcNow, Func<TimeZoneInfo> getTimeZone)
+		{
+			_getUtcNow = getUtcNow;
+			_getTimeZone = getTimeZone;
+		}
+
+		// The offset is worked out from the time zone's rules on every read. It used to be worked out once, when the
+		// class was first used, so a long-running process kept that offset across a daylight saving time change and
+		// answered an hour off until it was restarted - and for the first hour after the spring change answered a time
+		// that does not exist, which throws when converted back to UTC. Converting into TimeZoneInfo.Local itself is
+		// what makes the result DateTimeKind.Local and keeps the flag that tells the first 1 AM hour of the fall change
+		// from the second, so converting it back to UTC lands on the instant it was read at.
 		public DateTime CurrentDateTime
 		{
-			get { return DateTime.SpecifyKind(DateTime.UtcNow + LocalUtcOffset, DateTimeKind.Local); }
+			get { return TimeZoneInfo.ConvertTimeFromUtc(_getUtcNow(), _getTimeZone()); }
 		}
 
 		public string GetLoginName(IPrincipal principal)

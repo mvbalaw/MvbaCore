@@ -16,4 +16,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="MvbaCore.Tests" />
+  </ItemGroup>
+
 </Project>

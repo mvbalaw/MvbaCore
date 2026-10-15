@@ -11,3 +11,4 @@ CommonAssemblyInfo.cs
 *.user
 *.DotSettings
 _ReSharper.MvbaCore
+dist.bat

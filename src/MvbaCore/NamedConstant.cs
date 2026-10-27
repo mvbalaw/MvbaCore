@@ -11,7 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using JetBrains.Annotations;
 
@@ -50,7 +50,7 @@ namespace MvbaCore
 			var storageKey = key.ToLower();
 			if (NamedConstants.ContainsKey(storageKey))
 			{
-				if (ReferenceEquals(NamedConstants[key], item))
+				if (ReferenceEquals(NamedConstants[storageKey], item))
 				{
 					return;
 				}
@@ -81,6 +81,7 @@ namespace MvbaCore
 			{
 				return null;
 			}
+			EnsureValues();
 			T t;
 			NamedConstants.TryGetValue(key.ToLower(), out t);
 			return t;
@@ -112,7 +113,6 @@ namespace MvbaCore
 		[Pure]
 		public static T GetFor([CanBeNull] string key)
 		{
-			EnsureValues();
 			return Get(key);
 		}
 
@@ -126,13 +126,11 @@ namespace MvbaCore
 
 		private static void EnsureValues()
 		{
-			if (NamedConstants.Count != 0)
-			{
-				return;
-			}
-			var fieldInfos = typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public);
-			// ensure its static members get created by triggering the type initializer
-			fieldInfos[0].GetValue(null);
+			// the values are added by T's type initializer, so make sure it has finished. A non-zero Count is not
+			// enough: it is also what another thread sees while that initializer is still adding values. The
+			// runtime returns at once when the initializer has run, waits when another thread is running it, and
+			// returns at once when this thread is the one running it.
+			RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
 		}
 	}
 }
